@@ -10,6 +10,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     private let statusItem: NSStatusItem
     private let sessions: SessionController
+    private let customEndWindow = CustomEndWindow()
 
     init(sessions: SessionController) {
         self.sessions = sessions
@@ -61,11 +62,23 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         menu.addItem(submenuItem("Hours", items: Self.hourChoices.map {
             startItem($0 == 1 ? "1 hour" : "\($0) hours", end: .after(TimeInterval($0 * 3_600)))
         }))
+        menu.addItem(submenuItem("Until", items: untilItems()))
 
         menu.addItem(.separator())
         menu.addItem(ClosureMenuItem("Quit \(Brand.name)", keyEquivalent: "q") {
             NSApp.terminate(nil)
         })
+    }
+
+    private func untilItems() -> [NSMenuItem] {
+        var items = UntilTimes.upcomingHours(after: .now, count: 8).map { date in
+            startItem(Self.clockTime(date), end: .until(date))
+        }
+        items.append(.separator())
+        items.append(ClosureMenuItem("Other Time…") { [weak self] in
+            self?.customEndWindow.show { date in self?.sessions.start(.until(date)) }
+        })
+        return items
     }
 
     private func startItem(_ title: String, end: SessionEnd) -> NSMenuItem {
@@ -84,9 +97,13 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         guard let endDate = session.endDate, let remaining = session.remaining(at: .now) else {
             return "Running until you end it"
         }
-        let time = endDate.formatted(Calendar.current.isDateInToday(endDate)
+        return "Ends in \(RemainingTime.short(remaining)) (\(clockTime(endDate)))"
+    }
+
+    /// "5:00 PM" today, "Wed 1:00 AM" on another day.
+    private static func clockTime(_ date: Date) -> String {
+        date.formatted(Calendar.current.isDateInToday(date)
             ? .dateTime.hour().minute()
             : .dateTime.weekday(.abbreviated).hour().minute())
-        return "Ends in \(RemainingTime.short(remaining)) (\(time))"
     }
 }
