@@ -23,7 +23,15 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         menu.delegate = self
         statusItem.menu = menu
 
+        statusItem.button?.imagePosition = .imageLeading
         sessions.onChange = { [weak self] in self?.refreshButton() }
+        NotificationCenter.default.addObserver(
+            forName: UserDefaults.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            MainActor.assumeIsolated { self?.refreshButton() }
+        }
         refreshButton()
     }
 
@@ -32,6 +40,14 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         let image = NSImage(systemSymbolName: symbol, accessibilityDescription: Brand.name)
         image?.isTemplate = true
         statusItem.button?.image = image
+
+        var title = ""
+        if Preferences.showsRemainingInMenuBar, let remaining = sessions.session?.remaining(at: .now) {
+            title = " " + RemainingTime.short(remaining)
+        }
+        if statusItem.button?.title != title {
+            statusItem.button?.title = title
+        }
     }
 
     // MARK: - Menu

@@ -5,6 +5,7 @@ import SwiftUI
 struct GeneralSettingsView: View {
     private static let logger = Logger(subsystem: "app.midnightoil.MidnightOil", category: "Settings")
 
+    @AppStorage(Preferences.Key.showsRemainingInMenuBar) private var showsRemainingInMenuBar = false
     @State private var launchesAtLogin = SMAppService.mainApp.status == .enabled
 
     var body: some View {
@@ -14,6 +15,10 @@ struct GeneralSettingsView: View {
                     .onChange(of: launchesAtLogin) { _, enabled in
                         setLaunchAtLogin(enabled)
                     }
+            }
+
+            Section {
+                Toggle("Show time remaining in the menu bar", isOn: $showsRemainingInMenuBar)
             }
         }
         .formStyle(.grouped)
