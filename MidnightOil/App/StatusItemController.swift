@@ -11,6 +11,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private let statusItem: NSStatusItem
     private let sessions: SessionController
     private let customEndWindow = CustomEndWindow()
+    private let settingsWindow = SettingsWindow()
 
     init(sessions: SessionController) {
         self.sessions = sessions
@@ -65,6 +66,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         menu.addItem(submenuItem("Until", items: untilItems()))
 
         menu.addItem(.separator())
+        menu.addItem(ClosureMenuItem("Settings…", keyEquivalent: ",") { [weak self] in
+            self?.settingsWindow.show()
+        })
         menu.addItem(ClosureMenuItem("Quit \(Brand.name)", keyEquivalent: "q") {
             NSApp.terminate(nil)
         })
