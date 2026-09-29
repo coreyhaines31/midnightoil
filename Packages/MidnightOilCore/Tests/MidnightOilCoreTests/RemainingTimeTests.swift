@@ -16,3 +16,15 @@ private let cases: [(TimeInterval, String)] = [
 func formatsCompactCountdown(interval: TimeInterval, expected: String) {
     #expect(RemainingTime.short(interval) == expected)
 }
+
+private let detailedCases: [(TimeInterval, String)] = [
+    (45.9, "45s"),
+    (620, "10m 20s"),
+    (3_920, "1h 05m 20s"),
+    (-5, "0s")
+]
+
+@Test(arguments: detailedCases)
+func formatsDetailedCountdown(interval: TimeInterval, expected: String) {
+    #expect(RemainingTime.detailed(interval) == expected)
+}
