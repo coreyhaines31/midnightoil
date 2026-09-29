@@ -1,0 +1,10 @@
+included:
+  - MidnightOil
+  - Packages/MidnightOilCore/Sources
+  - Packages/MidnightOilCore/Tests
+excluded:
+  - Packages/MidnightOilCore/.build
+opt_in_rules:
+  - empty_count
+  - first_where
+  - sorted_imports
