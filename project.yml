@@ -1,0 +1,45 @@
+name: MidnightOil
+options:
+  bundleIdPrefix: app.midnightoil
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    ENABLE_HARDENED_RUNTIME: YES
+    DEAD_CODE_STRIPPING: YES
+packages:
+  MidnightOilCore:
+    path: Packages/MidnightOilCore
+targets:
+  MidnightOil:
+    type: application
+    platform: macOS
+    sources: [MidnightOil]
+    dependencies:
+      - package: MidnightOilCore
+    info:
+      path: MidnightOil/Info.plist
+      properties:
+        CFBundleDisplayName: Midnight Oil
+        LSUIElement: true
+        LSApplicationCategoryType: public.app-category.utilities
+        NSHumanReadableCopyright: Copyright © 2026 Corey Haines. MIT License.
+    settings:
+      base:
+        PRODUCT_NAME: Midnight Oil
+        PRODUCT_MODULE_NAME: MidnightOil
+        PRODUCT_BUNDLE_IDENTIFIER: app.midnightoil.MidnightOil
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGN_IDENTITY: "-"
+schemes:
+  MidnightOil:
+    build:
+      targets:
+        MidnightOil: all
+    test:
+      targets:
+        - package: MidnightOilCore/MidnightOilCoreTests
