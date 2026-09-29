@@ -44,6 +44,7 @@ final class SessionController {
         ticker?.cancel()
         ticker = nil
         assertions.releaseAll()
+        SessionNotifier.sessionEnded(reason)
         onChange?()
     }
 
