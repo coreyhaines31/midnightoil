@@ -28,6 +28,6 @@ private struct SettingsView: View {
             SessionSettingsView()
                 .tabItem { Label("Sessions", systemImage: "timer") }
         }
-        .frame(width: 480)
+        .frame(width: 500, height: 400)
     }
 }
