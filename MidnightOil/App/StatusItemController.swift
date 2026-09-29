@@ -4,26 +4,89 @@ import MidnightOilCore
 /// Owns the menu bar icon. It stays a plain `NSStatusItem` with an `autosaveName`
 /// (no custom view, never recreated) so macOS can Cmd-drag it and remember its position.
 @MainActor
-final class StatusItemController {
+final class StatusItemController: NSObject, NSMenuDelegate {
+    private static let minuteChoices = [5, 10, 15, 30, 45]
+    private static let hourChoices = [1, 2, 3, 4, 6, 8, 12]
+
     private let statusItem: NSStatusItem
+    private let sessions: SessionController
 
-    init() {
+    init(sessions: SessionController) {
+        self.sessions = sessions
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        statusItem.autosaveName = "MidnightOilStatusItem"
+        super.init()
 
-        let image = NSImage(systemSymbolName: "flame", accessibilityDescription: Brand.name)
-        image?.isTemplate = true
-        statusItem.button?.image = image
-        statusItem.menu = makeMenu()
+        statusItem.autosaveName = "MidnightOilStatusItem"
+        let menu = NSMenu()
+        menu.delegate = self
+        statusItem.menu = menu
+
+        sessions.onChange = { [weak self] in self?.refreshButton() }
+        refreshButton()
     }
 
-    private func makeMenu() -> NSMenu {
-        let menu = NSMenu()
-        menu.addItem(
-            withTitle: "Quit \(Brand.name)",
-            action: #selector(NSApplication.terminate(_:)),
-            keyEquivalent: "q"
-        )
-        return menu
+    private func refreshButton() {
+        let symbol = sessions.isActive ? "flame.fill" : "flame"
+        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: Brand.name)
+        image?.isTemplate = true
+        statusItem.button?.image = image
+    }
+
+    // MARK: - Menu
+
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        menu.removeAllItems()
+
+        if let session = sessions.session {
+            menu.addItem(.sectionHeader(title: "Current Session"))
+            let details = NSMenuItem(title: Self.describe(session), action: nil, keyEquivalent: "")
+            details.isEnabled = false
+            menu.addItem(details)
+
+            let displaySleep = ClosureMenuItem("Allow Display Sleep") { [weak self] in
+                self?.sessions.setAllowsDisplaySleep(!session.allowsDisplaySleep)
+            }
+            displaySleep.state = session.allowsDisplaySleep ? .on : .off
+            menu.addItem(displaySleep)
+
+            menu.addItem(ClosureMenuItem("End Session") { [weak self] in self?.sessions.end() })
+            menu.addItem(.separator())
+        }
+
+        menu.addItem(.sectionHeader(title: "Start New Session"))
+        menu.addItem(startItem("Indefinitely", end: .indefinite))
+        menu.addItem(submenuItem("Minutes", items: Self.minuteChoices.map {
+            startItem("\($0) minutes", end: .after(TimeInterval($0 * 60)))
+        }))
+        menu.addItem(submenuItem("Hours", items: Self.hourChoices.map {
+            startItem($0 == 1 ? "1 hour" : "\($0) hours", end: .after(TimeInterval($0 * 3_600)))
+        }))
+
+        menu.addItem(.separator())
+        menu.addItem(ClosureMenuItem("Quit \(Brand.name)", keyEquivalent: "q") {
+            NSApp.terminate(nil)
+        })
+    }
+
+    private func startItem(_ title: String, end: SessionEnd) -> NSMenuItem {
+        ClosureMenuItem(title) { [weak self] in self?.sessions.start(end) }
+    }
+
+    private func submenuItem(_ title: String, items: [NSMenuItem]) -> NSMenuItem {
+        let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        let submenu = NSMenu()
+        items.forEach(submenu.addItem)
+        item.submenu = submenu
+        return item
+    }
+
+    private static func describe(_ session: Session) -> String {
+        guard let endDate = session.endDate, let remaining = session.remaining(at: .now) else {
+            return "Running until you end it"
+        }
+        let time = endDate.formatted(Calendar.current.isDateInToday(endDate)
+            ? .dateTime.hour().minute()
+            : .dateTime.weekday(.abbreviated).hour().minute())
+        return "Ends in \(RemainingTime.short(remaining)) (\(time))"
     }
 }
