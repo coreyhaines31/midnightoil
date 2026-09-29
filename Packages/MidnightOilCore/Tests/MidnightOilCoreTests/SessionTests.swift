@@ -29,4 +29,22 @@ struct SessionTests {
         let session = Session(start: start, end: .until(target), allowsDisplaySleep: true)
         #expect(session.endDate == target)
     }
+
+    @Test func extendingATimedSessionPushesItsEnd() {
+        let session = Session(start: start, end: .after(600), allowsDisplaySleep: true)
+        let extended = session.extended(by: 900)
+        #expect(extended.endDate == start.addingTimeInterval(1_500))
+        #expect(extended.allowsDisplaySleep)
+    }
+
+    @Test func extendingAnUntilSessionPushesItsEnd() {
+        let target = start.addingTimeInterval(3_600)
+        let session = Session(start: start, end: .until(target), allowsDisplaySleep: false)
+        #expect(session.extended(by: 1_800).endDate == target.addingTimeInterval(1_800))
+    }
+
+    @Test func extendingAnIndefiniteSessionChangesNothing() {
+        let session = Session(start: start, end: .indefinite, allowsDisplaySleep: false)
+        #expect(session.extended(by: 600) == session)
+    }
 }

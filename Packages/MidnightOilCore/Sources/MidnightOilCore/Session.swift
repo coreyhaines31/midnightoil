@@ -33,6 +33,17 @@ public struct Session: Equatable, Sendable {
         endDate.map { max(0, $0.timeIntervalSince(now)) }
     }
 
+    /// Pushes a timed session's end later. Indefinite sessions are unchanged.
+    public func extended(by interval: TimeInterval) -> Session {
+        let newEnd: SessionEnd
+        switch end {
+        case .indefinite: return self
+        case .after(let duration): newEnd = .after(duration + interval)
+        case .until(let date): newEnd = .until(date.addingTimeInterval(interval))
+        }
+        return Session(start: start, end: newEnd, allowsDisplaySleep: allowsDisplaySleep)
+    }
+
     public func isFinished(at now: Date) -> Bool {
         guard let endDate else { return false }
         return now >= endDate
