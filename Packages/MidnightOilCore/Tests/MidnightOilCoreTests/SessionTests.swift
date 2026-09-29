@@ -26,7 +26,7 @@ struct SessionTests {
 
     @Test func untilSessionEndsAtTheGivenDate() {
         let target = start.addingTimeInterval(7_200)
-        let session = Session(start: start, end: .at(target), allowsDisplaySleep: true)
+        let session = Session(start: start, end: .until(target), allowsDisplaySleep: true)
         #expect(session.endDate == target)
     }
 }

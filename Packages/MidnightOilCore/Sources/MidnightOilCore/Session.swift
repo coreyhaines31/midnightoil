@@ -4,13 +4,13 @@ import Foundation
 public enum SessionEnd: Equatable, Sendable {
     case indefinite
     case after(TimeInterval)
-    case at(Date)
+    case until(Date)
 
     public func endDate(from start: Date) -> Date? {
         switch self {
         case .indefinite: nil
         case .after(let interval): start.addingTimeInterval(interval)
-        case .at(let date): date
+        case .until(let date): date
         }
     }
 }
