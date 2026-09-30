@@ -51,16 +51,40 @@ struct InfoButton: View {
 struct InfoLabel: View {
     let title: String
     let info: String
+    let isDimmed: Bool
 
-    init(_ title: String, info: String) {
+    init(_ title: String, info: String, isDimmed: Bool = false) {
         self.title = title
         self.info = info
+        self.isDimmed = isDimmed
     }
 
     var body: some View {
         HStack(spacing: 6) {
             Text(title)
+                .foregroundStyle(isDimmed ? .tertiary : .primary)
             InfoButton(text: info)
         }
+    }
+}
+
+/// A control with its ⓘ label kept outside it, so the explanation still opens
+/// while the control is disabled. SwiftUI disables everything inside a disabled
+/// view, including buttons in its label.
+struct InfoRow<Control: View>: View {
+    let title: String
+    let info: String
+    let isDisabled: Bool
+    @ViewBuilder let control: () -> Control
+
+    var body: some View {
+        LabeledContent {
+            control()
+                .labelsHidden()
+                .disabled(isDisabled)
+        } label: {
+            InfoLabel(title, info: info, isDimmed: isDisabled)
+        }
+        .help(info)
     }
 }

@@ -13,11 +13,9 @@ struct DriveAliveSettingsView: View {
             Section {
                 Toggle("Enable Drive Alive", isOn: $enabled)
                     .help(Help.enableDriveAlive)
-                Stepper(value: $interval, in: 1...300) {
-                    InfoLabel("Wake drives every \(interval) seconds", info: Help.driveInterval)
+                InfoRow(title: intervalTitle, info: Help.driveInterval, isDisabled: !enabled) {
+                    Stepper(intervalTitle, value: $interval, in: 1...300)
                 }
-                .help(Help.driveInterval)
-                .disabled(!enabled)
             }
 
             Section {
@@ -48,6 +46,7 @@ struct DriveAliveSettingsView: View {
                         .help(Help.driveWhen)
                         .disabled(!volumes.contains { $0.path == volume.path })
                     }
+                    .disabled(!enabled)
                 }
             } header: {
                 HStack {
@@ -56,14 +55,16 @@ struct DriveAliveSettingsView: View {
                     Button("Refresh") { mounted = MountedVolumes.all() }
                         .controlSize(.small)
                         .help(Help.refreshDrives)
+                        .disabled(!enabled)
                 }
             }
-            .disabled(!enabled)
         }
         .formStyle(.grouped)
         .frame(height: 470)
         .onChange(of: volumes) { _, newValue in Preferences.driveAliveVolumes = newValue }
     }
+
+    private var intervalTitle: String { "Wake drives every \(interval) seconds" }
 
     private func isChosen(_ volume: DriveAliveVolume) -> Binding<Bool> {
         Binding(
