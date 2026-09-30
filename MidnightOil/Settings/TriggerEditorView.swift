@@ -26,7 +26,7 @@ struct TriggerEditorView: View {
                             .foregroundStyle(.secondary)
                     }
                     ForEach(trigger.criteria.indices, id: \.self) { index in
-                        LabeledContent(trigger.criteria[index].kind.title) {
+                        LabeledContent {
                             HStack {
                                 CriterionEditor(criterion: $trigger.criteria[index])
                                 Button("Remove", systemImage: "minus.circle") {
@@ -35,27 +35,39 @@ struct TriggerEditorView: View {
                                 .labelStyle(.iconOnly)
                                 .buttonStyle(.borderless)
                                 .foregroundStyle(.secondary)
+                                .help("Remove this condition.")
                             }
+                        } label: {
+                            InfoLabel(
+                                trigger.criteria[index].kind.title,
+                                info: Help.condition(trigger.criteria[index].kind)
+                            )
                         }
                     }
                     Menu("Add Condition…") {
                         ForEach(CriterionKind.allCases) { kind in
                             Button(kind.title) { trigger.criteria.append(kind.defaultCriterion) }
+                                .help(Help.condition(kind))
                         }
                     }
                     .fixedSize()
                 } header: {
-                    Text("Conditions")
-                } footer: {
-                    Text("The session runs while every condition is true.")
-                        .foregroundStyle(.secondary)
+                    InfoLabel("Conditions", info: Help.triggerConditions)
                 }
 
-                Section("Session") {
-                    Toggle("Allow display sleep", isOn: $trigger.allowsDisplaySleep)
-                    if LidState.hasLid {
-                        Toggle("Stay awake with the lid closed", isOn: $trigger.staysAwakeWithLidClosed)
+                Section {
+                    Toggle(isOn: $trigger.allowsDisplaySleep) {
+                        InfoLabel("Allow display sleep", info: Help.allowDisplaySleep)
                     }
+                    .help(Help.allowDisplaySleep)
+                    if LidState.hasLid {
+                        Toggle(isOn: $trigger.staysAwakeWithLidClosed) {
+                            InfoLabel("Stay awake with the lid closed", info: Help.Menu.staysAwakeWithLidClosed)
+                        }
+                        .help(Help.Menu.staysAwakeWithLidClosed)
+                    }
+                } header: {
+                    InfoLabel("Session", info: Help.triggerSessionOptions)
                 }
             }
             .formStyle(.grouped)

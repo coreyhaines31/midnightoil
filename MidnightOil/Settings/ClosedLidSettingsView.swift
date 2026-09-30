@@ -10,26 +10,29 @@ struct ClosedLidSettingsView: View {
 
     var body: some View {
         Form {
+            PaneIntro(intro: Help.Pane.closedLid)
+
             Section {
-                LabeledContent("Closed-lid helper") {
+                LabeledContent {
                     helperControls
+                } label: {
+                    InfoLabel("Closed-lid helper", info: Help.helper)
                 }
             } footer: {
-                Text("""
-                    macOS sleeps a laptop when its lid closes. The helper turns that off only while a \
-                    session asks for it, and restores sleep when the session ends or the app quits. \
-                    With an external display and power connected, no helper is needed.
-                    """)
-                .foregroundStyle(.secondary)
+                Text(Help.lidDisplayNote)
+                    .foregroundStyle(.secondary)
             }
 
             Section {
-                Toggle("Stay awake with the lid closed by default", isOn: $staysAwakeWithLidClosed)
-                    .disabled(status != .installed)
-                Toggle("Sound an alarm if the lid closes on battery", isOn: $soundsLidAlarm)
-            } footer: {
-                Text("A reminder that your Mac is still running, so it doesn't overheat in a bag.")
-                    .foregroundStyle(.secondary)
+                Toggle(isOn: $staysAwakeWithLidClosed) {
+                    InfoLabel("Stay awake with the lid closed by default", info: Help.lidDefault)
+                }
+                .help(Help.lidDefault)
+                .disabled(status != .installed)
+                Toggle(isOn: $soundsLidAlarm) {
+                    InfoLabel("Sound an alarm if the lid closes on battery", info: Help.lidAlarm)
+                }
+                .help(Help.lidAlarm)
             }
         }
         .formStyle(.grouped)
@@ -54,16 +57,19 @@ struct ClosedLidSettingsView: View {
                         status = helper.status
                     }
                 }
+                .help(Help.removeHelper)
             }
         case .needsApproval:
             Button("Approve in System Settings…") {
                 SMAppService.openSystemSettingsLoginItems()
             }
+            .help(Help.approveHelper)
         case .notInstalled:
             Button("Install…") {
                 helper.install()
                 status = helper.status
             }
+            .help(Help.installHelper)
         }
     }
 }

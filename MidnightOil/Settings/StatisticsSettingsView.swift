@@ -5,19 +5,25 @@ import SwiftUI
 
 struct StatisticsSettingsView: View {
     let history: SessionHistory
+    @State private var confirmingClear = false
 
     private var stats: SessionStatistics { SessionStatistics.summarize(history.records) }
     private var week: [DayTotal] { DailyTotals.make(history.records, days: 7) }
 
     var body: some View {
         Form {
+            PaneIntro(intro: Help.Pane.statistics)
+
             Section {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(Self.hours(week.reduce(0) { $0 + $1.away }))
                         .font(.system(size: 34, weight: .bold))
                         .monospacedDigit()
-                    Text("worked while you were away in the last 7 days")
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 6) {
+                        Text("worked while you were away in the last 7 days")
+                            .foregroundStyle(.secondary)
+                        InfoButton(text: Help.away)
+                    }
                     Text("\(Self.hours(week.reduce(0) { $0 + $1.awake })) awake in total")
                         .font(.callout)
                         .foregroundStyle(.tertiary)
@@ -26,18 +32,19 @@ struct StatisticsSettingsView: View {
 
                 WeekChart(days: week)
                     .frame(height: 150)
+                    .help(Help.chart)
                     .padding(.vertical, 6)
             }
 
             Section {
                 HStack(spacing: 0) {
-                    tile("Sessions", "\(stats.sessionCount)")
+                    tile("Sessions", "\(stats.sessionCount)", help: Help.tileSessions)
                     Divider()
-                    tile("Away, all time", Self.hours(stats.totalAway))
+                    tile("Away, all time", Self.hours(stats.totalAway), help: Help.tileAwayAllTime)
                     Divider()
-                    tile("Longest", Self.hours(stats.longest))
+                    tile("Longest", Self.hours(stats.longest), help: Help.tileLongest)
                     Divider()
-                    tile("Lid closed", Self.hours(stats.lidClosedTotal))
+                    tile("Lid closed", Self.hours(stats.lidClosedTotal), help: Help.tileLidClosed)
                 }
                 .padding(.vertical, 4)
             }
@@ -47,22 +54,35 @@ struct StatisticsSettingsView: View {
             Section {
                 HStack {
                     Button("Export CSV…") { export() }
+                        .help(Help.exportCSV)
                     Spacer()
-                    Button("Clear History", role: .destructive) { history.clear() }
+                    Button("Clear History…", role: .destructive) { confirmingClear = true }
+                        .help(Help.clearHistory)
                 }
                 .disabled(history.records.isEmpty)
             }
         }
         .formStyle(.grouped)
-        .frame(height: 620)
+        .frame(height: 660)
+        .confirmationDialog(
+            "Clear all session history?",
+            isPresented: $confirmingClear,
+            titleVisibility: .visible
+        ) {
+            Button("Clear History", role: .destructive) { history.clear() }
+        } message: {
+            Text(Help.clearHistoryConfirm)
+        }
     }
 
-    private func tile(_ title: String, _ value: String) -> some View {
+    private func tile(_ title: String, _ value: String, help: String) -> some View {
         VStack(spacing: 4) {
             Text(value).font(.title2.weight(.semibold)).monospacedDigit()
             Text(title).font(.caption).foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
+        .contentShape(Rectangle())
+        .help(help)
     }
 
     static func hours(_ interval: TimeInterval) -> String {

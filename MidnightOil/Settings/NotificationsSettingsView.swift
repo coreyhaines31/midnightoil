@@ -11,12 +11,18 @@ struct NotificationsSettingsView: View {
 
     var body: some View {
         Form {
+            PaneIntro(intro: Help.Pane.notifications)
+
             Section("Notify me when") {
-                Toggle("A session ends on its own", isOn: $notifiesOnSessionEnd)
-                Toggle("A trigger starts a session", isOn: $notifiesOnTriggerStart)
+                Toggle(isOn: $notifiesOnSessionEnd) { InfoLabel("A session ends on its own", info: Help.notifyEnd) }
+                    .help(Help.notifyEnd)
+                Toggle(isOn: $notifiesOnTriggerStart) {
+                    InfoLabel("A trigger starts a session", info: Help.notifyTriggerStart)
+                }
+                .help(Help.notifyTriggerStart)
             }
             Section("Sounds") {
-                LabeledContent("Notification sound") {
+                LabeledContent {
                     HStack {
                         Picker("", selection: $notificationSound) {
                             Text("Default").tag(Preferences.defaultSound)
@@ -27,10 +33,13 @@ struct NotificationsSettingsView: View {
                         .labelsHidden()
                         Button("Play", systemImage: "play.fill") { SystemSounds.play(notificationSound) }
                             .labelStyle(.iconOnly)
+                            .help(Help.playSound)
                             .disabled(notificationSound == Preferences.noSound)
                     }
+                } label: {
+                    InfoLabel("Notification sound", info: Help.notificationSound)
                 }
-                LabeledContent("Lid-close alarm") {
+                LabeledContent {
                     HStack {
                         Picker("", selection: $lidAlarmSound) {
                             ForEach(sounds, id: \.self) { Text($0).tag($0) }
@@ -38,7 +47,10 @@ struct NotificationsSettingsView: View {
                         .labelsHidden()
                         Button("Play", systemImage: "play.fill") { SystemSounds.play(lidAlarmSound) }
                             .labelStyle(.iconOnly)
+                            .help(Help.playSound)
                     }
+                } label: {
+                    InfoLabel("Lid-close alarm", info: Help.lidAlarmSound)
                 }
             }
         }
