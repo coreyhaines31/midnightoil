@@ -108,6 +108,7 @@
     .tile .art { margin-top: 22px; padding: 0 0 0 26px; flex: 1; display: flex; align-items: flex-end; overflow: hidden; }
     .tile .art img { border-radius: 10px 0 0 0; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
     .tile .art.center { padding: 0 20px 20px; align-items: center; justify-content: center; }
+    .tile .art.center svg { width: 100%; max-width: 100%; height: auto; }
     .span-4 { grid-column: span 4; }
     .span-2 { grid-column: span 2; }
     .lampart {
