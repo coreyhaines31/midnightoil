@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Midnight Oil — Keep your Mac awake</title>
-  <meta name="description" content="Midnight Oil is a free, open-source menu bar app that keeps your Mac awake. Timed sessions, closed-lid mode, triggers, and more. A replacement for Amphetamine.">
-  <meta property="og:title" content="Midnight Oil — Keep your Mac awake">
-  <meta property="og:description" content="Free, open-source keep-awake app for macOS. A replacement for Amphetamine.">
+  <title>Midnight Oil — Let your AI agents work while you sleep</title>
+  <meta name="description" content="Midnight Oil keeps your Mac awake so Claude Code, Codex, and Cursor agents can keep working overnight, while you run errands, or with the lid closed in your bag. Free and open source.">
+  <meta property="og:title" content="Midnight Oil — Let your AI agents work while you sleep">
+  <meta property="og:description" content="Keep your Mac awake so your AI agents can finish the job. Free, open source, macOS.">
   <meta property="og:image" content="https://midnightoil.app/images/icon.png">
   <meta property="og:url" content="https://midnightoil.app">
   <link rel="icon" href="images/icon.png">
@@ -173,7 +173,7 @@
       <a class="brand" href="/"><img src="images/icon.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="#features">Features</a>
-        <a href="#safety">Safety</a>
+        <a href="#how">How it works</a>
         <a href="#faq">FAQ</a>
         <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
         <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
@@ -183,11 +183,11 @@
 
   <main>
     <div class="wrap hero">
-      <h1>Keep your Mac awake.</h1>
-      <p class="lede">A free, open-source menu bar app that stops your Mac from sleeping. For the long render, the big download, the presentation, and everything else that shouldn't be interrupted.</p>
+      <h1>Let your AI agents<br>work while you sleep.</h1>
+      <p class="lede">Midnight Oil keeps your Mac awake so Claude Code, Codex, and Cursor can finish the job. Overnight, while you run an errand, even with the lid closed in your bag. Free and open source.</p>
       <div class="actions">
         <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download for macOS</a>
-        <a class="link" href="https://github.com/coreyhaines31/midnightoil">View the source</a>
+        <a class="link" href="#how">See how it works</a>
       </div>
       <p class="fineprint">Free · Open source · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
     </div>
@@ -195,10 +195,10 @@
     <div class="wrap">
       <div class="stage" aria-label="Midnight Oil in action">
         <img class="menu" src="images/menu.png" alt="The Midnight Oil menu with a two-hour session running">
-        <div class="toast t1"><img src="images/icon.png" alt=""><div><b>Keeping your Mac awake</b><span>2 hours · until 10:22 PM</span></div></div>
-        <div class="toast t2"><img src="images/icon.png" alt=""><div><b>Trigger: Docked at desk</b><span>Display connected · On power</span></div></div>
-        <div class="toast t3"><img src="images/icon.png" alt=""><div><b>Download finished</b><span>render_final.mov · Sleep allowed</span></div></div>
-        <div class="toast t4"><img src="images/icon.png" alt=""><div><b>Final Cut Pro quit</b><span>Your Mac can sleep again</span></div></div>
+        <div class="toast t1"><img src="images/icon.png" alt=""><div><b>Keeping your Mac awake</b><span>Until 7 AM · Claude Code running</span></div></div>
+        <div class="toast t2"><img src="images/icon.png" alt=""><div><b>Lid closed · still working</b><span>Codex is on task 14 of 22</span></div></div>
+        <div class="toast t3"><img src="images/icon.png" alt=""><div><b>Overnight run finished</b><span>Terminal quit · Sleep allowed</span></div></div>
+        <div class="toast t4"><img src="images/icon.png" alt=""><div><b>Trigger: Docked at desk</b><span>Display connected · On power</span></div></div>
         <div class="toast t5"><img src="images/icon.png" alt=""><div><b>Lid closed on battery</b><span>Still awake · Alarm sounded</span></div></div>
         <div class="toast t6"><img src="images/icon.png" alt=""><div><b>Session ended</b><span>Battery dropped below 20%</span></div></div>
       </div>
@@ -207,30 +207,43 @@
     <section id="features" class="dark">
       <div class="wrap">
         <div class="section-head">
-          <h2>Everything Amphetamine did. And then some.</h2>
-          <p>Midnight Oil was built to replace Amphetamine, which stopped being updated in 2023. Same ideas, a cleaner app, and the source is right there.</p>
+          <h2>Your Mac sleeps.<br>Your agents stop.</h2>
+          <p>macOS puts a Mac to sleep after a few idle minutes, and an agent that's mid-task doesn't count as activity. The terminal freezes, the SSH session drops, and you come back to half a job. Midnight Oil fixes that, whichever way you work.</p>
         </div>
         <div class="bento">
           <div class="tile span-4">
-            <div class="copy"><h3>Triggers</h3><p>Stay awake automatically while conditions hold: your office Wi-Fi, an external display, a running app, a schedule, battery level, and more. Conditions combine.</p></div>
+            <div class="copy"><h3>Always on at your desk</h3><p>Triggers keep your Mac awake on their own while conditions hold: docked to a display, on power, on your office Wi-Fi, while Terminal or Cursor is open, or on a schedule. Set them once and stop thinking about it.</p></div>
             <div class="art"><img src="images/triggers.png" alt="Triggers settings listing three triggers" style="width: 640px; max-width: none;"></div>
           </div>
           <div class="tile span-2">
-            <div class="copy"><h3>Closed-lid mode</h3><p>Keep a MacBook running with the lid shut. Normal sleep comes back the moment the session ends.</p></div>
+            <div class="copy"><h3>Lid closed, still working</h3><p>Shut the laptop, put it in your bag, get on the train. The agent keeps going. Normal sleep comes back the moment the session ends.</p></div>
             <div class="art center"><div class="lampart"><img src="images/icon.png" alt=""></div></div>
           </div>
           <div class="tile span-2">
-            <div class="copy"><h3>Sessions your way</h3><p>Indefinitely, 5 minutes to 12 hours, until a time, while an app runs, or while a download finishes. Extend without restarting.</p></div>
+            <div class="copy"><h3>Overnight, or until it's done</h3><p>Keep awake until 7 AM, for 8 hours, or for as long as Terminal is running. Extend a session without restarting it. When the app quits, your Mac goes back to normal.</p></div>
             <div class="art"><img src="images/sessions.png" alt="Session settings" style="width: 420px; max-width: none;"></div>
           </div>
           <div class="tile span-2">
-            <div class="copy"><h3>Battery-aware</h3><p>End sessions when you unplug or the battery gets low. An alarm sounds if the lid closes on battery, so nothing cooks in a bag.</p></div>
+            <div class="copy"><h3>Won't cook your laptop</h3><p>End sessions when you unplug or when the battery drops below a level you choose. An alarm sounds if the lid closes on battery, so you always know it's still running.</p></div>
             <div class="art"><img src="images/closed-lid.png" alt="Closed Lid settings" style="width: 420px; max-width: none;"></div>
           </div>
           <div class="tile span-2">
-            <div class="copy"><h3>Statistics</h3><p>How long your Mac's been kept awake, this week and all time, and what started each session.</p></div>
+            <div class="copy"><h3>Know what it did</h3><p>How many hours your Mac worked while you were away, this week and all time, and what started each session.</p></div>
             <div class="art"><img src="images/statistics.png" alt="Statistics" style="width: 420px; max-width: none;"></div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="how" class="gray">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Three clicks, then walk away.</h2>
+        </div>
+        <div class="trust">
+          <div><div class="num">1</div><h3>Start the agent</h3><p>Kick off the long task in Claude Code, Codex, Cursor, or whatever you use.</p></div>
+          <div><div class="num">2</div><h3>Click the lamp</h3><p>Pick how long: until morning, for 8 hours, or while Terminal is running. Check “Stay awake with lid closed” if you're heading out.</p></div>
+          <div><div class="num">3</div><h3>Leave</h3><p>Sleep, run the errand, catch the train. Your Mac goes back to its normal sleep schedule the moment the session ends.</p></div>
         </div>
       </div>
     </section>
@@ -239,7 +252,7 @@
       <div class="wrap">
         <div class="section-head">
           <h2>Safe by design.</h2>
-          <p>Keeping a laptop awake with the lid shut is the one thing macOS won't let a normal app do. Here's how Midnight Oil does it without ever leaving your Mac in a bad state.</p>
+          <p>Keeping a laptop awake with the lid shut is the one thing macOS won't let a normal app do. Here's how Midnight Oil does it without ever leaving your Mac stuck awake.</p>
         </div>
         <div class="trust">
           <div><div class="num">1</div><h3>A helper you approve once</h3><p>macOS asks you to allow it in System Settings. It runs Apple's own <code>pmset</code> command and accepts instructions only from the signed Midnight Oil app.</p></div>
@@ -249,13 +262,15 @@
       </div>
     </section>
 
-    <section id="faq" class="gray">
+    <section id="faq">
       <div class="wrap">
         <div class="section-head center"><h2>Questions</h2></div>
         <div class="faq">
+          <details><summary>Which AI agents does it work with?</summary><p>All of them. Midnight Oil keeps the Mac itself awake, so it doesn't matter what's running: Claude Code, Codex, Cursor, a cron job, a render, or a download. Tie a session to the app that runs your agent and it ends when that app quits.</p></details>
           <details><summary>Is it really free?</summary><p>Yes. It's MIT-licensed and the whole thing is on GitHub. No account, no subscription, no telemetry.</p></details>
+          <details><summary>Won't it drain my battery?</summary><p>Only if you let it. Set sessions to end when you unplug or when the battery drops below, say, 20%, and they will. Plugged in, there's nothing to worry about.</p></details>
           <details><summary>Which Macs does it run on?</summary><p>Apple Silicon and Intel Macs running macOS 14 Sonoma or later.</p></details>
-          <details><summary>Can I move the icon in the menu bar?</summary><p>Yes. Hold ⌘ and drag it wherever you like. It remembers.</p></details>
+          <details><summary>How is this different from Amphetamine?</summary><p>Same idea, and everything Amphetamine could do is here. Amphetamine stopped being updated in 2023; Midnight Oil is maintained, open source, and you can drag its icon around the menu bar.</p></details>
           <details><summary>Does it update itself?</summary><p>Yes. The app is signed and notarized by Apple, and checks for updates on its own. You can turn that off in General settings.</p></details>
           <details><summary>Where do I report a bug or ask for a feature?</summary><p><a href="https://github.com/coreyhaines31/midnightoil/issues">GitHub Issues</a>. Pull requests are welcome too.</p></details>
         </div>
@@ -264,7 +279,7 @@
 
     <section class="cta">
       <div class="wrap">
-        <h2>Burn the midnight oil.</h2>
+        <h2>Give your agents the night shift.</h2>
         <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download for macOS</a>
         <p class="fineprint">Free · Open source · macOS 14 or later</p>
       </div>
