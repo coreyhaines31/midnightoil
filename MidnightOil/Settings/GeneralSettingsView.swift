@@ -19,22 +19,29 @@ struct GeneralSettingsView: View {
 
     var body: some View {
         Form {
+            PaneIntro(intro: Help.Pane.general)
+
             Section {
-                Toggle("Launch at login", isOn: $launchesAtLogin)
+                Toggle(isOn: $launchesAtLogin) { InfoLabel("Launch at login", info: Help.launchAtLogin) }
+                    .help(Help.launchAtLogin)
                     .onChange(of: launchesAtLogin) { _, enabled in
                         setLaunchAtLogin(enabled)
                     }
-                Toggle("Keep the Mac awake as soon as \(Brand.name) opens", isOn: $startsSessionAtLaunch)
-            } footer: {
-                Text("Together, these keep your Mac awake from the moment you log in.")
-                    .foregroundStyle(.secondary)
+                Toggle(isOn: $startsSessionAtLaunch) {
+                    InfoLabel("Keep the Mac awake as soon as \(Brand.name) opens", info: Help.startAtLaunch)
+                }
+                .help(Help.startAtLaunch)
             }
 
             Section {
-                Toggle("Check for updates automatically", isOn: $checksForUpdates)
-                    .onChange(of: checksForUpdates) { _, enabled in updater.checksAutomatically = enabled }
+                Toggle(isOn: $checksForUpdates) {
+                    InfoLabel("Check for updates automatically", info: Help.automaticUpdates)
+                }
+                .help(Help.automaticUpdates)
+                .onChange(of: checksForUpdates) { _, enabled in updater.checksAutomatically = enabled }
                 LabeledContent("Version \(Self.version)") {
                     Button("Check Now") { updater.checkForUpdates() }
+                        .help(Help.checkNow)
                 }
             }
         }
