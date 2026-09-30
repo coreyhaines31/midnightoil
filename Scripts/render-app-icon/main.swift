@@ -1,6 +1,6 @@
-// Renders the app icon set from LampIcon's paths.
+// Renders the app icon set from FlameIcon's paths.
 // Usage (from the repo root):
-//   swiftc Scripts/render-app-icon/main.swift MidnightOil/Appearance/LampIcon.swift -o /tmp/render-icon && /tmp/render-icon
+//   swiftc Scripts/render-app-icon/main.swift MidnightOil/Appearance/FlameIcon.swift -o /tmp/render-icon && /tmp/render-icon
 import AppKit
 
 let outputDirectory = URL(filePath: "MidnightOil/Assets.xcassets/AppIcon.appiconset")
@@ -25,26 +25,24 @@ func render(_ pixels: Int) -> Data {
     midnight.draw(in: plateShape, angle: -90)
 
     // Warm glow behind the flame.
-    let lampRect = plate.insetBy(dx: plate.width * 0.16, dy: plate.height * 0.18)
-    let glowCenter = NSPoint(x: lampRect.minX + lampRect.width * 0.20, y: lampRect.minY + lampRect.height * 0.62)
+    let flameRect = NSRect(
+        x: plate.minX + plate.width * 0.25, y: plate.minY + plate.height * 0.16,
+        width: plate.width * 0.50, height: plate.height * 0.66
+    )
+    let glowCenter = NSPoint(x: flameRect.midX, y: flameRect.minY + flameRect.height * 0.45)
     let glow = NSGradient(colors: [
-        NSColor(red: 1.0, green: 0.72, blue: 0.30, alpha: 0.55),
-        NSColor(red: 1.0, green: 0.72, blue: 0.30, alpha: 0.0)
+        NSColor(red: 1.0, green: 0.62, blue: 0.25, alpha: 0.55),
+        NSColor(red: 1.0, green: 0.62, blue: 0.25, alpha: 0.0)
     ])!
     plateShape.addClip()
-    glow.draw(fromCenter: glowCenter, radius: 0, toCenter: glowCenter, radius: plate.width * 0.42, options: [])
+    glow.draw(fromCenter: glowCenter, radius: 0, toCenter: glowCenter, radius: plate.width * 0.46, options: [])
 
-    NSColor(red: 0.96, green: 0.76, blue: 0.28, alpha: 1).setFill()
-    LampIcon.body(in: lampRect).fill()
-    LampIcon.base(in: lampRect).fill()
-    LampIcon.handle(in: lampRect).fill()
-
-    let flame = LampIcon.flame(in: lampRect)
+    // The flame: orange at the base rising to gold, inner flame cut out so the glow shows through.
     let flameGradient = NSGradient(colors: [
-        NSColor(red: 1.0, green: 0.55, blue: 0.15, alpha: 1),
-        NSColor(red: 1.0, green: 0.88, blue: 0.45, alpha: 1)
+        NSColor(red: 1.0, green: 0.50, blue: 0.16, alpha: 1),
+        NSColor(red: 0.98, green: 0.80, blue: 0.32, alpha: 1)
     ])!
-    flameGradient.draw(in: flame, angle: 90)
+    flameGradient.draw(in: FlameIcon.filled(in: flameRect), angle: 90)
 
     NSGraphicsContext.restoreGraphicsState()
     return rep.representation(using: .png, properties: [:])!
