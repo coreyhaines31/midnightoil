@@ -11,6 +11,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         Preferences.registerDefaults()
+        sessions.helper.refreshAfterUpdate()
         statusItemController = StatusItemController(sessions: sessions, triggers: triggerStore, updater: updater)
         triggerController = TriggerController(store: triggerStore, sessions: sessions)
         driveAlive = DriveAliveController(sessions: sessions)
