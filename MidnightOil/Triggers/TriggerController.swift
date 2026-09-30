@@ -29,8 +29,7 @@ final class TriggerController {
     }
 
     func evaluate() {
-        guard Preferences.triggersEnabled else { return }
-        let triggers = store.triggers.filter(\.isEnabled)
+        let triggers = Preferences.triggersEnabled ? store.triggers.filter(\.isEnabled) : []
         let needs = Self.needs(for: triggers)
         if needs.wifi { WifiAccess.requestIfNeeded() }
         let state = SystemStateReader.current(needs: needs)
