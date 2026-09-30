@@ -14,6 +14,8 @@ enum Preferences {
         static let notifiesOnSessionEnd = "notifiesOnSessionEnd"
         static let triggersEnabled = "triggersEnabled"
         static let driveAliveEnabled = "driveAliveEnabled"
+        static let statusIconStyle = "statusIconStyle"
+        static let customIconsAreTemplates = "customIconsAreTemplates"
         static let driveAliveInterval = "driveAliveInterval"
         static let driveAliveVolumes = "driveAliveVolumes"
     }
@@ -34,6 +36,8 @@ enum Preferences {
             Key.notifiesOnSessionEnd: true,
             Key.triggersEnabled: true,
             Key.driveAliveEnabled: false,
+            Key.statusIconStyle: StatusIcon.Style.flame.rawValue,
+            Key.customIconsAreTemplates: true,
             Key.driveAliveInterval: 10
         ])
     }
@@ -55,6 +59,12 @@ enum Preferences {
     static var notifiesOnSessionEnd: Bool { defaults.bool(forKey: Key.notifiesOnSessionEnd) }
 
     static var triggersEnabled: Bool { defaults.bool(forKey: Key.triggersEnabled) }
+
+    static var statusIconStyle: StatusIcon.Style {
+        StatusIcon.Style(rawValue: defaults.string(forKey: Key.statusIconStyle) ?? "") ?? .flame
+    }
+
+    static var customIconsAreTemplates: Bool { defaults.bool(forKey: Key.customIconsAreTemplates) }
 
     static var driveAliveEnabled: Bool { defaults.bool(forKey: Key.driveAliveEnabled) }
 

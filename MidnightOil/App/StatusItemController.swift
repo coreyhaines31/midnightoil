@@ -41,9 +41,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     private func refreshButton() {
-        let symbol = sessions.isActive ? "flame.fill" : "flame"
-        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: Brand.name)
-        image?.isTemplate = true
+        let image = StatusIcon.image(for: sessions.isActive ? .active : .inactive)
+        image?.accessibilityDescription = Brand.name
         statusItem.button?.image = image
 
         var title = ""
