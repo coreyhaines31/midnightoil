@@ -63,7 +63,7 @@ macOS puts a laptop to sleep when the lid closes no matter what apps ask. Midnig
 
 ## Releasing
 
-Push a tag like `v1.2.0` and the [release workflow](.github/workflows/release.yml) builds, notarizes, packages, signs the Sparkle update, and publishes a GitHub release. `Scripts/release.sh` does the same locally.
+Push a tag like `v1.2.0` and the [release workflow](.github/workflows/release.yml) builds, notarizes, packages, signs the Sparkle update, and publishes a GitHub release. `Scripts/release.sh` does the same locally. Developer ID signing is cloud-managed, so nothing certificate-shaped lives on any machine.
 
 ## License
 

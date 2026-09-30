@@ -4,7 +4,8 @@
 #   Scripts/release.sh 1.0.0
 #
 # Needs, one time:
-#   - a "Developer ID Application" certificate in the keychain
+#   - Developer ID signing: either Xcode signed in to the team (cloud signing), or
+#     ASC_KEY_PATH + ASC_KEY_ID + ASC_ISSUER_ID for an App Store Connect API key (CI)
 #   - notarytool credentials: either `xcrun notarytool store-credentials midnightoil-notary`
 #     or APPLE_ID + APPLE_APP_PASSWORD (+ TEAM_ID) in the environment (CI)
 #   - the Sparkle EdDSA private key in the keychain, or SPARKLE_KEY_FILE pointing at it (CI)
@@ -33,6 +34,11 @@ else
 fi
 SPARKLE_KEY_ARGS=()
 [ -n "${SPARKLE_KEY_FILE:-}" ] && SPARKLE_KEY_ARGS=(--ed-key-file "$SPARKLE_KEY_FILE")
+# Cloud-managed Developer ID signing needs an account: Xcode's signed-in one, or an API key.
+AUTH_ARGS=(-allowProvisioningUpdates)
+if [ -n "${ASC_KEY_PATH:-}" ]; then
+  AUTH_ARGS+=(-authenticationKeyPath "$ASC_KEY_PATH" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER_ID")
+fi
 
 echo "▶ Generating project"
 xcodegen generate -q
@@ -40,7 +46,7 @@ xcodegen generate -q
 echo "▶ Archiving $APP_NAME $VERSION ($BUILD_NUMBER)"
 xcodebuild -project MidnightOil.xcodeproj -scheme MidnightOil -configuration Release \
   -archivePath "$BUILD/MidnightOil.xcarchive" \
-  -allowProvisioningUpdates \
+  "${AUTH_ARGS[@]}" \
   MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
   DEVELOPMENT_TEAM="$TEAM_ID" \
   archive | quiet
@@ -57,7 +63,7 @@ cat > "$BUILD/export.plist" <<PLIST
 PLIST
 xcodebuild -exportArchive -archivePath "$BUILD/MidnightOil.xcarchive" \
   -exportOptionsPlist "$BUILD/export.plist" -exportPath "$BUILD/export" \
-  -allowProvisioningUpdates | quiet
+  "${AUTH_ARGS[@]}" | quiet
 APP="$BUILD/export/$APP_NAME.app"
 codesign --verify --deep --strict --verbose=1 "$APP"
 
@@ -71,7 +77,11 @@ DMG="$BUILD/MidnightOil-$VERSION.dmg"
 STAGE="$BUILD/dmg"
 mkdir -p "$STAGE" && cp -R "$APP" "$STAGE/" && ln -s /Applications "$STAGE/Applications"
 hdiutil create -volname "$APP_NAME" -srcfolder "$STAGE" -ov -format UDZO -quiet "$DMG"
-codesign --sign "Developer ID Application" --timestamp "$DMG"
+# The DMG is signed when a local Developer ID identity exists; with cloud-managed
+# signing there is none, and notarization accepts an unsigned DMG of a signed app.
+if security find-identity -v -p codesigning | grep -q "Developer ID Application"; then
+  codesign --sign "Developer ID Application" --timestamp "$DMG"
+fi
 xcrun notarytool submit "$DMG" "${NOTARY_ARGS[@]}" --wait
 xcrun stapler staple "$DMG"
 spctl --assess --type open --context context:primary-signature -v "$DMG"
