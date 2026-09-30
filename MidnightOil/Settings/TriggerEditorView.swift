@@ -13,49 +13,54 @@ struct TriggerEditorView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            TextField("Name", text: $trigger.name)
+        VStack(spacing: 0) {
+            Form {
+                Section {
+                    TextField("Name", text: $trigger.name, prompt: Text("Name"))
+                        .multilineTextAlignment(.leading)
+                }
 
-            GroupBox("Conditions (all must be true)") {
-                VStack(alignment: .leading, spacing: 10) {
+                Section {
                     if trigger.criteria.isEmpty {
                         Text("Add at least one condition.")
                             .foregroundStyle(.secondary)
                     }
                     ForEach(trigger.criteria.indices, id: \.self) { index in
-                        HStack(alignment: .top) {
-                            Text(trigger.criteria[index].kind.title)
-                                .frame(width: 130, alignment: .trailing)
+                        LabeledContent(trigger.criteria[index].kind.title) {
+                            HStack {
+                                CriterionEditor(criterion: $trigger.criteria[index])
+                                Button("Remove", systemImage: "minus.circle") {
+                                    trigger.criteria.remove(at: index)
+                                }
+                                .labelStyle(.iconOnly)
+                                .buttonStyle(.borderless)
                                 .foregroundStyle(.secondary)
-                            CriterionEditor(criterion: $trigger.criteria[index])
-                            Button("Remove", systemImage: "minus.circle") {
-                                trigger.criteria.remove(at: index)
                             }
-                            .labelStyle(.iconOnly)
-                            .buttonStyle(.borderless)
                         }
                     }
-                    Menu("Add Condition") {
+                    Menu("Add Condition…") {
                         ForEach(CriterionKind.allCases) { kind in
                             Button(kind.title) { trigger.criteria.append(kind.defaultCriterion) }
                         }
                     }
                     .fixedSize()
+                } header: {
+                    Text("Conditions")
+                } footer: {
+                    Text("The session runs while every condition is true.")
+                        .foregroundStyle(.secondary)
                 }
-                .padding(6)
-            }
 
-            GroupBox("Session") {
-                VStack(alignment: .leading) {
+                Section("Session") {
                     Toggle("Allow display sleep", isOn: $trigger.allowsDisplaySleep)
                     if LidState.hasLid {
                         Toggle("Stay awake with the lid closed", isOn: $trigger.staysAwakeWithLidClosed)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(6)
             }
+            .formStyle(.grouped)
 
+            Divider()
             HStack {
                 Spacer()
                 Button("Cancel") { dismiss() }
@@ -67,9 +72,9 @@ struct TriggerEditorView: View {
                 .keyboardShortcut(.defaultAction)
                 .disabled(trigger.name.isEmpty || trigger.criteria.isEmpty)
             }
+            .padding(16)
         }
-        .padding(20)
-        .frame(width: 560)
+        .frame(width: 600, height: 470)
     }
 }
 
@@ -197,9 +202,13 @@ private struct ScheduleEditor: View {
                     .toggleStyle(.button)
                 }
             }
-            HStack {
+            HStack(spacing: 6) {
+                Text("From")
                 DatePicker("From", selection: minuteBinding(\.startMinute), displayedComponents: .hourAndMinute)
-                DatePicker("to", selection: minuteBinding(\.endMinute), displayedComponents: .hourAndMinute)
+                    .labelsHidden()
+                Text("to")
+                DatePicker("To", selection: minuteBinding(\.endMinute), displayedComponents: .hourAndMinute)
+                    .labelsHidden()
             }
         }
     }

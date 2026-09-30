@@ -7,59 +7,67 @@ struct DriveAliveSettingsView: View {
     @State private var mounted = MountedVolumes.all()
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Toggle("Enable Drive Alive", isOn: $enabled)
-            Text("Writes a tiny hidden file to each chosen drive so it never spins down during a session.")
-                .font(.callout)
-                .foregroundStyle(.secondary)
-
-            Table(mounted) {
-                TableColumn("Drive") { volume in
-                    Toggle(volume.name, isOn: binding(for: volume) { $0 != nil } set: { include, current in
-                        include ? (current ?? volume) : nil
-                    })
-                }
-                TableColumn("Always keep alive") { volume in
-                    Toggle("", isOn: binding(for: volume) { $0?.always == true } set: { always, current in
-                        current.map { var updated = $0; updated.always = always; return updated }
-                    })
-                    .labelsHidden()
-                    .disabled(!volumes.contains { $0.path == volume.path })
-                }
-                .width(140)
-            }
-            .overlay {
-                if mounted.isEmpty {
-                    Text("No writable drives found.").foregroundStyle(.secondary)
-                }
-            }
-            .disabled(!enabled)
-
-            HStack {
+        Form {
+            Section {
+                Toggle("Enable Drive Alive", isOn: $enabled)
                 Stepper(value: $interval, in: 1...300) {
                     Text("Wake drives every \(interval) seconds")
                 }
-                Spacer()
-                Button("Refresh") { mounted = MountedVolumes.all() }
+                .disabled(!enabled)
+            } footer: {
+                Text("Writes a tiny hidden file to each chosen drive so it doesn't spin down.")
+                    .foregroundStyle(.secondary)
+            }
+
+            Section {
+                if mounted.isEmpty {
+                    Text("No writable drives found.")
+                        .foregroundStyle(.secondary)
+                }
+                ForEach(mounted) { volume in
+                    HStack {
+                        Toggle(volume.name, isOn: isChosen(volume))
+                        Spacer()
+                        Picker("", selection: whenToWake(volume)) {
+                            Text("During sessions").tag(false)
+                            Text("Always").tag(true)
+                        }
+                        .labelsHidden()
+                        .fixedSize()
+                        .disabled(!volumes.contains { $0.path == volume.path })
+                    }
+                }
+            } header: {
+                HStack {
+                    Text("Drives")
+                    Spacer()
+                    Button("Refresh") { mounted = MountedVolumes.all() }
+                        .controlSize(.small)
+                }
             }
             .disabled(!enabled)
         }
-        .padding()
+        .formStyle(.grouped)
+        .frame(height: 380)
         .onChange(of: volumes) { _, newValue in Preferences.driveAliveVolumes = newValue }
     }
 
-    /// Binds a table row to its entry in the chosen-volumes list (nil = not chosen).
-    private func binding(
-        for volume: DriveAliveVolume,
-        get: @escaping (DriveAliveVolume?) -> Bool,
-        set: @escaping (Bool, DriveAliveVolume?) -> DriveAliveVolume?
-    ) -> Binding<Bool> {
+    private func isChosen(_ volume: DriveAliveVolume) -> Binding<Bool> {
         Binding(
-            get: { get(volumes.first { $0.path == volume.path }) },
-            set: { value in
-                let current = volumes.first { $0.path == volume.path }
+            get: { volumes.contains { $0.path == volume.path } },
+            set: { chosen in
                 volumes.removeAll { $0.path == volume.path }
-                if let updated = set(value, current) { volumes.append(updated) }
+                if chosen { volumes.append(volume) }
+            }
+        )
+    }
+
+    private func whenToWake(_ volume: DriveAliveVolume) -> Binding<Bool> {
+        Binding(
+            get: { volumes.first { $0.path == volume.path }?.always ?? false },
+            set: { always in
+                guard let index = volumes.firstIndex(where: { $0.path == volume.path }) else { return }
+                volumes[index].always = always
             }
         )
     }

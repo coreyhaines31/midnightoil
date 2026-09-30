@@ -5,42 +5,55 @@ struct StatisticsSettingsView: View {
     let history: SessionHistory
 
     private var stats: SessionStatistics { SessionStatistics.summarize(history.records) }
+    private var recent: [SessionRecord] { history.records.suffix(12).reversed() }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 12) {
-                tile("Sessions", "\(stats.sessionCount)")
-                tile("Awake in total", Self.hours(stats.totalAwake))
-                tile("This week", Self.hours(stats.awakeThisWeek))
-                tile("Longest", Self.hours(stats.longest))
-                tile("By triggers", "\(stats.triggeredCount)")
+        Form {
+            Section {
+                HStack(spacing: 0) {
+                    tile("Sessions", "\(stats.sessionCount)")
+                    Divider()
+                    tile("Awake in total", Self.hours(stats.totalAwake))
+                    Divider()
+                    tile("This week", Self.hours(stats.awakeThisWeek))
+                    Divider()
+                    tile("Longest", Self.hours(stats.longest))
+                    Divider()
+                    tile("By triggers", "\(stats.triggeredCount)")
+                }
+                .padding(.vertical, 4)
             }
 
-            Table(history.records.reversed()) {
-                TableColumn("Started") { record in
-                    Text(record.start.formatted(.dateTime.month(.abbreviated).day().hour().minute()))
+            Section {
+                if recent.isEmpty {
+                    Text("Finished sessions show up here.")
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .padding(.vertical, 12)
                 }
-                TableColumn("Length") { record in
-                    Text(RemainingTime.short(record.duration))
+                ForEach(recent) { record in
+                    HStack {
+                        Text(record.start.formatted(.dateTime.month(.abbreviated).day().hour().minute()))
+                        Spacer()
+                        Text(record.triggerName.map { "Trigger “\($0)”" } ?? "Manual")
+                            .foregroundStyle(.secondary)
+                        Text(RemainingTime.short(record.duration))
+                            .monospacedDigit()
+                            .frame(width: 70, alignment: .trailing)
+                    }
                 }
-                .width(90)
-                TableColumn("Started by") { record in
-                    Text(record.triggerName.map { "Trigger “\($0)”" } ?? "You")
+            } header: {
+                HStack {
+                    Text("Recent Sessions")
+                    Spacer()
+                    Button("Clear History") { history.clear() }
+                        .controlSize(.small)
+                        .disabled(history.records.isEmpty)
                 }
-            }
-            .overlay {
-                if history.records.isEmpty {
-                    Text("Finished sessions show up here.").foregroundStyle(.secondary)
-                }
-            }
-
-            HStack {
-                Spacer()
-                Button("Clear History") { history.clear() }
-                    .disabled(history.records.isEmpty)
             }
         }
-        .padding()
+        .formStyle(.grouped)
+        .frame(height: 440)
     }
 
     private func tile(_ title: String, _ value: String) -> some View {
@@ -49,8 +62,6 @@ struct StatisticsSettingsView: View {
             Text(title).font(.caption).foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 10)
-        .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 8))
     }
 
     private static func hours(_ interval: TimeInterval) -> String {

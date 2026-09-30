@@ -1,9 +1,12 @@
 import AppKit
-import MidnightOilCore
 import SwiftUI
 
+/// Standard macOS preferences window: icon tabs in the toolbar, the pane's
+/// name as the window title, and the window sized to each pane.
 @MainActor
 final class SettingsWindow {
+    static let paneWidth: CGFloat = 720
+
     private let helper: HelperClient
     private let triggers: TriggerStore
     private let history: SessionHistory
@@ -17,47 +20,44 @@ final class SettingsWindow {
 
     func show() {
         if window == nil {
-            let view = SettingsView(helper: helper, triggers: triggers, history: history)
-            let window = NSWindow(contentViewController: NSHostingController(rootView: view))
-            window.title = "\(Brand.name) Settings"
-            window.styleMask = [.titled, .closable]
-            window.isReleasedWhenClosed = false
-            window.center()
-            self.window = window
+            window = makeWindow()
         }
         NSApp.activate()
         window?.makeKeyAndOrderFront(nil)
     }
+
+    private func makeWindow() -> NSWindow {
+        let tabs = SettingsTabController()
+        tabs.tabStyle = .toolbar
+        tabs.add("General", symbol: "gearshape", view: GeneralSettingsView())
+        tabs.add("Sessions", symbol: "timer", view: SessionSettingsView())
+        tabs.add("Triggers", symbol: "bolt", view: TriggersSettingsView(store: triggers))
+        if LidState.hasLid {
+            tabs.add("Closed Lid", symbol: "laptopcomputer", view: ClosedLidSettingsView(helper: helper))
+        }
+        tabs.add("Drive Alive", symbol: "externaldrive", view: DriveAliveSettingsView())
+        tabs.add("Hot Keys", symbol: "keyboard", view: HotKeysSettingsView())
+        tabs.add("Notifications", symbol: "bell", view: NotificationsSettingsView())
+        tabs.add("Appearance", symbol: "paintbrush", view: AppearanceSettingsView())
+        tabs.add("Statistics", symbol: "chart.bar", view: StatisticsSettingsView(history: history))
+
+        let window = NSWindow(contentViewController: tabs)
+        window.styleMask = [.titled, .closable]
+        window.toolbarStyle = .preference
+        window.isReleasedWhenClosed = false
+        window.center()
+        return window
+    }
 }
 
-private struct SettingsView: View {
-    let helper: HelperClient
-    let triggers: TriggerStore
-    let history: SessionHistory
-
-    var body: some View {
-        TabView {
-            GeneralSettingsView()
-                .tabItem { Label("General", systemImage: "gearshape") }
-            SessionSettingsView()
-                .tabItem { Label("Sessions", systemImage: "timer") }
-            TriggersSettingsView(store: triggers)
-                .tabItem { Label("Triggers", systemImage: "bolt") }
-            if LidState.hasLid {
-                ClosedLidSettingsView(helper: helper)
-                    .tabItem { Label("Closed Lid", systemImage: "laptopcomputer") }
-            }
-            DriveAliveSettingsView()
-                .tabItem { Label("Drive Alive", systemImage: "externaldrive") }
-            HotKeysSettingsView()
-                .tabItem { Label("Hot Keys", systemImage: "keyboard") }
-            NotificationsSettingsView()
-                .tabItem { Label("Notifications", systemImage: "bell") }
-            AppearanceSettingsView()
-                .tabItem { Label("Appearance", systemImage: "paintbrush") }
-            StatisticsSettingsView(history: history)
-                .tabItem { Label("Statistics", systemImage: "chart.bar") }
-        }
-        .frame(width: 780, height: 460)
+private final class SettingsTabController: NSTabViewController {
+    func add(_ title: String, symbol: String, view: some View) {
+        let controller = NSHostingController(rootView: view.frame(width: SettingsWindow.paneWidth))
+        controller.sizingOptions = .preferredContentSize
+        controller.title = title
+        let item = NSTabViewItem(viewController: controller)
+        item.label = title
+        item.image = NSImage(systemSymbolName: symbol, accessibilityDescription: title)
+        addTabViewItem(item)
     }
 }

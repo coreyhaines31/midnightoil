@@ -1,5 +1,6 @@
 import AppKit
 import MidnightOilCore
+import SwiftUI
 
 /// Owns the menu bar icon. It stays a plain `NSStatusItem` with an `autosaveName`
 /// (no custom view, never recreated) so macOS can Cmd-drag it and remember its position.
@@ -13,8 +14,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private let sessions: SessionController
     private let customEndWindow = CustomEndWindow()
     private let settingsWindow: SettingsWindow
-    /// The countdown line in the open menu, retitled every tick so it stays live.
-    private weak var detailsItem: NSMenuItem?
+    private let card = SessionCardModel()
 
     init(sessions: SessionController, triggers: TriggerStore) {
         self.sessions = sessions
@@ -56,7 +56,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             statusItem.button?.title = title
         }
         if let session = sessions.session {
-            detailsItem?.title = Self.describe(session)
+            card.update(from: session)
         }
     }
 
@@ -70,17 +70,11 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             menu.addItem(.separator())
         }
 
-        menu.addItem(.sectionHeader(title: "Start New Session"))
-        menu.addItem(startItem("Indefinitely", end: .indefinite, keyEquivalent: "i"))
-        menu.addItem(submenuItem("Minutes", items: Self.minuteChoices.map {
-            startItem(Self.durationTitle(minutes: $0), end: .after(TimeInterval($0 * 60)))
-        }))
-        menu.addItem(submenuItem("Hours", items: Self.hourChoices.map {
-            startItem(Self.durationTitle(minutes: $0 * 60), end: .after(TimeInterval($0 * 3_600)))
-        }))
-        menu.addItem(submenuItem("Until", items: untilItems()))
-        menu.addItem(submenuItem("While App is Running", items: runningAppItems()))
-        menu.addItem(ClosureMenuItem("While File is Downloading…", keyEquivalent: "f") { [weak self] in
+        menu.addItem(startItem("Keep Awake Indefinitely", end: .indefinite, keyEquivalent: "i"))
+        menu.addItem(submenuItem("Keep Awake For", items: durationItems()))
+        menu.addItem(submenuItem("Keep Awake Until", items: untilItems()))
+        menu.addItem(submenuItem("While App Is Running", items: runningAppItems()))
+        menu.addItem(ClosureMenuItem("While File Is Downloading…", keyEquivalent: "f") { [weak self] in
             DownloadPicker.choose { file in self?.sessions.start(.whileDownloading(file)) }
         })
 
@@ -99,31 +93,22 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     private func addCurrentSessionItems(for session: Session, to menu: NSMenu) {
-        menu.addItem(.sectionHeader(title: "Current Session"))
-        let details = NSMenuItem(title: Self.describe(session), action: nil, keyEquivalent: "")
-        details.isEnabled = false
-        menu.addItem(details)
-        detailsItem = details
-
-        if case .trigger(_, let name) = session.source {
-            let source = NSMenuItem(title: "Started by the “\(name)” trigger", action: nil, keyEquivalent: "")
-            source.isEnabled = false
-            menu.addItem(source)
-        }
-
-        let displaySleep = ClosureMenuItem("Allow Display Sleep") { [weak self] in
-            self?.sessions.setAllowsDisplaySleep(!session.allowsDisplaySleep)
-        }
-        displaySleep.state = session.allowsDisplaySleep ? .on : .off
-        menu.addItem(displaySleep)
-
-        if LidState.hasLid {
-            let lidClosed = ClosureMenuItem("Stay Awake with Lid Closed") { [weak self] in
-                self?.toggleLidClosedMode(for: session)
+        card.update(from: session)
+        let cardView = SessionCardView(
+            model: card,
+            showsLidOption: LidState.hasLid,
+            onAllowDisplaySleep: { [weak self] allowed in self?.sessions.setAllowsDisplaySleep(allowed) },
+            onStayAwakeWithLidClosed: { [weak self] _ in
+                guard let self, let session = sessions.session else { return }
+                menu.cancelTracking()
+                toggleLidClosedMode(for: session)
             }
-            lidClosed.state = session.staysAwakeWithLidClosed ? .on : .off
-            menu.addItem(lidClosed)
-        }
+        )
+        let hostingView = NSHostingView(rootView: cardView)
+        hostingView.frame.size = hostingView.fittingSize
+        let cardItem = NSMenuItem()
+        cardItem.view = hostingView
+        menu.addItem(cardItem)
 
         if session.endDate != nil {
             menu.addItem(submenuItem("Extend Session", items: Self.extendChoices.map { minutes in
@@ -132,10 +117,20 @@ final class StatusItemController: NSObject, NSMenuDelegate {
                 }
             }))
         }
-
-        menu.addItem(ClosureMenuItem("End Current Session", keyEquivalent: "x") { [weak self] in
+        menu.addItem(ClosureMenuItem("End Session", keyEquivalent: "x") { [weak self] in
             self?.sessions.end()
         })
+    }
+
+    private func durationItems() -> [NSMenuItem] {
+        var items = Self.minuteChoices.map {
+            startItem(Self.durationTitle(minutes: $0), end: .after(TimeInterval($0 * 60)))
+        }
+        items.append(.separator())
+        items += Self.hourChoices.map {
+            startItem(Self.durationTitle(minutes: $0 * 60), end: .after(TimeInterval($0 * 3_600)))
+        }
+        return items
     }
 
     private func toggleLidClosedMode(for session: Session) {
@@ -161,7 +156,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     private func untilItems() -> [NSMenuItem] {
         var items = UntilTimes.upcomingHours(after: .now, count: 8).map { date in
-            startItem(Self.clockTime(date), end: .until(date))
+            startItem(SessionCardModel.clockTime(date), end: .until(date))
         }
         items.append(.separator())
         items.append(ClosureMenuItem("Other Time…") { [weak self] in
@@ -212,24 +207,5 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         items.forEach(submenu.addItem)
         item.submenu = submenu
         return item
-    }
-
-    private static func describe(_ session: Session) -> String {
-        switch session.end {
-        case .whileAppRunning(let app): return "While \(app.name) is running"
-        case .whileDownloading(let file): return "While “\(DownloadProgress.displayName(for: file))” is downloading"
-        case .indefinite, .after, .until: break
-        }
-        guard let endDate = session.endDate, let remaining = session.remaining(at: .now) else {
-            return "Running until you end it"
-        }
-        return "\(RemainingTime.detailed(remaining)) remaining (\(clockTime(endDate)))"
-    }
-
-    /// "5:00 PM" today, "Wed 1:00 AM" on another day.
-    private static func clockTime(_ date: Date) -> String {
-        date.formatted(Calendar.current.isDateInToday(date)
-            ? .dateTime.hour().minute()
-            : .dateTime.weekday(.abbreviated).hour().minute())
     }
 }

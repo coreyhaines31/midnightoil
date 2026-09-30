@@ -1,3 +1,4 @@
+import MidnightOilCore
 import os
 import ServiceManagement
 import SwiftUI
@@ -5,6 +6,7 @@ import SwiftUI
 struct GeneralSettingsView: View {
     private static let logger = Logger(subsystem: "app.midnightoil.MidnightOil", category: "Settings")
 
+    @AppStorage(Preferences.Key.startsSessionAtLaunch) private var startsSessionAtLaunch = false
     @State private var launchesAtLogin = SMAppService.mainApp.status == .enabled
 
     var body: some View {
@@ -14,6 +16,10 @@ struct GeneralSettingsView: View {
                     .onChange(of: launchesAtLogin) { _, enabled in
                         setLaunchAtLogin(enabled)
                     }
+                Toggle("Keep the Mac awake as soon as \(Brand.name) opens", isOn: $startsSessionAtLaunch)
+            } footer: {
+                Text("Together, these keep your Mac awake from the moment you log in.")
+                    .foregroundStyle(.secondary)
             }
         }
         .formStyle(.grouped)
