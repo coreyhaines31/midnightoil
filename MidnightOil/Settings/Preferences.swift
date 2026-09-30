@@ -12,10 +12,21 @@ enum Preferences {
         static let endsWhenUnplugged = "endsWhenUnplugged"
         static let showsRemainingInMenuBar = "showsRemainingInMenuBar"
         static let notifiesOnSessionEnd = "notifiesOnSessionEnd"
+        static let notifiesOnTriggerStart = "notifiesOnTriggerStart"
+        static let notificationSound = "notificationSound"
+        static let lidAlarmSound = "lidAlarmSound"
         static let triggersEnabled = "triggersEnabled"
+        static let driveAliveEnabled = "driveAliveEnabled"
+        static let statusIconStyle = "statusIconStyle"
+        static let customIconsAreTemplates = "customIconsAreTemplates"
+        static let driveAliveInterval = "driveAliveInterval"
+        static let driveAliveVolumes = "driveAliveVolumes"
     }
 
     static let defaultBatteryFloorPercent = 20
+    static let defaultSound = "default"
+    static let noSound = "none"
+    static let defaultLidAlarmSound = "Sosumi"
 
     private static var defaults: UserDefaults { .standard }
 
@@ -29,7 +40,14 @@ enum Preferences {
             Key.endsWhenUnplugged: false,
             Key.showsRemainingInMenuBar: false,
             Key.notifiesOnSessionEnd: true,
-            Key.triggersEnabled: true
+            Key.notifiesOnTriggerStart: false,
+            Key.notificationSound: defaultSound,
+            Key.lidAlarmSound: defaultLidAlarmSound,
+            Key.triggersEnabled: true,
+            Key.driveAliveEnabled: false,
+            Key.statusIconStyle: StatusIcon.Style.flame.rawValue,
+            Key.customIconsAreTemplates: true,
+            Key.driveAliveInterval: 10
         ])
     }
 
@@ -49,5 +67,31 @@ enum Preferences {
 
     static var notifiesOnSessionEnd: Bool { defaults.bool(forKey: Key.notifiesOnSessionEnd) }
 
+    static var notifiesOnTriggerStart: Bool { defaults.bool(forKey: Key.notifiesOnTriggerStart) }
+
+    static var notificationSound: String { defaults.string(forKey: Key.notificationSound) ?? defaultSound }
+
+    static var lidAlarmSound: String { defaults.string(forKey: Key.lidAlarmSound) ?? defaultLidAlarmSound }
+
     static var triggersEnabled: Bool { defaults.bool(forKey: Key.triggersEnabled) }
+
+    static var statusIconStyle: StatusIcon.Style {
+        StatusIcon.Style(rawValue: defaults.string(forKey: Key.statusIconStyle) ?? "") ?? .flame
+    }
+
+    static var customIconsAreTemplates: Bool { defaults.bool(forKey: Key.customIconsAreTemplates) }
+
+    static var driveAliveEnabled: Bool { defaults.bool(forKey: Key.driveAliveEnabled) }
+
+    static var driveAliveInterval: Int { defaults.integer(forKey: Key.driveAliveInterval) }
+
+    static var driveAliveVolumes: [DriveAliveVolume] {
+        get {
+            guard let data = defaults.data(forKey: Key.driveAliveVolumes) else { return [] }
+            return (try? JSONDecoder().decode([DriveAliveVolume].self, from: data)) ?? []
+        }
+        set {
+            defaults.set(try? JSONEncoder().encode(newValue), forKey: Key.driveAliveVolumes)
+        }
+    }
 }

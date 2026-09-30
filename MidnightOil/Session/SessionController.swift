@@ -22,6 +22,7 @@ final class SessionController {
     var onUserEndedTriggerSession: ((UUID) -> Void)?
 
     let helper: HelperClient
+    let history = SessionHistory()
     private let assertions = AssertionManager()
     /// What we last asked the helper for, so it's only messaged on changes.
     private var lidModeRequested = false
@@ -70,6 +71,9 @@ final class SessionController {
 
     private func begin(_ newSession: Session) {
         session = newSession
+        if case .trigger(_, let name) = newSession.source {
+            SessionNotifier.sessionStarted(byTrigger: name)
+        }
         if case .whileDownloading(let file) = newSession.end {
             download = DownloadProgress(file: file, startedAt: .now)
         } else {
@@ -87,6 +91,7 @@ final class SessionController {
             onUserEndedTriggerSession?(id)
         }
         self.session = nil
+        history.record(session, endedAt: .now)
         download = nil
         lastPower = nil
         lastLidClosed = nil
@@ -160,7 +165,7 @@ final class SessionController {
         defer { lastLidClosed = isClosed }
         let isOnBattery = lastPower?.isOnBattery ?? false
         if LidAlarm.shouldSound(wasClosed: lastLidClosed, isClosed: isClosed, isOnBattery: isOnBattery) {
-            NSSound(named: "Sosumi")?.play()
+            SystemSounds.play(Preferences.lidAlarmSound)
         }
     }
 

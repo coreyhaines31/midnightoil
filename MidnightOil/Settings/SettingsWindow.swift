@@ -6,16 +6,18 @@ import SwiftUI
 final class SettingsWindow {
     private let helper: HelperClient
     private let triggers: TriggerStore
+    private let history: SessionHistory
     private var window: NSWindow?
 
-    init(helper: HelperClient, triggers: TriggerStore) {
+    init(helper: HelperClient, triggers: TriggerStore, history: SessionHistory) {
         self.helper = helper
         self.triggers = triggers
+        self.history = history
     }
 
     func show() {
         if window == nil {
-            let view = SettingsView(helper: helper, triggers: triggers)
+            let view = SettingsView(helper: helper, triggers: triggers, history: history)
             let window = NSWindow(contentViewController: NSHostingController(rootView: view))
             window.title = "\(Brand.name) Settings"
             window.styleMask = [.titled, .closable]
@@ -31,6 +33,7 @@ final class SettingsWindow {
 private struct SettingsView: View {
     let helper: HelperClient
     let triggers: TriggerStore
+    let history: SessionHistory
 
     var body: some View {
         TabView {
@@ -44,7 +47,17 @@ private struct SettingsView: View {
                 ClosedLidSettingsView(helper: helper)
                     .tabItem { Label("Closed Lid", systemImage: "laptopcomputer") }
             }
+            DriveAliveSettingsView()
+                .tabItem { Label("Drive Alive", systemImage: "externaldrive") }
+            HotKeysSettingsView()
+                .tabItem { Label("Hot Keys", systemImage: "keyboard") }
+            NotificationsSettingsView()
+                .tabItem { Label("Notifications", systemImage: "bell") }
+            AppearanceSettingsView()
+                .tabItem { Label("Appearance", systemImage: "paintbrush") }
+            StatisticsSettingsView(history: history)
+                .tabItem { Label("Statistics", systemImage: "chart.bar") }
         }
-        .frame(width: 500, height: 400)
+        .frame(width: 780, height: 460)
     }
 }

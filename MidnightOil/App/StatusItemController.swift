@@ -18,7 +18,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     init(sessions: SessionController, triggers: TriggerStore) {
         self.sessions = sessions
-        settingsWindow = SettingsWindow(helper: sessions.helper, triggers: triggers)
+        settingsWindow = SettingsWindow(helper: sessions.helper, triggers: triggers, history: sessions.history)
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         super.init()
 
@@ -29,20 +29,23 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
         statusItem.button?.imagePosition = .imageLeading
         sessions.onChange = { [weak self] in self?.refreshButton() }
+        HotKeys.install(sessions: sessions) { [weak self] in self?.settingsWindow.show() }
         NotificationCenter.default.addObserver(
             forName: UserDefaults.didChangeNotification,
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            MainActor.assumeIsolated { self?.refreshButton() }
+            MainActor.assumeIsolated {
+                StatusIcon.invalidateCache()
+                self?.refreshButton()
+            }
         }
         refreshButton()
     }
 
     private func refreshButton() {
-        let symbol = sessions.isActive ? "flame.fill" : "flame"
-        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: Brand.name)
-        image?.isTemplate = true
+        let image = StatusIcon.image(for: sessions.isActive ? .active : .inactive)
+        image?.accessibilityDescription = Brand.name
         statusItem.button?.image = image
 
         var title = ""
