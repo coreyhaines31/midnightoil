@@ -113,6 +113,7 @@ enum Help {
     static let triggerConditions = """
         The trigger runs a session while every condition here is true, and ends it as soon as one isn't.
         """
+    static let removeCondition = "Remove this condition."
     static let triggerSessionOptions = "How the session behaves while this trigger is running it."
 
     static func condition(_ kind: CriterionKind) -> String {

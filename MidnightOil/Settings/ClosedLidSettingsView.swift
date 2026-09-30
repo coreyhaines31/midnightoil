@@ -24,11 +24,14 @@ struct ClosedLidSettingsView: View {
             }
 
             Section {
-                Toggle(isOn: $staysAwakeWithLidClosed) {
-                    InfoLabel("Stay awake with the lid closed by default", info: Help.lidDefault)
+                InfoRow(
+                    title: "Stay awake with the lid closed by default",
+                    info: Help.lidDefault,
+                    isDisabled: status != .installed
+                ) {
+                    Toggle("Stay awake with the lid closed by default", isOn: $staysAwakeWithLidClosed)
+                        .toggleStyle(.switch)
                 }
-                .help(Help.lidDefault)
-                .disabled(status != .installed)
                 Toggle(isOn: $soundsLidAlarm) {
                     InfoLabel("Sound an alarm if the lid closes on battery", info: Help.lidAlarm)
                 }

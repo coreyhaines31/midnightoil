@@ -35,7 +35,7 @@ struct TriggerEditorView: View {
                                 .labelStyle(.iconOnly)
                                 .buttonStyle(.borderless)
                                 .foregroundStyle(.secondary)
-                                .help("Remove this condition.")
+                                .help(Help.removeCondition)
                             }
                         } label: {
                             InfoLabel(
