@@ -12,25 +12,30 @@ struct AppearanceSettingsView: View {
 
     var body: some View {
         Form {
+            PaneIntro(intro: Help.Pane.appearance)
+
             Section {
-                Picker("Menu bar icon", selection: $style) {
+                Picker(selection: $style) {
                     Text("Flame").tag(StatusIcon.Style.flame.rawValue)
                     Text("Custom images").tag(StatusIcon.Style.custom.rawValue)
+                } label: {
+                    InfoLabel("Menu bar icon", info: Help.menuBarIcon)
                 }
-                Toggle("Show time remaining next to the icon", isOn: $showsRemainingInMenuBar)
+                .help(Help.menuBarIcon)
+                Toggle(isOn: $showsRemainingInMenuBar) {
+                    InfoLabel("Show time remaining next to the icon", info: Help.showRemaining)
+                }
+                .help(Help.showRemaining)
             }
 
             if style == StatusIcon.Style.custom.rawValue {
                 Section {
-                    iconRow("Inactive", state: .inactive)
-                    iconRow("Active", state: .active)
-                    Toggle("Treat images as templates", isOn: $templates)
-                } footer: {
-                    Text("""
-                        Templates are recolored to match the menu bar, so use black shapes on a \
-                        transparent background. Turn this off for full-color images.
-                        """)
-                    .foregroundStyle(.secondary)
+                    iconRow("When your Mac can sleep", state: .inactive)
+                    iconRow("During a session", state: .active)
+                    Toggle(isOn: $templates) { InfoLabel("Treat images as templates", info: Help.templates) }
+                        .help(Help.templates)
+                } header: {
+                    InfoLabel("Custom images", info: Help.customImages)
                 }
             }
         }

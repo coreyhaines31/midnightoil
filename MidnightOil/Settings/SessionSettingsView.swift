@@ -9,23 +9,29 @@ struct SessionSettingsView: View {
 
     var body: some View {
         Form {
+            PaneIntro(intro: Help.Pane.sessions)
+
             Section {
-                Toggle("Allow display sleep", isOn: $allowsDisplaySleep)
-            } footer: {
-                Text("New sessions keep your Mac awake but let the screen turn off on its normal schedule.")
-                    .foregroundStyle(.secondary)
+                Toggle(isOn: $allowsDisplaySleep) { InfoLabel("Allow display sleep", info: Help.allowDisplaySleep) }
+                    .help(Help.allowDisplaySleep)
             }
 
             Section {
-                Toggle("End sessions when unplugged from power", isOn: $endsWhenUnplugged)
-                Toggle("End sessions when the battery is low", isOn: $batteryFloorEnabled)
+                Toggle(isOn: $endsWhenUnplugged) {
+                    InfoLabel("End sessions when unplugged from power", info: Help.endWhenUnplugged)
+                }
+                .help(Help.endWhenUnplugged)
+                Toggle(isOn: $batteryFloorEnabled) {
+                    InfoLabel("End sessions when the battery is low", info: Help.endOnLowBattery)
+                }
+                .help(Help.endOnLowBattery)
                 Stepper(value: $batteryFloorPercent, in: 5...50, step: 5) {
                     Text("Below \(batteryFloorPercent)%")
                 }
+                .help(Help.batteryLevel)
                 .disabled(!batteryFloorEnabled)
-            } footer: {
-                Text("The low-battery rule only applies while running on battery.")
-                    .foregroundStyle(.secondary)
+            } header: {
+                Text("Safety")
             }
         }
         .formStyle(.grouped)

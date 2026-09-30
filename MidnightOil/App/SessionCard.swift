@@ -76,11 +76,13 @@ struct SessionCardView: View {
                         get: { model.allowsDisplaySleep },
                         set: { onAllowDisplaySleep($0) }
                     ))
+                    .help(Help.Menu.allowDisplaySleepShort)
                     if showsLidOption {
                         Toggle("Stay awake with lid closed", isOn: Binding(
                             get: { model.staysAwakeWithLidClosed },
                             set: { onStayAwakeWithLidClosed($0) }
                         ))
+                        .help(Help.Menu.staysAwakeWithLidClosed)
                     }
                 }
                 .toggleStyle(.checkbox)
