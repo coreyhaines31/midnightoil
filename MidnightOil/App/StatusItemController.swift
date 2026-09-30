@@ -12,12 +12,13 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private let statusItem: NSStatusItem
     private let sessions: SessionController
     private let customEndWindow = CustomEndWindow()
-    private let settingsWindow = SettingsWindow()
+    private let settingsWindow: SettingsWindow
     /// The countdown line in the open menu, retitled every tick so it stays live.
     private weak var detailsItem: NSMenuItem?
 
     init(sessions: SessionController) {
         self.sessions = sessions
+        settingsWindow = SettingsWindow(helper: sessions.helper)
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         super.init()
 
