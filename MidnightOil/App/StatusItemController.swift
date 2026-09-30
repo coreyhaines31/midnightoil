@@ -12,13 +12,20 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     private let statusItem: NSStatusItem
     private let sessions: SessionController
+    private let updater: Updater
     private let customEndWindow = CustomEndWindow()
     private let settingsWindow: SettingsWindow
     private let card = SessionCardModel()
 
-    init(sessions: SessionController, triggers: TriggerStore) {
+    init(sessions: SessionController, triggers: TriggerStore, updater: Updater) {
         self.sessions = sessions
-        settingsWindow = SettingsWindow(helper: sessions.helper, triggers: triggers, history: sessions.history)
+        self.updater = updater
+        settingsWindow = SettingsWindow(
+            helper: sessions.helper,
+            triggers: triggers,
+            history: sessions.history,
+            updater: updater
+        )
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         super.init()
 
@@ -82,6 +89,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         menu.addItem(ClosureMenuItem("Settings…", keyEquivalent: ",") { [weak self] in
             self?.settingsWindow.show()
         })
+        let check = ClosureMenuItem("Check for Updates…") { [weak self] in self?.updater.checkForUpdates() }
+        check.isEnabled = updater.canCheck
+        menu.addItem(check)
         menu.addItem(ClosureMenuItem("About \(Brand.name)") {
             NSApp.activate()
             NSApp.orderFrontStandardAboutPanel(nil)

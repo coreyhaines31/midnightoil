@@ -10,12 +10,14 @@ final class SettingsWindow {
     private let helper: HelperClient
     private let triggers: TriggerStore
     private let history: SessionHistory
+    private let updater: Updater
     private var window: NSWindow?
 
-    init(helper: HelperClient, triggers: TriggerStore, history: SessionHistory) {
+    init(helper: HelperClient, triggers: TriggerStore, history: SessionHistory, updater: Updater) {
         self.helper = helper
         self.triggers = triggers
         self.history = history
+        self.updater = updater
     }
 
     func show() {
@@ -29,7 +31,7 @@ final class SettingsWindow {
     private func makeWindow() -> NSWindow {
         let tabs = SettingsTabController()
         tabs.tabStyle = .toolbar
-        tabs.add("General", symbol: "gearshape", view: GeneralSettingsView())
+        tabs.add("General", symbol: "gearshape", view: GeneralSettingsView(updater: updater))
         tabs.add("Sessions", symbol: "timer", view: SessionSettingsView())
         tabs.add("Triggers", symbol: "bolt", view: TriggersSettingsView(store: triggers))
         if LidState.hasLid {
