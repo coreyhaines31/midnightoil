@@ -9,6 +9,22 @@ enum SessionEndReason {
     case downloadFinished(String)
     case unplugged
     case triggerEnded(String)
+    case replaced
+    case quit
+
+    var cause: SessionEndCause {
+        switch self {
+        case .user: .you
+        case .timeUp: .timeUp
+        case .lowBattery: .lowBattery
+        case .appQuit: .appQuit
+        case .downloadFinished: .downloadFinished
+        case .unplugged: .unplugged
+        case .triggerEnded: .triggerEnded
+        case .replaced: .replaced
+        case .quit: .midnightOilQuit
+        }
+    }
 }
 
 /// Runs the current keep-awake session: holds the power assertions and ends the
@@ -30,6 +46,8 @@ final class SessionController {
     private var ticker: Task<Void, Never>?
     private var download: DownloadProgress?
     private var lastPower: PowerState?
+    private var tally: SessionTally?
+    private var batteryAtStart: Int?
 
     init(helper: HelperClient) {
         self.helper = helper
@@ -70,7 +88,12 @@ final class SessionController {
     }
 
     private func begin(_ newSession: Session) {
+        if let previous = session {
+            recordFinished(previous, reason: .replaced)
+        }
         session = newSession
+        tally = SessionTally(start: newSession.start)
+        batteryAtStart = PowerSourceReader.current().batteryPercent
         if case .trigger(_, let name) = newSession.source {
             SessionNotifier.sessionStarted(byTrigger: name)
         }
@@ -91,7 +114,8 @@ final class SessionController {
             onUserEndedTriggerSession?(id)
         }
         self.session = nil
-        history.record(session, endedAt: .now)
+        let record = recordFinished(session, reason: reason)
+        tally = nil
         download = nil
         lastPower = nil
         lastLidClosed = nil
@@ -99,8 +123,35 @@ final class SessionController {
         ticker = nil
         assertions.releaseAll()
         syncLidClosedMode()
-        SessionNotifier.sessionEnded(reason)
+        SessionNotifier.sessionEnded(reason, record: record)
         onChange?()
+    }
+
+    @discardableResult
+    private func recordFinished(_ session: Session, reason: SessionEndReason) -> SessionRecord {
+        var triggerName: String?
+        if case .trigger(_, let name) = session.source { triggerName = name }
+        var subject: String?
+        switch session.end {
+        case .whileAppRunning(let app): subject = app.name
+        case .whileDownloading(let file): subject = DownloadProgress.displayName(for: file)
+        case .indefinite, .after, .until: break
+        }
+        let record = SessionRecord(
+            start: session.start,
+            end: .now,
+            triggerName: triggerName,
+            endCause: reason.cause,
+            subject: subject,
+            awakeTime: tally?.awake,
+            awayTime: tally?.away,
+            lidClosedTime: tally?.lidClosed,
+            usedLidMode: tally?.usedLidMode ?? session.staysAwakeWithLidClosed,
+            batteryStart: batteryAtStart,
+            batteryEnd: PowerSourceReader.current().batteryPercent
+        )
+        history.record(record)
+        return record
     }
 
     func extend(by interval: TimeInterval) {
@@ -151,6 +202,12 @@ final class SessionController {
 
     private func tick() {
         guard let session else { return }
+        tally?.sample(
+            at: .now,
+            idleSeconds: SystemStateReader.idleSeconds(),
+            lidClosed: LidState.isClosed() ?? false,
+            lidMode: session.staysAwakeWithLidClosed
+        )
         if let reason = endReason(for: session) {
             end(reason: reason)
         } else {
