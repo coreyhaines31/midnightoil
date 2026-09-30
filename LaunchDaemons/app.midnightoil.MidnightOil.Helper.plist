@@ -18,5 +18,8 @@
 	<!-- Launch at boot so sleep left disabled by a crash or power loss is restored right away. -->
 	<key>RunAtLoad</key>
 	<true/>
+	<!-- Restart right after a crash so the restore-on-launch safety check runs immediately. -->
+	<key>KeepAlive</key>
+	<true/>
 </dict>
 </plist>
