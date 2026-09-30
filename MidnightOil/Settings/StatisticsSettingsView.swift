@@ -108,10 +108,18 @@ private struct WeekChart: View {
         .chartYAxis {
             AxisMarks { value in
                 AxisGridLine()
-                AxisValueLabel { if let hours = value.as(Double.self) { Text("\(Int(hours))h") } }
+                AxisValueLabel { if let hours = value.as(Double.self) { Text(Self.axisLabel(hours)) } }
             }
         }
         .chartLegend(position: .bottom, alignment: .leading)
+    }
+
+    /// "0", "15m", "1h", "1.5h": whole hours when they are, minutes under an hour.
+    static func axisLabel(_ hours: Double) -> String {
+        if hours == 0 { return "0" }
+        if hours < 1 { return "\(Int((hours * 60).rounded()))m" }
+        if hours == hours.rounded() { return "\(Int(hours))h" }
+        return String(format: "%.1fh", hours)
     }
 }
 
@@ -200,7 +208,7 @@ private struct SessionRow: View {
         case .triggerEnded: "bolt.slash"
         case .replaced: "arrow.triangle.2.circlepath"
         case .midnightOilQuit: "power"
-        case nil: "circle"
+        case .unknown, nil: "circle"
         }
     }
 }

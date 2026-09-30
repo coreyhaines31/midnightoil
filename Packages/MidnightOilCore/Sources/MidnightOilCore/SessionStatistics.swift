@@ -11,6 +11,13 @@ public enum SessionEndCause: String, Codable, Sendable, CaseIterable {
     case triggerEnded
     case replaced
     case midnightOilQuit
+    /// A value written by a newer version of the app.
+    case unknown
+
+    public init(from decoder: Decoder) throws {
+        let raw = try decoder.singleValueContainer().decode(String.self)
+        self = Self(rawValue: raw) ?? .unknown
+    }
 
     public var label: String {
         switch self {
@@ -23,6 +30,7 @@ public enum SessionEndCause: String, Codable, Sendable, CaseIterable {
         case .triggerEnded: "Trigger stopped matching"
         case .replaced: "Replaced by a new session"
         case .midnightOilQuit: "Midnight Oil quit"
+        case .unknown: "Ended"
         }
     }
 }
@@ -91,6 +99,10 @@ public struct SessionRecord: Codable, Equatable, Identifiable, Sendable {
 }
 
 /// Accumulates what happened during a running session from periodic samples.
+///
+/// Only time between samples while the Mac was awake counts. Sleep is excluded
+/// two ways: explicitly, via `resumeAfterSleep`, and as a fallback, by ignoring
+/// any gap longer than `maxGap`.
 public struct SessionTally: Equatable, Sendable {
     /// Idle for this long and you count as away.
     public static let awayThreshold: TimeInterval = 5 * 60
@@ -102,30 +114,39 @@ public struct SessionTally: Equatable, Sendable {
     public private(set) var lidClosed: TimeInterval = 0
     public private(set) var usedLidMode = false
 
-    private let start: Date
     private var lastSample: Date
     private var wasAway = false
+    /// Awake time since your last input. Unlike the system idle clock, it
+    /// doesn't grow while the Mac sleeps.
+    private var idleStreak: TimeInterval = 0
 
     public init(start: Date) {
-        self.start = start
         lastSample = start
     }
 
     public mutating func sample(at now: Date, idleSeconds: TimeInterval, lidClosed isLidClosed: Bool, lidMode: Bool) {
         let gap = now.timeIntervalSince(lastSample)
-        let isAway = idleSeconds >= Self.awayThreshold
         lastSample = now
         if lidMode { usedLidMode = true }
-        defer { wasAway = isAway }
         guard gap > 0, gap <= Self.maxGap else { return }
 
         awake += gap
         if isLidClosed { lidClosed += gap }
+        // Input during the gap means only the part after it was idle.
+        idleStreak = idleSeconds >= gap ? idleStreak + gap : idleSeconds
+
+        let isAway = idleSeconds >= Self.awayThreshold
         if isAway {
-            // On the sample where you first count as away, credit the idle stretch that got you there.
-            away += wasAway ? gap : min(idleSeconds, now.timeIntervalSince(start))
+            // The first away sample credits the whole idle streak that led to it.
+            away += wasAway ? gap : idleStreak
             away = min(away, awake)
         }
+        wasAway = isAway
+    }
+
+    /// Call on wake so the time asleep is never counted, however short.
+    public mutating func resumeAfterSleep(at now: Date) {
+        lastSample = now
     }
 }
 

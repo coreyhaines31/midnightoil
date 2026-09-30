@@ -34,9 +34,14 @@ final class SessionHistory {
     private static func load() -> [SessionRecord] {
         guard let data = try? Data(contentsOf: fileURL) else { return [] }
         do {
-            return try JSONDecoder().decode([SessionRecord].self, from: data)
+            // Skip any single record we can't read rather than losing them all.
+            return try JSONDecoder().decode([LossyRecord].self, from: data).compactMap(\.record)
         } catch {
             logger.error("Couldn't read session history: \(error.localizedDescription, privacy: .public)")
+            // Keep the unreadable file instead of overwriting it on the next save.
+            let backup = fileURL.deletingPathExtension().appendingPathExtension("unreadable.json")
+            try? FileManager.default.removeItem(at: backup)
+            try? FileManager.default.moveItem(at: fileURL, to: backup)
             return []
         }
     }
@@ -50,5 +55,14 @@ final class SessionHistory {
         } catch {
             Self.logger.error("Couldn't save session history: \(error.localizedDescription, privacy: .public)")
         }
+    }
+}
+
+/// Decodes one history entry, or nothing if that entry is malformed.
+private struct LossyRecord: Decodable {
+    let record: SessionRecord?
+
+    init(from decoder: Decoder) throws {
+        record = try? SessionRecord(from: decoder)
     }
 }
