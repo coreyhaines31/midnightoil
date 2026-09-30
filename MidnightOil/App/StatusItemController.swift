@@ -18,7 +18,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     init(sessions: SessionController, triggers: TriggerStore) {
         self.sessions = sessions
-        settingsWindow = SettingsWindow(helper: sessions.helper, triggers: triggers)
+        settingsWindow = SettingsWindow(helper: sessions.helper, triggers: triggers, history: sessions.history)
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         super.init()
 

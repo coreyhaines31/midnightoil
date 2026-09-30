@@ -22,6 +22,7 @@ final class SessionController {
     var onUserEndedTriggerSession: ((UUID) -> Void)?
 
     let helper: HelperClient
+    let history = SessionHistory()
     private let assertions = AssertionManager()
     /// What we last asked the helper for, so it's only messaged on changes.
     private var lidModeRequested = false
@@ -90,6 +91,7 @@ final class SessionController {
             onUserEndedTriggerSession?(id)
         }
         self.session = nil
+        history.record(session, endedAt: .now)
         download = nil
         lastPower = nil
         lastLidClosed = nil
