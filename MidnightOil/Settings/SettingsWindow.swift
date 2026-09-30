@@ -48,6 +48,8 @@ private struct SettingsView: View {
                 .tabItem { Label("Drive Alive", systemImage: "externaldrive") }
             HotKeysSettingsView()
                 .tabItem { Label("Hot Keys", systemImage: "keyboard") }
+            NotificationsSettingsView()
+                .tabItem { Label("Notifications", systemImage: "bell") }
             AppearanceSettingsView()
                 .tabItem { Label("Appearance", systemImage: "paintbrush") }
         }

@@ -12,6 +12,9 @@ enum Preferences {
         static let endsWhenUnplugged = "endsWhenUnplugged"
         static let showsRemainingInMenuBar = "showsRemainingInMenuBar"
         static let notifiesOnSessionEnd = "notifiesOnSessionEnd"
+        static let notifiesOnTriggerStart = "notifiesOnTriggerStart"
+        static let notificationSound = "notificationSound"
+        static let lidAlarmSound = "lidAlarmSound"
         static let triggersEnabled = "triggersEnabled"
         static let driveAliveEnabled = "driveAliveEnabled"
         static let statusIconStyle = "statusIconStyle"
@@ -21,6 +24,9 @@ enum Preferences {
     }
 
     static let defaultBatteryFloorPercent = 20
+    static let defaultSound = "default"
+    static let noSound = "none"
+    static let defaultLidAlarmSound = "Sosumi"
 
     private static var defaults: UserDefaults { .standard }
 
@@ -34,6 +40,9 @@ enum Preferences {
             Key.endsWhenUnplugged: false,
             Key.showsRemainingInMenuBar: false,
             Key.notifiesOnSessionEnd: true,
+            Key.notifiesOnTriggerStart: false,
+            Key.notificationSound: defaultSound,
+            Key.lidAlarmSound: defaultLidAlarmSound,
             Key.triggersEnabled: true,
             Key.driveAliveEnabled: false,
             Key.statusIconStyle: StatusIcon.Style.flame.rawValue,
@@ -57,6 +66,12 @@ enum Preferences {
     static var showsRemainingInMenuBar: Bool { defaults.bool(forKey: Key.showsRemainingInMenuBar) }
 
     static var notifiesOnSessionEnd: Bool { defaults.bool(forKey: Key.notifiesOnSessionEnd) }
+
+    static var notifiesOnTriggerStart: Bool { defaults.bool(forKey: Key.notifiesOnTriggerStart) }
+
+    static var notificationSound: String { defaults.string(forKey: Key.notificationSound) ?? defaultSound }
+
+    static var lidAlarmSound: String { defaults.string(forKey: Key.lidAlarmSound) ?? defaultLidAlarmSound }
 
     static var triggersEnabled: Bool { defaults.bool(forKey: Key.triggersEnabled) }
 

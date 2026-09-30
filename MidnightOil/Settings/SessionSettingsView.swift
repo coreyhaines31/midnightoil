@@ -6,7 +6,6 @@ struct SessionSettingsView: View {
     @AppStorage(Preferences.Key.batteryFloorPercent)
     private var batteryFloorPercent = Preferences.defaultBatteryFloorPercent
     @AppStorage(Preferences.Key.endsWhenUnplugged) private var endsWhenUnplugged = false
-    @AppStorage(Preferences.Key.notifiesOnSessionEnd) private var notifiesOnSessionEnd = true
 
     var body: some View {
         Form {
@@ -27,10 +26,6 @@ struct SessionSettingsView: View {
             } footer: {
                 Text("The low-battery rule only applies while running on battery.")
                     .foregroundStyle(.secondary)
-            }
-
-            Section {
-                Toggle("Notify me when a session ends on its own", isOn: $notifiesOnSessionEnd)
             }
         }
         .formStyle(.grouped)

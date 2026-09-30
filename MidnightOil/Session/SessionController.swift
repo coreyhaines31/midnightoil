@@ -70,6 +70,9 @@ final class SessionController {
 
     private func begin(_ newSession: Session) {
         session = newSession
+        if case .trigger(_, let name) = newSession.source {
+            SessionNotifier.sessionStarted(byTrigger: name)
+        }
         if case .whileDownloading(let file) = newSession.end {
             download = DownloadProgress(file: file, startedAt: .now)
         } else {
@@ -160,7 +163,7 @@ final class SessionController {
         defer { lastLidClosed = isClosed }
         let isOnBattery = lastPower?.isOnBattery ?? false
         if LidAlarm.shouldSound(wasClosed: lastLidClosed, isClosed: isClosed, isOnBattery: isOnBattery) {
-            NSSound(named: "Sosumi")?.play()
+            SystemSounds.play(Preferences.lidAlarmSound)
         }
     }
 
