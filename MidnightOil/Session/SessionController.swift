@@ -8,6 +8,7 @@ enum SessionEndReason {
     case appQuit(String)
     case downloadFinished(String)
     case unplugged
+    case triggerEnded(String)
 }
 
 /// Runs the current keep-awake session: holds the power assertions and ends the
@@ -17,6 +18,8 @@ final class SessionController {
     private(set) var session: Session?
     /// Called whenever the session starts, ends, changes, or ticks.
     var onChange: (() -> Void)?
+    /// Called when the user ends a session a trigger started, with that trigger's id.
+    var onUserEndedTriggerSession: ((UUID) -> Void)?
 
     let helper: HelperClient
     private let assertions = AssertionManager()
@@ -47,13 +50,27 @@ final class SessionController {
     var isActive: Bool { session != nil }
 
     func start(_ end: SessionEnd) {
-        session = Session(
+        begin(Session(
             start: .now,
             end: end,
             allowsDisplaySleep: Preferences.allowsDisplaySleep,
             staysAwakeWithLidClosed: Preferences.staysAwakeWithLidClosed && helper.status == .installed
-        )
-        if case .whileDownloading(let file) = end {
+        ))
+    }
+
+    func start(trigger: Trigger) {
+        begin(Session(
+            start: .now,
+            end: .indefinite,
+            allowsDisplaySleep: trigger.allowsDisplaySleep,
+            staysAwakeWithLidClosed: trigger.staysAwakeWithLidClosed && helper.status == .installed,
+            source: .trigger(id: trigger.id, name: trigger.name)
+        ))
+    }
+
+    private func begin(_ newSession: Session) {
+        session = newSession
+        if case .whileDownloading(let file) = newSession.end {
             download = DownloadProgress(file: file, startedAt: .now)
         } else {
             download = nil
@@ -65,8 +82,11 @@ final class SessionController {
     }
 
     func end(reason: SessionEndReason = .user) {
-        guard session != nil else { return }
-        session = nil
+        guard let session else { return }
+        if case .user = reason, case .trigger(let id, _) = session.source {
+            onUserEndedTriggerSession?(id)
+        }
+        self.session = nil
         download = nil
         lastPower = nil
         lastLidClosed = nil

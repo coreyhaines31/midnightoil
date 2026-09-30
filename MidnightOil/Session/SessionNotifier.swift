@@ -24,6 +24,7 @@ enum SessionNotifier {
         case .appQuit(let name): "\(name) quit, so your Mac can sleep again."
         case .downloadFinished(let name): "“\(name)” finished downloading, so your Mac can sleep again."
         case .unplugged: "Your Mac was unplugged, so it can sleep again."
+        case .triggerEnded(let name): "The “\(name)” trigger no longer applies, so your Mac can sleep again."
         case .lowBattery:
             "Your battery dropped below \(Preferences.batteryFloorPercent ?? 0)%, so your Mac can sleep again."
         }

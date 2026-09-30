@@ -102,6 +102,12 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         menu.addItem(details)
         detailsItem = details
 
+        if case .trigger(_, let name) = session.source {
+            let source = NSMenuItem(title: "Started by the “\(name)” trigger", action: nil, keyEquivalent: "")
+            source.isEnabled = false
+            menu.addItem(source)
+        }
+
         let displaySleep = ClosureMenuItem("Allow Display Sleep") { [weak self] in
             self?.sessions.setAllowsDisplaySleep(!session.allowsDisplaySleep)
         }

@@ -12,6 +12,7 @@ enum Preferences {
         static let endsWhenUnplugged = "endsWhenUnplugged"
         static let showsRemainingInMenuBar = "showsRemainingInMenuBar"
         static let notifiesOnSessionEnd = "notifiesOnSessionEnd"
+        static let triggersEnabled = "triggersEnabled"
     }
 
     static let defaultBatteryFloorPercent = 20
@@ -27,7 +28,8 @@ enum Preferences {
             Key.batteryFloorPercent: defaultBatteryFloorPercent,
             Key.endsWhenUnplugged: false,
             Key.showsRemainingInMenuBar: false,
-            Key.notifiesOnSessionEnd: true
+            Key.notifiesOnSessionEnd: true,
+            Key.triggersEnabled: true
         ])
     }
 
@@ -46,4 +48,6 @@ enum Preferences {
     static var showsRemainingInMenuBar: Bool { defaults.bool(forKey: Key.showsRemainingInMenuBar) }
 
     static var notifiesOnSessionEnd: Bool { defaults.bool(forKey: Key.notifiesOnSessionEnd) }
+
+    static var triggersEnabled: Bool { defaults.bool(forKey: Key.triggersEnabled) }
 }

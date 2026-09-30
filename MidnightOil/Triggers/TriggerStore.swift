@@ -11,8 +11,13 @@ final class TriggerStore {
     private static let logger = Logger(subsystem: "app.midnightoil.MidnightOil", category: "Triggers")
 
     var triggers: [Trigger] {
-        didSet { save() }
+        didSet {
+            save()
+            onChange?()
+        }
     }
+
+    @ObservationIgnored var onChange: (() -> Void)?
 
     init() {
         triggers = Self.load()
