@@ -29,6 +29,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
         statusItem.button?.imagePosition = .imageLeading
         sessions.onChange = { [weak self] in self?.refreshButton() }
+        HotKeys.install(sessions: sessions) { [weak self] in self?.settingsWindow.show() }
         NotificationCenter.default.addObserver(
             forName: UserDefaults.didChangeNotification,
             object: nil,

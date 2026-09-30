@@ -46,6 +46,8 @@ private struct SettingsView: View {
             }
             DriveAliveSettingsView()
                 .tabItem { Label("Drive Alive", systemImage: "externaldrive") }
+            HotKeysSettingsView()
+                .tabItem { Label("Hot Keys", systemImage: "keyboard") }
         }
         .frame(width: 500, height: 400)
     }

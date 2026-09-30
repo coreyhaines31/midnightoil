@@ -16,6 +16,9 @@ settings:
 packages:
   MidnightOilCore:
     path: Packages/MidnightOilCore
+  KeyboardShortcuts:
+    url: https://github.com/sindresorhus/KeyboardShortcuts
+    exactVersion: "2.4.0"
 targets:
   MidnightOil:
     type: application
@@ -30,6 +33,7 @@ targets:
             subpath: Contents/Library/LaunchDaemons
     dependencies:
       - package: MidnightOilCore
+      - package: KeyboardShortcuts
       - target: MidnightOilHelper
         copy:
           destination: executables
