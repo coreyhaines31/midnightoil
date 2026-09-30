@@ -10,3 +10,4 @@ build/
 # Swift Package Manager
 .build/
 .swiftpm/
+site/.vercel
