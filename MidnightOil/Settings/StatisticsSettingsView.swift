@@ -13,12 +13,12 @@ struct StatisticsSettingsView: View {
         Form {
             Section {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(Self.hours(stats.awayThisWeek))
+                    Text(Self.hours(week.reduce(0) { $0 + $1.away }))
                         .font(.system(size: 34, weight: .bold))
                         .monospacedDigit()
-                    Text("worked while you were away this week")
+                    Text("worked while you were away in the last 7 days")
                         .foregroundStyle(.secondary)
-                    Text("\(Self.hours(stats.awakeThisWeek)) awake in total")
+                    Text("\(Self.hours(week.reduce(0) { $0 + $1.awake })) awake in total")
                         .font(.callout)
                         .foregroundStyle(.tertiary)
                 }
