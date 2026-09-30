@@ -55,6 +55,7 @@ targets:
         PRODUCT_NAME: Midnight Oil
         PRODUCT_MODULE_NAME: MidnightOil
         PRODUCT_BUNDLE_IDENTIFIER: app.midnightoil.MidnightOil
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
   MidnightOilHelper:
     type: tool
     platform: macOS
