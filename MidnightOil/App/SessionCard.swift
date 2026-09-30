@@ -52,11 +52,10 @@ struct SessionCardView: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
-            Image(systemName: "flame.fill")
-                .font(.system(size: 20))
+            Image(nsImage: LampIcon.menuBarImage(lit: true, size: 26))
+                .renderingMode(.template)
                 .foregroundStyle(.orange)
-                .frame(width: 24, height: 24)
-                .padding(.top, 1)
+                .frame(width: 26, height: 26)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("Keeping your Mac awake")
