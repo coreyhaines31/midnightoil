@@ -8,6 +8,11 @@ enum HelperConstants {
         identifier "app.midnightoil.MidnightOil" and anchor apple generic \
         and certificate leaf[subject.OU] = "KPQU8X839X"
         """
+    /// And the app only trusts a helper signed by the same team.
+    static let helperRequirement = """
+        identifier "app.midnightoil.MidnightOil.Helper" and anchor apple generic \
+        and certificate leaf[subject.OU] = "KPQU8X839X"
+        """
 }
 
 /// XPC interface of the privileged helper that keeps a Mac awake with its lid closed.
