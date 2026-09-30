@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 struct AppearanceSettingsView: View {
-    @AppStorage(Preferences.Key.statusIconStyle) private var style = StatusIcon.Style.flame.rawValue
+    @AppStorage(Preferences.Key.statusIconStyle) private var style = StatusIcon.Style.lamp.rawValue
     @AppStorage(Preferences.Key.customIconsAreTemplates) private var templates = true {
         didSet { StatusIcon.invalidateCache() }
     }
@@ -14,6 +14,7 @@ struct AppearanceSettingsView: View {
         Form {
             Section {
                 Picker("Menu bar icon", selection: $style) {
+                    Text("Oil lamp").tag(StatusIcon.Style.lamp.rawValue)
                     Text("Flame").tag(StatusIcon.Style.flame.rawValue)
                     Text("Custom images").tag(StatusIcon.Style.custom.rawValue)
                 }
