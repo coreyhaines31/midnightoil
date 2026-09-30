@@ -84,20 +84,22 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             menu.addItem(.separator())
         }
 
-        menu.addItem(startItem("Keep Awake Indefinitely", end: .indefinite, keyEquivalent: "i"))
-        menu.addItem(submenuItem("Keep Awake For", items: durationItems()))
-        menu.addItem(submenuItem("Keep Awake Until", items: untilItems()))
-        menu.addItem(submenuItem("While App Is Running", items: runningAppItems()))
+        menu.addItem(startItem("Keep Awake Indefinitely", end: .indefinite, keyEquivalent: "i")
+            .withToolTip(Help.Menu.indefinitely))
+        menu.addItem(submenuItem("Keep Awake For", items: durationItems()).withToolTip(Help.Menu.forDuration))
+        menu.addItem(submenuItem("Keep Awake Until", items: untilItems()).withToolTip(Help.Menu.until))
+        menu.addItem(submenuItem("While App Is Running", items: runningAppItems()).withToolTip(Help.Menu.whileApp))
         menu.addItem(ClosureMenuItem("While File Is Downloading…", keyEquivalent: "f") { [weak self] in
             DownloadPicker.choose { file in self?.sessions.start(.whileDownloading(file)) }
-        })
+        }.withToolTip(Help.Menu.whileDownloading))
 
         menu.addItem(.separator())
         menu.addItem(ClosureMenuItem("Settings…", keyEquivalent: ",") { [weak self] in
             self?.settingsWindow.show()
-        })
+        }.withToolTip(Help.Menu.settings))
         let check = ClosureMenuItem("Check for Updates…") { [weak self] in self?.updater.checkForUpdates() }
         check.isEnabled = updater.canCheck
+        check.toolTip = Help.Menu.checkForUpdates
         menu.addItem(check)
         menu.addItem(ClosureMenuItem("About \(Brand.name)") {
             NSApp.activate()
@@ -132,11 +134,11 @@ final class StatusItemController: NSObject, NSMenuDelegate {
                 ClosureMenuItem("+ " + Self.durationTitle(minutes: minutes)) { [weak self] in
                     self?.sessions.extend(by: TimeInterval(minutes * 60))
                 }
-            }))
+            }).withToolTip(Help.Menu.extend))
         }
         menu.addItem(ClosureMenuItem("End Session", keyEquivalent: "x") { [weak self] in
             self?.sessions.end()
-        })
+        }.withToolTip(Help.Menu.end))
     }
 
     private func durationItems() -> [NSMenuItem] {
@@ -178,7 +180,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         items.append(.separator())
         items.append(ClosureMenuItem("Other Time…") { [weak self] in
             self?.customEndWindow.show { date in self?.sessions.start(.until(date)) }
-        })
+        }.withToolTip(Help.Menu.otherTime))
         return items
     }
 
@@ -224,5 +226,12 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         items.forEach(submenu.addItem)
         item.submenu = submenu
         return item
+    }
+}
+
+private extension NSMenuItem {
+    func withToolTip(_ text: String) -> NSMenuItem {
+        toolTip = text
+        return self
     }
 }
