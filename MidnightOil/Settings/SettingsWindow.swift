@@ -44,6 +44,8 @@ private struct SettingsView: View {
                 ClosedLidSettingsView(helper: helper)
                     .tabItem { Label("Closed Lid", systemImage: "laptopcomputer") }
             }
+            DriveAliveSettingsView()
+                .tabItem { Label("Drive Alive", systemImage: "externaldrive") }
         }
         .frame(width: 500, height: 400)
     }

@@ -25,8 +25,19 @@ final class DriveAliveController {
     private func tick() {
         guard Preferences.driveAliveEnabled else { return }
         for volume in Preferences.driveAliveVolumes where volume.always || sessions.isActive {
-            touch(URL(filePath: volume.path).appending(path: Self.fileName))
+            touch(Self.touchFile(for: volume))
         }
+    }
+
+    /// The boot volume's root is read-only, so its file lives in Application Support (same disk).
+    private static func touchFile(for volume: DriveAliveVolume) -> URL {
+        guard volume.path == "/" else {
+            return URL(filePath: volume.path).appending(path: fileName)
+        }
+        let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+        let directory = support.appending(path: "Midnight Oil")
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        return directory.appending(path: fileName)
     }
 
     private func touch(_ file: URL) {
@@ -42,10 +53,10 @@ final class DriveAliveController {
 
 struct DriveAliveVolume: Codable, Equatable, Identifiable {
     var path: String
+    var name: String
     var always: Bool
 
     var id: String { path }
-    var name: String { URL(filePath: path).lastPathComponent }
 }
 
 enum MountedVolumes {
@@ -61,7 +72,8 @@ enum MountedVolumes {
                   values.volumeIsBrowsable == true,
                   values.volumeIsReadOnly != true
             else { return nil }
-            return DriveAliveVolume(path: url.path(percentEncoded: false), always: false)
+            let name = values.volumeName ?? url.lastPathComponent
+            return DriveAliveVolume(path: url.path(percentEncoded: false), name: name, always: false)
         }
     }
 }
