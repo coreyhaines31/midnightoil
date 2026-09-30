@@ -22,6 +22,7 @@ PAGE_CSS = """
     .sub-hero { padding: 72px 0 40px; }
     .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
     .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
+    .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
     .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
     .sub-hero .actions { display: flex; align-items: center; gap: 22px; margin-top: 28px; flex-wrap: wrap; }
     .tldr { background: var(--gray); border-radius: var(--radius); padding: 26px 28px; margin: 44px 0 0; max-width: 900px; }
@@ -50,7 +51,9 @@ PAGE_CSS = """
     .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
     .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
     .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
-    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .glance { max-width: 760px; margin: 0 0 44px; }
+    .glance .compare td:first-child { font-weight: 500; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
     .related a { display: block; background: #fff; border-radius: 14px; padding: 18px 20px; text-decoration: none; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
     .related a:hover { box-shadow: 0 0 0 0.5px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.06); }
     .related b { display: block; margin-bottom: 4px; }
@@ -190,6 +193,10 @@ def render_hub():
     </div>
     <section class="tight">
       <div class="wrap">
+        <div class="glance"><table class="compare">
+          <thead><tr><th>{esc(HUB["glance"][0][0])}</th><th class="us">{esc(HUB["glance"][0][1])}</th></tr></thead>
+          <tbody>{"".join(f'<tr><td>{esc(a)}</td><td class="{"us y" if b == "Midnight Oil" else ""}">{esc(b)}</td></tr>' for a, b in HUB["glance"][1:])}</tbody>
+        </table></div>
         <div class="related">
 {cards}        </div>
       </div>

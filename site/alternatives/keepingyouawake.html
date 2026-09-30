@@ -17,6 +17,7 @@
     .sub-hero { padding: 72px 0 40px; }
     .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
     .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
+    .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
     .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
     .sub-hero .actions { display: flex; align-items: center; gap: 22px; margin-top: 28px; flex-wrap: wrap; }
     .tldr { background: var(--gray); border-radius: var(--radius); padding: 26px 28px; margin: 44px 0 0; max-width: 900px; }
@@ -45,7 +46,9 @@
     .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
     .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
     .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
-    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .glance { max-width: 760px; margin: 0 0 44px; }
+    .glance .compare td:first-child { font-weight: 500; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
     .related a { display: block; background: #fff; border-radius: 14px; padding: 18px 20px; text-decoration: none; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
     .related a:hover { box-shadow: 0 0 0 0.5px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.06); }
     .related b { display: block; margin-bottom: 4px; }
@@ -70,13 +73,13 @@
   <main>
     <div class="wrap sub-hero">
       <div class="eyebrow">KeepingYouAwake alternative</div>
-      <h1>KeepingYouAwake is good. It just won't keep a closed MacBook awake.</h1>
+      <h1>KeepingYouAwake stops at the lid.<br>Midnight Oil doesn't.</h1>
       <p class="lede">KeepingYouAwake is the app most people recommend after Amphetamine: free, MIT-licensed, actively maintained, a Homebrew cask, one click. It also draws a line at closed-lid mode, on purpose, and its most-requested feature in 2026 is exactly that. Midnight Oil is the open-source alternative that crosses the line carefully.</p>
       <div class="actions">
         <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download Midnight Oil</a>
         <a class="link" href="#compare">See the comparison</a>
       </div>
-      <div class="tldr"><h2>The short version</h2><p>If you keep the lid open and only need on/off with a timer, KeepingYouAwake is excellent and you should keep it. If you run agents or builds overnight, need the lid closed, or want sessions tied to an app, Midnight Oil adds those on the same free, open-source terms.</p></div>
+      <div class="tldr"><h2>The short version</h2><p>Lid open and just need on/off with a timer? KeepingYouAwake is excellent; keep it. Running agents overnight with the lid closed, or want sessions tied to an app? Midnight Oil adds those on the same free, open-source terms.</p></div>
     </div>
     <section class="tight" id="why">
       <div class="wrap"><div class="prose">
@@ -140,10 +143,10 @@
       <div class="wrap">
         <div class="section-head"><h2>Other ways people keep a Mac awake</h2></div>
         <div class="related">
-          <a href="/alternatives/amphetamine"><b>Amphetamine</b><span>The former default. Frozen since 2023; closed-lid mode needs a three-part install.</span></a>
-          <a href="/alternatives/caffeine"><b>Caffeine</b><span>The 2006 original. One-click and tiny, with no timers, triggers, or closed-lid mode.</span></a>
-          <a href="/alternatives/caffeinate"><b>caffeinate command</b><span>Built in and free. No lid support, no status, dies with the terminal.</span></a>
-          <a href="/alternatives/mouse-jiggler"><b>Mouse jigglers</b><span>Fake input to look active. Detectable, and useless with the lid closed.</span></a>
+          <a href="/alternatives/amphetamine"><b>Amphetamine</b><span>Last update 2023. Closed-lid mode takes a script, a sudoers file, and a Terminal command.</span></a>
+          <a href="/alternatives/caffeine"><b>Caffeine</b><span>The 2006 original. One click, and that&#x27;s the whole app: no timers, triggers, or lid mode.</span></a>
+          <a href="/alternatives/caffeinate"><b>caffeinate command</b><span>Built in and free. Stops at a closed lid, and dies with the terminal.</span></a>
+          <a href="/alternatives/mouse-jiggler"><b>Mouse jigglers</b><span>Fake input to look busy. Detectable, and no help once the lid closes.</span></a>
         </div>
       </div>
     </section>
