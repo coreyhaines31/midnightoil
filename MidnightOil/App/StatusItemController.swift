@@ -16,9 +16,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     /// The countdown line in the open menu, retitled every tick so it stays live.
     private weak var detailsItem: NSMenuItem?
 
-    init(sessions: SessionController) {
+    init(sessions: SessionController, triggers: TriggerStore) {
         self.sessions = sessions
-        settingsWindow = SettingsWindow(helper: sessions.helper)
+        settingsWindow = SettingsWindow(helper: sessions.helper, triggers: triggers)
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         super.init()
 

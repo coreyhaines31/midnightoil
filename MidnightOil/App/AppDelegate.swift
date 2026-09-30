@@ -9,7 +9,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         Preferences.registerDefaults()
-        statusItemController = StatusItemController(sessions: sessions)
+        statusItemController = StatusItemController(sessions: sessions, triggers: triggerStore)
         triggerController = TriggerController(store: triggerStore, sessions: sessions)
     }
 

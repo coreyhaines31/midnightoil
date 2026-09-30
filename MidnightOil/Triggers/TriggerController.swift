@@ -1,4 +1,4 @@
-import CoreLocation
+import Foundation
 import MidnightOilCore
 
 /// Evaluates triggers on a timer and starts or ends trigger sessions.
@@ -12,7 +12,6 @@ final class TriggerController {
     private let sessions: SessionController
     private var suppressed: UUID?
     private var ticker: Task<Void, Never>?
-    private var location: CLLocationManager?
 
     init(store: TriggerStore, sessions: SessionController) {
         self.store = store
@@ -33,7 +32,7 @@ final class TriggerController {
         guard Preferences.triggersEnabled else { return }
         let triggers = store.triggers.filter(\.isEnabled)
         let needs = Self.needs(for: triggers)
-        if needs.wifi { requestLocationForWifiName() }
+        if needs.wifi { WifiAccess.requestIfNeeded() }
         let state = SystemStateReader.current(needs: needs)
 
         if TriggerEngine.canRearm(suppressed, triggers: triggers, state: state) {
@@ -64,15 +63,5 @@ final class TriggerController {
             }
         }
         return needs
-    }
-
-    /// macOS 14+ only reveals the Wi-Fi network name to apps with Location access.
-    private func requestLocationForWifiName() {
-        guard location == nil else { return }
-        let manager = CLLocationManager()
-        location = manager
-        if manager.authorizationStatus == .notDetermined {
-            manager.requestWhenInUseAuthorization()
-        }
     }
 }

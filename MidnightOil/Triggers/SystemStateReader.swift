@@ -1,5 +1,4 @@
 import AppKit
-import CoreWLAN
 import Darwin
 import IOBluetooth
 import IOKit
@@ -19,7 +18,7 @@ enum SystemStateReader {
     static func current(needs: Needs) -> SystemState {
         let running = NSWorkspace.shared.runningApplications
         return SystemState(
-            wifiNetwork: needs.wifi ? wifiNetwork() : nil,
+            wifiNetwork: needs.wifi ? WifiAccess.currentNetwork() : nil,
             usbDevices: needs.usb ? usbDeviceNames() : [],
             bluetoothDevices: needs.bluetooth ? bluetoothDeviceNames() : [],
             externalDisplayCount: externalDisplayCount(),
@@ -29,10 +28,6 @@ enum SystemStateReader {
             ipAddresses: ipv4Addresses(),
             idleSeconds: idleSeconds()
         )
-    }
-
-    static func wifiNetwork() -> String? {
-        CWWiFiClient.shared().interface()?.ssid()
     }
 
     static func usbDeviceNames() -> Set<String> {
