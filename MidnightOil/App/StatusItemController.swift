@@ -75,6 +75,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             startItem(Self.durationTitle(minutes: $0 * 60), end: .after(TimeInterval($0 * 3_600)))
         }))
         menu.addItem(submenuItem("Until", items: untilItems()))
+        menu.addItem(submenuItem("While App is Running", items: runningAppItems()))
 
         menu.addItem(.separator())
         menu.addItem(ClosureMenuItem("Settings…", keyEquivalent: ",") { [weak self] in
@@ -127,6 +128,30 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         return items
     }
 
+    private func runningAppItems() -> [NSMenuItem] {
+        let apps = NSWorkspace.shared.runningApplications
+            .filter { $0.activationPolicy == .regular && $0 != .current && $0.bundleIdentifier != nil }
+            .sorted { ($0.localizedName ?? "").localizedStandardCompare($1.localizedName ?? "") == .orderedAscending }
+
+        guard !apps.isEmpty else {
+            let none = NSMenuItem(title: "No Apps Running", action: nil, keyEquivalent: "")
+            none.isEnabled = false
+            return [none]
+        }
+        return apps.compactMap { app in
+            guard let bundleIdentifier = app.bundleIdentifier else { return nil }
+            let name = app.localizedName ?? bundleIdentifier
+            let watched = WatchedApp(bundleIdentifier: bundleIdentifier, name: name)
+            let item = startItem(name, end: .whileAppRunning(watched))
+            item.image = app.icon.map { icon in
+                let image = icon.copy() as? NSImage ?? icon
+                image.size = NSSize(width: 16, height: 16)
+                return image
+            }
+            return item
+        }
+    }
+
     private func startItem(_ title: String, end: SessionEnd, keyEquivalent: String = "") -> NSMenuItem {
         ClosureMenuItem(title, keyEquivalent: keyEquivalent) { [weak self] in self?.sessions.start(end) }
     }
@@ -148,6 +173,11 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     private static func describe(_ session: Session) -> String {
+        switch session.end {
+        case .whileAppRunning(let app): return "While \(app.name) is running"
+        case .whileDownloading(let file): return "While “\(file.lastPathComponent)” is downloading"
+        case .indefinite, .after, .until: break
+        }
         guard let endDate = session.endDate, let remaining = session.remaining(at: .now) else {
             return "Running until you end it"
         }

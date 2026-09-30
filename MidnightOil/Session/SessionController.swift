@@ -5,6 +5,7 @@ enum SessionEndReason {
     case user
     case timeUp
     case lowBattery
+    case appQuit(String)
 }
 
 /// Runs the current keep-awake session: holds the power assertions and ends the
@@ -75,15 +76,27 @@ final class SessionController {
 
     private func tick() {
         guard let session else { return }
-        if session.isFinished(at: .now) {
-            end(reason: .timeUp)
-        } else if BatteryGuard.shouldEndSession(
-            power: PowerSourceReader.current(),
-            floorPercent: Preferences.batteryFloorPercent
-        ) {
-            end(reason: .lowBattery)
+        if let reason = endReason(for: session) {
+            end(reason: reason)
         } else {
             onChange?()
         }
+    }
+
+    private func endReason(for session: Session) -> SessionEndReason? {
+        if session.isFinished(at: .now) {
+            return .timeUp
+        }
+        if case .whileAppRunning(let app) = session.end,
+           NSRunningApplication.runningApplications(withBundleIdentifier: app.bundleIdentifier).isEmpty {
+            return .appQuit(app.name)
+        }
+        if BatteryGuard.shouldEndSession(
+            power: PowerSourceReader.current(),
+            floorPercent: Preferences.batteryFloorPercent
+        ) {
+            return .lowBattery
+        }
+        return nil
     }
 }
