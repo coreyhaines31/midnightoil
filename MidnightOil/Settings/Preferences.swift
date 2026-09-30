@@ -5,6 +5,7 @@ import Foundation
 enum Preferences {
     enum Key {
         static let allowsDisplaySleep = "allowsDisplaySleep"
+        static let startsSessionAtLaunch = "startsSessionAtLaunch"
         static let staysAwakeWithLidClosed = "staysAwakeWithLidClosed"
         static let soundsLidAlarm = "soundsLidAlarm"
         static let batteryFloorEnabled = "batteryFloorEnabled"
@@ -33,6 +34,7 @@ enum Preferences {
     static func registerDefaults() {
         defaults.register(defaults: [
             Key.allowsDisplaySleep: false,
+            Key.startsSessionAtLaunch: false,
             Key.staysAwakeWithLidClosed: false,
             Key.soundsLidAlarm: true,
             Key.batteryFloorEnabled: false,
@@ -52,6 +54,8 @@ enum Preferences {
     }
 
     static var allowsDisplaySleep: Bool { defaults.bool(forKey: Key.allowsDisplaySleep) }
+
+    static var startsSessionAtLaunch: Bool { defaults.bool(forKey: Key.startsSessionAtLaunch) }
 
     static var staysAwakeWithLidClosed: Bool { defaults.bool(forKey: Key.staysAwakeWithLidClosed) }
 

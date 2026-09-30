@@ -13,6 +13,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItemController = StatusItemController(sessions: sessions, triggers: triggerStore)
         triggerController = TriggerController(store: triggerStore, sessions: sessions)
         driveAlive = DriveAliveController(sessions: sessions)
+        if Preferences.startsSessionAtLaunch {
+            sessions.start(.indefinite)
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
