@@ -35,6 +35,7 @@ if [ -n "${APPLE_ID:-}" ]; then
 else
   NOTARY_ARGS=(--keychain-profile "$NOTARY_PROFILE")
 fi
+# macOS ships bash 3.2, where expanding an empty array trips `set -u`; hence the ${arr[@]+...} form below.
 SPARKLE_KEY_ARGS=()
 [ -n "${SPARKLE_KEY_FILE:-}" ] && SPARKLE_KEY_ARGS=(--ed-key-file "$SPARKLE_KEY_FILE")
 # Cloud-managed Developer ID signing needs an account: Xcode's signed-in one, or an API key.
@@ -101,7 +102,7 @@ if [ -z "$SPARKLE_BIN" ]; then
   SPARKLE_BIN=$(find build/DerivedData/SourcePackages/artifacts -type d -path "*Sparkle/bin" | head -1)
 fi
 mkdir -p "$BUILD/appcast" && cp "$DMG" "$BUILD/appcast/"
-"$SPARKLE_BIN/generate_appcast" "${SPARKLE_KEY_ARGS[@]}" \
+"$SPARKLE_BIN/generate_appcast" ${SPARKLE_KEY_ARGS[@]+"${SPARKLE_KEY_ARGS[@]}"} \
   --download-url-prefix "https://github.com/$REPO/releases/download/v$VERSION/" \
   --link "https://midnightoil.app" \
   "$BUILD/appcast"
