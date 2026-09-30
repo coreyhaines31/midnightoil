@@ -30,13 +30,16 @@ public enum SessionEnd: Equatable, Sendable {
 
 public struct Session: Equatable, Sendable {
     public let start: Date
-    public let end: SessionEnd
+    public private(set) var end: SessionEnd
     public var allowsDisplaySleep: Bool
+    /// Keeps a laptop running with its lid shut (needs the privileged helper).
+    public var staysAwakeWithLidClosed: Bool
 
-    public init(start: Date, end: SessionEnd, allowsDisplaySleep: Bool) {
+    public init(start: Date, end: SessionEnd, allowsDisplaySleep: Bool, staysAwakeWithLidClosed: Bool = false) {
         self.start = start
         self.end = end
         self.allowsDisplaySleep = allowsDisplaySleep
+        self.staysAwakeWithLidClosed = staysAwakeWithLidClosed
     }
 
     public var endDate: Date? { end.endDate(from: start) }
@@ -54,7 +57,9 @@ public struct Session: Equatable, Sendable {
         case .after(let duration): newEnd = .after(duration + interval)
         case .until(let date): newEnd = .until(date.addingTimeInterval(interval))
         }
-        return Session(start: start, end: newEnd, allowsDisplaySleep: allowsDisplaySleep)
+        var extended = self
+        extended.end = newEnd
+        return extended
     }
 
     public func isFinished(at now: Date) -> Bool {
