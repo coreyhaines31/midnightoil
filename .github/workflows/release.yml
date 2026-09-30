@@ -14,6 +14,9 @@ jobs:
       APPLE_ID: ${{ secrets.APPLE_ID }}
       APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
       GH_TOKEN: ${{ github.token }}
+    # Skips quietly until the App Store Connect API key secrets exist;
+    # releases are made locally with Scripts/release.sh in the meantime.
+    if: ${{ vars.CI_RELEASES == 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,6 +32,11 @@ jobs:
 
       - name: Write Sparkle private key
         run: echo "${{ secrets.SPARKLE_PRIVATE_KEY }}" > "$RUNNER_TEMP/sparkle.key"
+
+      - name: Configure git for the Homebrew tap
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Build, notarize, and publish
         env:
