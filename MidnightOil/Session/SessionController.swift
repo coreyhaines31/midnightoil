@@ -29,6 +29,11 @@ final class SessionController {
 
     init(helper: HelperClient) {
         self.helper = helper
+        helper.onHelperRestarted = { [weak self] in
+            guard let self else { return }
+            lidModeRequested = false
+            syncLidClosedMode()
+        }
         // A sleeping Mac doesn't tick; re-check as soon as it wakes.
         NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.didWakeNotification,

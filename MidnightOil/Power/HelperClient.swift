@@ -14,6 +14,9 @@ final class HelperClient {
     private static let logger = Logger(subsystem: "app.midnightoil.MidnightOil", category: "Helper")
     private let service = SMAppService.daemon(plistName: HelperConstants.plistName)
     private var connection: NSXPCConnection?
+    /// Called when the helper restarts mid-connection. It restores sleep on
+    /// launch, so anything still wanted must be requested again.
+    var onHelperRestarted: (() -> Void)?
 
     var status: Status {
         switch service.status {
@@ -76,6 +79,9 @@ final class HelperClient {
         connection.setCodeSigningRequirement(HelperConstants.helperRequirement)
         connection.invalidationHandler = { [weak self] in
             Task { @MainActor in self?.connection = nil }
+        }
+        connection.interruptionHandler = { [weak self] in
+            Task { @MainActor in self?.onHelperRestarted?() }
         }
         connection.resume()
         self.connection = connection
