@@ -7,6 +7,7 @@ enum SessionEndReason {
     case lowBattery
     case appQuit(String)
     case downloadFinished(String)
+    case unplugged
 }
 
 /// Runs the current keep-awake session: holds the power assertions and ends the
@@ -20,6 +21,7 @@ final class SessionController {
     private let assertions = AssertionManager()
     private var ticker: Task<Void, Never>?
     private var download: DownloadProgress?
+    private var lastPower: PowerState?
 
     init() {
         // A sleeping Mac doesn't tick; re-check as soon as it wakes.
@@ -50,6 +52,7 @@ final class SessionController {
         guard session != nil else { return }
         session = nil
         download = nil
+        lastPower = nil
         ticker?.cancel()
         ticker = nil
         assertions.releaseAll()
@@ -104,10 +107,12 @@ final class SessionController {
         if case .whileDownloading(let file) = session.end, !advanceDownload(file) {
             return .downloadFinished(DownloadProgress.displayName(for: file))
         }
-        if BatteryGuard.shouldEndSession(
-            power: PowerSourceReader.current(),
-            floorPercent: Preferences.batteryFloorPercent
-        ) {
+        let power = PowerSourceReader.current()
+        defer { lastPower = power }
+        if Preferences.endsWhenUnplugged, BatteryGuard.wasUnplugged(from: lastPower, to: power) {
+            return .unplugged
+        }
+        if BatteryGuard.shouldEndSession(power: power, floorPercent: Preferences.batteryFloorPercent) {
             return .lowBattery
         }
         return nil

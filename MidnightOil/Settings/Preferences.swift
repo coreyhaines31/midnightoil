@@ -7,6 +7,7 @@ enum Preferences {
         static let allowsDisplaySleep = "allowsDisplaySleep"
         static let batteryFloorEnabled = "batteryFloorEnabled"
         static let batteryFloorPercent = "batteryFloorPercent"
+        static let endsWhenUnplugged = "endsWhenUnplugged"
         static let showsRemainingInMenuBar = "showsRemainingInMenuBar"
         static let notifiesOnSessionEnd = "notifiesOnSessionEnd"
     }
@@ -20,6 +21,7 @@ enum Preferences {
             Key.allowsDisplaySleep: false,
             Key.batteryFloorEnabled: false,
             Key.batteryFloorPercent: defaultBatteryFloorPercent,
+            Key.endsWhenUnplugged: false,
             Key.showsRemainingInMenuBar: false,
             Key.notifiesOnSessionEnd: true
         ])
@@ -30,6 +32,8 @@ enum Preferences {
     static var batteryFloorPercent: Int? {
         defaults.bool(forKey: Key.batteryFloorEnabled) ? defaults.integer(forKey: Key.batteryFloorPercent) : nil
     }
+
+    static var endsWhenUnplugged: Bool { defaults.bool(forKey: Key.endsWhenUnplugged) }
 
     static var showsRemainingInMenuBar: Bool { defaults.bool(forKey: Key.showsRemainingInMenuBar) }
 
