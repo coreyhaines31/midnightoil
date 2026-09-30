@@ -19,7 +19,10 @@ REPO="coreyhaines31/midnightoil"
 APP_NAME="Midnight Oil"
 
 cd "$(dirname "$0")/.."
-export DEVELOPER_DIR="${DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}"
+# Needs the full Xcode, even if the shell points DEVELOPER_DIR at the Command Line Tools.
+case "${DEVELOPER_DIR:-}" in
+  ""|*CommandLineTools*) export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer ;;
+esac
 BUILD=build/release
 [ -d "$BUILD" ] && rm -r "$BUILD"
 mkdir -p "$BUILD"
@@ -84,7 +87,11 @@ if security find-identity -v -p codesigning | grep -q "Developer ID Application"
 fi
 xcrun notarytool submit "$DMG" "${NOTARY_ARGS[@]}" --wait
 xcrun stapler staple "$DMG"
-spctl --assess --type open --context context:primary-signature -v "$DMG"
+# Gatekeeper judges the app inside the image, so that's what we assess.
+MOUNT=$(mktemp -d)
+hdiutil attach -nobrowse -quiet "$DMG" -mountpoint "$MOUNT"
+spctl --assess --type exec -v "$MOUNT/$APP_NAME.app"
+hdiutil detach -quiet "$MOUNT"
 
 echo "▶ Signing the update and writing the appcast"
 SPARKLE_BIN=$(find build/DerivedData/SourcePackages/artifacts -type d -path "*Sparkle/bin" | head -1)
@@ -101,5 +108,12 @@ mkdir -p "$BUILD/appcast" && cp "$DMG" "$BUILD/appcast/"
 
 echo "▶ Publishing GitHub release v$VERSION"
 gh release create "v$VERSION" "$DMG" "$BUILD/appcast/appcast.xml" \
-  --repo "$REPO" --title "$APP_NAME $VERSION" --generate-notes
+  --repo "$REPO" --target main --title "$APP_NAME $VERSION" --generate-notes
+
+echo "▶ Updating the Homebrew cask"
+TAP="$BUILD/homebrew-tap"
+gh repo clone coreyhaines31/homebrew-tap "$TAP" -- --quiet --depth 1
+SHA=$(shasum -a 256 "$DMG" | cut -d' ' -f1)
+sed -i '' -e "s/^  version \".*\"/  version \"$VERSION\"/" -e "s/^  sha256 \".*\"/  sha256 \"$SHA\"/" "$TAP/Casks/midnightoil.rb"
+git -C "$TAP" commit -qam "midnightoil $VERSION" && git -C "$TAP" push -q
 echo "✓ Released $APP_NAME $VERSION"
