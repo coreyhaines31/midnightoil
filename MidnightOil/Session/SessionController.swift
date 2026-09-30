@@ -56,13 +56,17 @@ final class SessionController {
             lidModeRequested = false
             syncLidClosedMode()
         }
+        let center = NSWorkspace.shared.notificationCenter
+        // Count right up to sleep, then skip the time asleep entirely.
+        center.addObserver(forName: NSWorkspace.willSleepNotification, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated { self?.sampleTally() }
+        }
         // A sleeping Mac doesn't tick; re-check as soon as it wakes.
-        NSWorkspace.shared.notificationCenter.addObserver(
-            forName: NSWorkspace.didWakeNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            MainActor.assumeIsolated { self?.tick() }
+        center.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
+            MainActor.assumeIsolated {
+                self?.tally?.resumeAfterSleep(at: .now)
+                self?.tick()
+            }
         }
     }
 
@@ -127,8 +131,25 @@ final class SessionController {
         onChange?()
     }
 
+    private func sampleTally() {
+        guard let session else { return }
+        tally?.sample(
+            at: .now,
+            idleSeconds: SystemStateReader.idleSeconds(),
+            lidClosed: LidState.isClosed() ?? false,
+            lidMode: session.staysAwakeWithLidClosed
+        )
+    }
+
     @discardableResult
     private func recordFinished(_ session: Session, reason: SessionEndReason) -> SessionRecord {
+        // Count the time since the last tick, and a lid mode switched on just now.
+        tally?.sample(
+            at: .now,
+            idleSeconds: SystemStateReader.idleSeconds(),
+            lidClosed: LidState.isClosed() ?? false,
+            lidMode: session.staysAwakeWithLidClosed
+        )
         var triggerName: String?
         if case .trigger(_, let name) = session.source { triggerName = name }
         var subject: String?
@@ -202,12 +223,7 @@ final class SessionController {
 
     private func tick() {
         guard let session else { return }
-        tally?.sample(
-            at: .now,
-            idleSeconds: SystemStateReader.idleSeconds(),
-            lidClosed: LidState.isClosed() ?? false,
-            lidMode: session.staysAwakeWithLidClosed
-        )
+        sampleTally()
         if let reason = endReason(for: session) {
             end(reason: reason)
         } else {
