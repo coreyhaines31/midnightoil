@@ -151,6 +151,67 @@
     footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
     footer a { color: var(--muted); text-decoration: none; }
 
+    /* Use cases */
+    .cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .case { background: var(--gray); border-radius: var(--radius); padding: 26px 26px 0; overflow: hidden; display: flex; flex-direction: column; }
+    .case .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 8px; }
+    .case h3 { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .case p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.45; }
+    .case .ill { margin-top: 18px; flex: 1; display: flex; align-items: flex-end; justify-content: center; }
+    .case .ill svg { width: 100%; max-width: 300px; height: auto; display: block; }
+
+    /* Terminal mockup */
+    .night { background: #0b0d1c; color: #f5f5f7; border-top: 1px solid rgba(255,255,255,0.08); }
+    .screen {
+      max-width: 860px; margin: 0 auto; border-radius: 14px; overflow: hidden;
+      background: #14162a; box-shadow: 0 40px 90px rgba(0,0,0,0.5), 0 0 0 0.5px rgba(255,255,255,0.1);
+      font: 13.5px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .screen .bar { display: flex; align-items: center; justify-content: space-between; padding: 0 14px; height: 30px; background: #1d2036; font: 12.5px -apple-system, BlinkMacSystemFont, sans-serif; color: #c7c9d9; }
+    .screen .bar .left { display: flex; align-items: center; gap: 14px; }
+    .screen .bar .dots span { display: inline-block; width: 11px; height: 11px; border-radius: 50%; margin-right: 6px; }
+    .screen .bar .right { display: flex; align-items: center; gap: 10px; }
+    .screen .bar .flame { display: inline-flex; align-items: center; gap: 5px; background: rgba(255,140,66,0.18); color: #ffb36b; border-radius: 6px; padding: 2px 7px; font-weight: 500; }
+    .screen .bar .flame svg { width: 12px; height: 13px; }
+    .screen pre { margin: 0; padding: 18px 20px 22px; white-space: pre-wrap; color: #d9dbe9; }
+    .screen .t { color: #6e7291; }
+    .screen .ok { color: #7ee2a8; }
+    .screen .you { color: #ffb36b; }
+    .screen .dim { color: #8a8ea8; }
+    .screen .cursor { display: inline-block; width: 8px; height: 15px; background: #d9dbe9; vertical-align: -2px; animation: blink 1.1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .caption { text-align: center; color: #a1a1a6; font-size: 14px; margin-top: 18px; }
+
+    /* Comparison */
+    .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .compare { width: 100%; min-width: 640px; border-collapse: collapse; font-size: 15px; }
+    .compare th, .compare td { text-align: left; padding: 14px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .compare th { font-weight: 600; font-size: 14px; color: var(--muted); }
+    .compare th:first-child, .compare td:first-child { padding-left: 0; color: var(--text); font-weight: 500; }
+    .compare thead th.us { color: var(--text); }
+    .compare td.us { background: rgba(245,194,66,0.10); font-weight: 500; }
+    .compare .y { color: #1d1d1f; }
+    .compare .n { color: var(--faint); }
+    .compare .note { display: block; font-weight: 400; color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+    /* Proof */
+    .proof { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .proof div { background: #fff; border-radius: 16px; padding: 22px; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
+    .proof b { display: block; font-size: 28px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 4px; }
+    .proof span { color: var(--muted); font-size: 14px; line-height: 1.4; display: block; }
+    .founder { max-width: 720px; margin: 44px auto 0; color: var(--muted); font-size: 17px; line-height: 1.55; }
+    .founder strong { color: var(--text); font-weight: 600; }
+
+    @media (max-width: 900px) {
+      .cases { grid-template-columns: 1fr; }
+      .proof { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 720px) {
+      .compare { font-size: 13px; }
+      .compare th, .compare td { padding: 10px 6px; }
+      .proof { grid-template-columns: 1fr; }
+    }
+
     @media (max-width: 900px) {
       .bento { grid-template-columns: 1fr 1fr; }
       .span-4, .span-2 { grid-column: span 2; }
@@ -172,8 +233,9 @@
     <div class="wrap">
       <a class="brand" href="/"><img src="images/icon.png" alt=""> Midnight Oil</a>
       <nav>
+        <a href="#usecases">Use cases</a>
         <a href="#features">Features</a>
-        <a href="#how">How it works</a>
+        <a href="#compare">Compare</a>
         <a href="#faq">FAQ</a>
         <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
         <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
@@ -204,6 +266,57 @@
       </div>
     </div>
 
+
+    <section id="usecases">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Built for the way work happens now.</h2>
+          <p>Agents run for hours and don't need you at the keyboard. Your Mac doesn't know that. Midnight Oil does.</p>
+        </div>
+        <div class="cases">
+          <div class="case">
+            <div class="eyebrow">Overnight</div>
+            <h3>Start the run at 11. Wake up to a finished PR.</h3>
+            <p>Set “Keep awake until 7 AM” before bed. The refactor, the migration, the 400 test fixes: done while you sleep, and your Mac goes back to normal at seven.</p>
+            <div class="ill"><svg viewBox="0 0 300 190" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="238" cy="42" r="22" fill="#fff"/><path d="M228 24a22 22 0 1 0 22 30 18 18 0 0 1-22-30z" fill="#f5c242" stroke="none"/>
+              <path d="M40 30l1.5 4 4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5z" fill="#1d1d1f" stroke="none"/><path d="M96 58l1 2.6 2.6 1-2.6 1-1 2.6-1-2.6-2.6-1 2.6-1z" fill="#1d1d1f" stroke="none"/><circle cx="170" cy="28" r="1.6" fill="#1d1d1f" stroke="none"/>
+              <path d="M60 140V96a6 6 0 0 1 6-6h132a6 6 0 0 1 6 6v44" fill="#fff"/><path d="M36 140h192l8 14H28z" fill="#fff"/><path d="M66 100h132v34H66z" fill="#14162a" stroke="none"/>
+              <path d="M78 110h40M78 118h60M78 126h28" stroke="#7ee2a8" stroke-width="2.5"/>
+              <g transform="translate(176 104) scale(0.9)" fill="#ff8c42" stroke="none"><path d="M12 0c6.8 0 10 4.7 10 10.6 0 6.3-4.6 9.4-7.5 18.4-.9-3.8-3.6-6.6-4.7-10.3-1 1.9-2.5 4-3.9 5.1C2.6 21.5 2 18.2 2 15.4 2 8.8 4.8 0 12 0z"/></g>
+              <text x="150" y="176" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="12" fill="#6e6e73" stroke="none">11:04 PM → 7:00 AM</text>
+            </svg></div>
+          </div>
+          <div class="case">
+            <div class="eyebrow">The errand</div>
+            <h3>Step out for forty minutes. It keeps going.</h3>
+            <p>Lunch, the school run, a workout. Tie the session to Terminal or Cursor and walk away. When the agent's app quits, the session ends on its own.</p>
+            <div class="ill"><svg viewBox="0 0 300 190" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M70 130V88a6 6 0 0 1 6-6h120a6 6 0 0 1 6 6v42" fill="#fff"/><path d="M48 130h176l8 14H40z" fill="#fff"/><path d="M76 92h120v30H76z" fill="#14162a" stroke="none"/>
+              <rect x="86" y="104" width="100" height="8" rx="4" fill="#2b2e48" stroke="none"/><rect x="86" y="104" width="64" height="8" rx="4" fill="#ff8c42" stroke="none"/>
+              <circle cx="246" cy="52" r="26" fill="#fff"/><path d="M246 34v18l11 7" /><circle cx="246" cy="52" r="2" fill="#1d1d1f" stroke="none"/>
+              <path d="M22 140V52a4 4 0 0 1 4-4h30v92" fill="#fff"/><path d="M56 48l-22 8v84l22-8z" fill="#f5f5f7"/><circle cx="40" cy="96" r="2.5" fill="#1d1d1f" stroke="none"/><path d="M62 96h26m-8-8l8 8-8 8" stroke="#ff8c42"/>
+              <text x="150" y="176" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="12" fill="#6e6e73" stroke="none">While Terminal is running · 64% done</text>
+            </svg></div>
+          </div>
+          <div class="case">
+            <div class="eyebrow">On the go</div>
+            <h3>Lid closed, in the bag, still working.</h3>
+            <p>Check “Stay awake with lid closed,” shut the laptop, and get on the train. The agent doesn't notice. If you're on battery, an alarm tells you it's still running.</p>
+            <div class="ill"><svg viewBox="0 0 300 190" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M96 78c0-20 12-32 30-32h48c18 0 30 12 30 32v72a12 12 0 0 1-12 12H108a12 12 0 0 1-12-12z" fill="#f5c242" stroke="#1d1d1f"/>
+              <path d="M120 46V38a30 30 0 0 1 60 0v8" /><path d="M96 104h108" /><rect x="128" y="118" width="44" height="26" rx="6" fill="#fff"/>
+              <path d="M104 78h92v12h-92z" fill="#fff"/><path d="M104 78l6-30h80l6 30" fill="#fff"/>
+              <g transform="translate(142 54) scale(0.72)" fill="#ff8c42" stroke="none"><path d="M12 0c6.8 0 10 4.7 10 10.6 0 6.3-4.6 9.4-7.5 18.4-.9-3.8-3.6-6.6-4.7-10.3-1 1.9-2.5 4-3.9 5.1C2.6 21.5 2 18.2 2 15.4 2 8.8 4.8 0 12 0z"/></g>
+              <path d="M54 92h-18M52 108h-24M56 124h-14" stroke="#d2d2d7"/>
+              <path d="M40 150c10-4 20-4 30 0M230 150c10-4 20-4 30 0" stroke="#d2d2d7"/>
+              <text x="150" y="176" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="12" fill="#6e6e73" stroke="none">Lid closed · Codex on task 14 of 22</text>
+            </svg></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="features" class="dark">
       <div class="wrap">
         <div class="section-head">
@@ -217,7 +330,15 @@
           </div>
           <div class="tile span-2">
             <div class="copy"><h3>Lid closed, still working</h3><p>Shut the laptop, put it in your bag, get on the train. The agent keeps going. Normal sleep comes back the moment the session ends.</p></div>
-            <div class="art center"><div class="lampart"><img src="images/icon.png" alt=""></div></div>
+            <div class="art center"><svg viewBox="24 40 252 156" fill="none" stroke="#f5f5f7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:100%;max-width:300px;height:auto">
+              <defs><radialGradient id="lidglow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#ff8c42" stop-opacity="0.55"/><stop offset="1" stop-color="#ff8c42" stop-opacity="0"/></radialGradient></defs>
+              <circle cx="150" cy="118" r="90" fill="url(#lidglow)" stroke="none"/>
+              <path d="M46 132h208l14 16H32z" fill="#1f2237"/><path d="M60 118a6 6 0 0 1 6-6h168a6 6 0 0 1 6 6v14H60z" fill="#2a2d45"/>
+              <path d="M120 140h60" stroke="#8a8ea8"/>
+              <g transform="translate(138 60) scale(1.0)" fill="#ff8c42" stroke="none"><path d="M12 0c6.8 0 10 4.7 10 10.6 0 6.3-4.6 9.4-7.5 18.4-.9-3.8-3.6-6.6-4.7-10.3-1 1.9-2.5 4-3.9 5.1C2.6 21.5 2 18.2 2 15.4 2 8.8 4.8 0 12 0z"/></g>
+              <path d="M96 86c-4 6-4 12 0 18M204 86c4 6 4 12 0 18" stroke="#ffb36b" opacity="0.7"/>
+              <text x="150" y="182" text-anchor="middle" font-family="-apple-system, sans-serif" font-size="12" fill="#a1a1a6" stroke="none">Lid shut · still running · sleep restored when done</text>
+            </svg></div>
           </div>
           <div class="tile span-2">
             <div class="copy"><h3>Overnight, or until it's done</h3><p>Keep awake until 7 AM, for 8 hours, or for as long as Terminal is running. Extend a session without restarting it. When the app quits, your Mac goes back to normal.</p></div>
@@ -235,6 +356,32 @@
       </div>
     </section>
 
+
+    <section class="night" id="night">
+      <div class="wrap">
+        <div class="section-head center">
+          <h2>3:12 AM. Still running.</h2>
+          <p>An unattended run, and the one thing in the menu bar that made it possible.</p>
+        </div>
+        <div class="screen" aria-label="A terminal showing an AI agent working overnight while Midnight Oil keeps the Mac awake">
+          <div class="bar">
+            <div class="left"><span class="dots"><span style="background:#ff5f57"></span><span style="background:#febc2e"></span><span style="background:#28c840"></span></span> claude — 80×24</div>
+            <div class="right"><span class="flame"><svg viewBox="0 0 24 30" fill="currentColor"><path d="M12 0c6.8 0 10 4.7 10 10.6 0 6.3-4.6 9.4-7.5 18.4-.9-3.8-3.6-6.6-4.7-10.3-1 1.9-2.5 4-3.9 5.1C2.6 21.5 2 18.2 2 15.4 2 8.8 4.8 0 12 0z"/></svg> 3h 48m</span><span>3:12 AM</span></div>
+          </div>
+<pre><span class="t">23:04</span> <span class="you">›</span> Migrate the billing service off the legacy API. Run the full suite after each step.
+<span class="t">23:05</span> Reading 41 files in services/billing…
+<span class="t">23:31</span> Step 1/6 — replaced Invoice client <span class="ok">✓</span> 212 tests passing
+<span class="t">00:14</span> Step 2/6 — rewrote webhook handlers <span class="ok">✓</span> 212 tests passing
+<span class="t">01:02</span> Step 3/6 — customer sync <span class="dim">(retry after rate limit)</span> <span class="ok">✓</span>
+<span class="t">01:49</span> Step 4/6 — removed legacy adapter <span class="ok">✓</span> 198 tests passing, 14 skipped
+<span class="t">02:37</span> Step 5/6 — updated fixtures and docs <span class="ok">✓</span> 212 tests passing
+<span class="t">03:11</span> Step 6/6 — opening pull request…
+<span class="t">03:12</span> Running the full suite one more time <span class="cursor"></span></pre>
+        </div>
+        <p class="caption">The menu bar still says 3h 48m. Nothing slept, nothing dropped, nothing to redo in the morning.</p>
+      </div>
+    </section>
+
     <section id="how" class="gray">
       <div class="wrap">
         <div class="section-head">
@@ -242,9 +389,33 @@
         </div>
         <div class="trust">
           <div><div class="num">1</div><h3>Start the agent</h3><p>Kick off the long task in Claude Code, Codex, Cursor, or whatever you use.</p></div>
-          <div><div class="num">2</div><h3>Click the lamp</h3><p>Pick how long: until morning, for 8 hours, or while Terminal is running. Check “Stay awake with lid closed” if you're heading out.</p></div>
+          <div><div class="num">2</div><h3>Click the flame</h3><p>Pick how long: until morning, for 8 hours, or while Terminal is running. Check “Stay awake with lid closed” if you're heading out.</p></div>
           <div><div class="num">3</div><h3>Leave</h3><p>Sleep, run the errand, catch the train. Your Mac goes back to its normal sleep schedule the moment the session ends.</p></div>
         </div>
+      </div>
+    </section>
+
+
+    <section id="compare">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>The other ways to do this, honestly compared.</h2>
+          <p>You can keep a Mac awake for free without any app. Here's what you give up.</p>
+        </div>
+        <div class="table-scroll"><table class="compare">
+          <thead><tr><th></th><th class="us">Midnight Oil</th><th>System Settings</th><th><code>caffeinate</code></th><th>Amphetamine</th></tr></thead>
+          <tbody>
+            <tr><td>One click to start, one to stop</td><td class="us y">Yes</td><td class="n">Buried in Battery › Options</td><td class="n">Type a command, remember to kill it</td><td class="y">Yes</td></tr>
+            <tr><td>Timed and “until” sessions</td><td class="us y">Yes</td><td class="n">No</td><td class="y">Yes<span class="note">-t seconds, do the math</span></td><td class="y">Yes</td></tr>
+            <tr><td>Ends when the agent's app quits</td><td class="us y">Yes</td><td class="n">No</td><td class="n">Only for one process</td><td class="y">Yes</td></tr>
+            <tr><td>Keeps working with the lid closed</td><td class="us y">Yes<span class="note">restores sleep automatically</span></td><td class="n">Only on a display and power</td><td class="n">No</td><td class="y">Yes<span class="note">needs a separate script download</span></td></tr>
+            <tr><td>Triggers (Wi-Fi, display, app, schedule…)</td><td class="us y">Yes</td><td class="n">No</td><td class="n">No</td><td class="y">Yes</td></tr>
+            <tr><td>Battery safety and lid alarm</td><td class="us y">Yes</td><td class="n">No</td><td class="n">No</td><td class="y">Yes</td></tr>
+            <tr><td>Still maintained</td><td class="us y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="n">Last update 2023</td></tr>
+            <tr><td>Open source</td><td class="us y">Yes, MIT</td><td class="n">No</td><td class="n">No</td><td class="n">No</td></tr>
+            <tr><td>Price</td><td class="us y">Free</td><td class="y">Free</td><td class="y">Free</td><td class="y">Free</td></tr>
+          </tbody>
+        </table></div>
       </div>
     </section>
 
@@ -262,7 +433,24 @@
       </div>
     </section>
 
-    <section id="faq">
+
+    <section id="open">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Built in the open.</h2>
+          <p>No account, no subscription, no telemetry. Everything it does is in the source.</p>
+        </div>
+        <div class="proof">
+          <div><b>MIT</b><span>Licensed. Fork it, audit it, ship your own build.</span></div>
+          <div><b>3 MB</b><span>The whole download. Native Swift, no Electron.</span></div>
+          <div><b>0</b><span>Trackers, analytics, or network calls, apart from checking for updates.</span></div>
+          <div><b>Notarized</b><span>Signed with Developer ID and checked by Apple, every release.</span></div>
+        </div>
+        <p class="founder"><strong>Why it exists.</strong> I run coding agents all day and let them keep going overnight. My Mac kept falling asleep on them, and Amphetamine, the app everyone used for this, hasn't been updated since 2023. So I built the replacement I wanted, and made it free. <span class="dim">— Corey Haines</span></p>
+      </div>
+    </section>
+
+    <section id="faq" class="gray">
       <div class="wrap">
         <div class="section-head center"><h2>Questions</h2></div>
         <div class="faq">
@@ -272,6 +460,9 @@
           <details><summary>Which Macs does it run on?</summary><p>Apple Silicon and Intel Macs running macOS 14 Sonoma or later.</p></details>
           <details><summary>How is this different from Amphetamine?</summary><p>Same idea, and everything Amphetamine could do is here. Amphetamine stopped being updated in 2023; Midnight Oil is maintained, open source, and you can drag its icon around the menu bar.</p></details>
           <details><summary>Does it update itself?</summary><p>Yes. The app is signed and notarized by Apple, and checks for updates on its own. You can turn that off in General settings.</p></details>
+          <details><summary>Does it keep the screen on too?</summary><p>Only if you want it to. “Allow display sleep” keeps the Mac awake but lets the screen turn off, which is usually what you want for an overnight run.</p></details>
+          <details><summary>What if I close the lid and forget it's running?</summary><p>On battery, an alarm sounds when the lid closes during a closed-lid session, and you can set sessions to end below a battery level. On power, it just keeps working.</p></details>
+          <details><summary>Does it need admin rights?</summary><p>Only closed-lid mode does, and only once: you approve its helper in System Settings › Login Items. Everything else runs as a normal app.</p></details>
           <details><summary>Where do I report a bug or ask for a feature?</summary><p><a href="https://github.com/coreyhaines31/midnightoil/issues">GitHub Issues</a>. Pull requests are welcome too.</p></details>
         </div>
       </div>
