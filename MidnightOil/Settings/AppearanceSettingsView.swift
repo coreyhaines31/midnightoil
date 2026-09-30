@@ -3,7 +3,9 @@ import SwiftUI
 
 struct AppearanceSettingsView: View {
     @AppStorage(Preferences.Key.statusIconStyle) private var style = StatusIcon.Style.flame.rawValue
-    @AppStorage(Preferences.Key.customIconsAreTemplates) private var templates = true
+    @AppStorage(Preferences.Key.customIconsAreTemplates) private var templates = true {
+        didSet { StatusIcon.invalidateCache() }
+    }
     @AppStorage(Preferences.Key.showsRemainingInMenuBar) private var showsRemainingInMenuBar = false
     /// Bumped after choosing or clearing an image so the previews reload.
     @State private var revision = 0
@@ -50,6 +52,7 @@ struct AppearanceSettingsView: View {
                 Button("Choose…") { choose(for: state) }
                 Button("Clear") {
                     StatusIcon.clearCustomImage(for: state)
+                    StatusIcon.invalidateCache()
                     revision += 1
                 }
             }
@@ -64,6 +67,7 @@ struct AppearanceSettingsView: View {
         guard panel.runModal() == .OK, let url = panel.url else { return }
         do {
             try StatusIcon.setCustomImage(url, for: state)
+            StatusIcon.invalidateCache()
             revision += 1
         } catch {
             NSAlert(error: error).runModal()

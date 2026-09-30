@@ -25,6 +25,8 @@ final class DriveAliveController {
     private func tick() {
         guard Preferences.driveAliveEnabled else { return }
         for volume in Preferences.driveAliveVolumes where volume.always || sessions.isActive {
+            // An unplugged drive isn't an error; it just has nothing to keep awake.
+            guard FileManager.default.fileExists(atPath: volume.path) else { continue }
             touch(Self.touchFile(for: volume))
         }
     }

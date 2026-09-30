@@ -13,10 +13,17 @@ enum StatusIcon {
     }
 
     private static let barHeight: CGFloat = 18
+    /// The button refreshes every second during a session; don't hit the disk each time.
+    @MainActor private static var cache: [State: NSImage] = [:]
 
+    @MainActor
     static func image(for state: State) -> NSImage? {
-        if Preferences.statusIconStyle == .custom, let custom = customImage(for: state) {
-            return custom
+        if Preferences.statusIconStyle == .custom {
+            if let cached = cache[state] { return cached }
+            if let custom = customImage(for: state) {
+                cache[state] = custom
+                return custom
+            }
         }
         let symbol = state == .active ? "flame.fill" : "flame"
         let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
@@ -27,6 +34,11 @@ enum StatusIcon {
     static func customImageURL(for state: State) -> URL {
         let support = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
         return support.appending(path: "Midnight Oil/icon-\(state.rawValue).png")
+    }
+
+    @MainActor
+    static func invalidateCache() {
+        cache = [:]
     }
 
     static func customImage(for state: State) -> NSImage? {

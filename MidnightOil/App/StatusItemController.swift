@@ -35,7 +35,10 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            MainActor.assumeIsolated { self?.refreshButton() }
+            MainActor.assumeIsolated {
+                StatusIcon.invalidateCache()
+                self?.refreshButton()
+            }
         }
         refreshButton()
     }
