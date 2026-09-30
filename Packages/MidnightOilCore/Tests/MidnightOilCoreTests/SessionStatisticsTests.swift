@@ -57,6 +57,12 @@ struct SessionStatisticsTests {
         #expect(overnight.headline == "7h 48m awake, 6h 55m while you were away")
     }
 
+    @Test func unknownEndCausesDecodeInsteadOfFailing() throws {
+        let json = #"[{"id":"895A3519-B96C-4B1C-A50C-61BC9863C7B8","start":1,"end":2,"endCause":"futureCause"}]"#
+        let records = try JSONDecoder().decode([SessionRecord].self, from: Data(json.utf8))
+        #expect(records[0].endCause == .unknown)
+    }
+
     @Test func olderRecordsWithoutNewFieldsStillDecode() throws {
         let json = #"[{"id":"895A3519-B96C-4B1C-A50C-61BC9863C7B8","start":812427885.9,"end":812427891.9}]"#
         let records = try JSONDecoder().decode([SessionRecord].self, from: Data(json.utf8))
@@ -68,6 +74,50 @@ struct SessionStatisticsTests {
 
 struct SessionTallyTests {
     let start = Date(timeIntervalSinceReferenceDate: 1_000_000)
+
+    /// Samples every second from `from` to `to`, with idle time supplied per second.
+    func run(_ tally: inout SessionTally, from first: Int, to last: Int, idle: (Int) -> TimeInterval) {
+        for second in first...last {
+            let now = start.addingTimeInterval(TimeInterval(second))
+            tally.sample(at: now, idleSeconds: idle(second), lidClosed: false, lidMode: false)
+        }
+    }
+
+    @Test func sleepIsNeverCreditedAsAwayTime() {
+        // Codex repro: 600s active, 30s idle, a 240s sleep, then 30s more idle.
+        // The system idle clock keeps running through the sleep; only 60 awake seconds were idle.
+        var tally = SessionTally(start: start)
+        run(&tally, from: 1, to: 600, idle: { _ in 0 })
+        run(&tally, from: 601, to: 630, idle: { TimeInterval($0 - 600) })
+        run(&tally, from: 871, to: 900, idle: { TimeInterval($0 - 600) })
+        #expect(tally.awake == 659)  // the sample that ends the sleep gap is dropped too
+        // Away starts once idle reaches 5 minutes (at t=900); only awake idle seconds count.
+        #expect(tally.away <= 60)
+    }
+
+    @Test func shortSleepIsExcludedAfterResume() {
+        var tally = SessionTally(start: start)
+        tally.sample(at: start.addingTimeInterval(1), idleSeconds: 0, lidClosed: false, lidMode: false)
+        // Sleeps at t=1, wakes at t=21: under maxGap, so only the explicit resume excludes it.
+        tally.resumeAfterSleep(at: start.addingTimeInterval(21))
+        tally.sample(at: start.addingTimeInterval(21), idleSeconds: 0, lidClosed: false, lidMode: false)
+        #expect(tally.awake == 1)
+    }
+
+    @Test func awayStartsCountingOnceYouCrossTheThresholdWhileAwake() {
+        var tally = SessionTally(start: start)
+        // Idle the whole time, awake the whole time: after 10 minutes, all 10 were away.
+        run(&tally, from: 1, to: 600, idle: { TimeInterval($0) })
+        #expect(tally.away == 600)
+    }
+
+    @Test func inputResetsTheIdleStreak() {
+        var tally = SessionTally(start: start)
+        // Idle for 4 minutes, a keypress at t=240, then idle for 6 minutes.
+        run(&tally, from: 1, to: 600, idle: { $0 < 240 ? TimeInterval($0) : TimeInterval($0 - 240) })
+        // Away from t=240 onward (360s), not from t=0.
+        #expect(abs(tally.away - 360) <= 1)
+    }
 
     @Test func countsAwakeTimeFromSamples() {
         var tally = SessionTally(start: start)
