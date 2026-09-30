@@ -28,15 +28,28 @@ public enum SessionEnd: Equatable, Sendable {
     }
 }
 
+public enum SessionSource: Equatable, Sendable {
+    case manual
+    case trigger(id: UUID, name: String)
+}
+
 public struct Session: Equatable, Sendable {
     public let start: Date
+    public let source: SessionSource
     public private(set) var end: SessionEnd
     public var allowsDisplaySleep: Bool
     /// Keeps a laptop running with its lid shut (needs the privileged helper).
     public var staysAwakeWithLidClosed: Bool
 
-    public init(start: Date, end: SessionEnd, allowsDisplaySleep: Bool, staysAwakeWithLidClosed: Bool = false) {
+    public init(
+        start: Date,
+        end: SessionEnd,
+        allowsDisplaySleep: Bool,
+        staysAwakeWithLidClosed: Bool = false,
+        source: SessionSource = .manual
+    ) {
         self.start = start
+        self.source = source
         self.end = end
         self.allowsDisplaySleep = allowsDisplaySleep
         self.staysAwakeWithLidClosed = staysAwakeWithLidClosed

@@ -59,4 +59,14 @@ struct SessionTests {
             #expect(session.extended(by: 600) == session)
         }
     }
+
+    @Test func sessionsAreManualUnlessATriggerStartedThem() {
+        let manual = Session(start: start, end: .indefinite, allowsDisplaySleep: false)
+        #expect(manual.source == .manual)
+        let id = UUID()
+        let source = SessionSource.trigger(id: id, name: "Home")
+        let auto = Session(start: start, end: .indefinite, allowsDisplaySleep: false, source: source)
+        #expect(auto.source == .trigger(id: id, name: "Home"))
+        #expect(auto.extended(by: 60).source == auto.source)
+    }
 }
