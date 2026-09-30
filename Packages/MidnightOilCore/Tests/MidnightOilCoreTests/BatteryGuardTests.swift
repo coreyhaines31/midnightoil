@@ -26,4 +26,13 @@ struct BatteryGuardTests {
         let power = PowerState(batteryPercent: 1, isOnBattery: true)
         #expect(!BatteryGuard.shouldEndSession(power: power, floorPercent: nil))
     }
+
+    @Test func detectsUnplugging() {
+        let pluggedIn = PowerState(batteryPercent: 80, isOnBattery: false)
+        let onBattery = PowerState(batteryPercent: 80, isOnBattery: true)
+        #expect(BatteryGuard.wasUnplugged(from: pluggedIn, to: onBattery))
+        #expect(!BatteryGuard.wasUnplugged(from: onBattery, to: onBattery))
+        #expect(!BatteryGuard.wasUnplugged(from: onBattery, to: pluggedIn))
+        #expect(!BatteryGuard.wasUnplugged(from: nil, to: onBattery))
+    }
 }

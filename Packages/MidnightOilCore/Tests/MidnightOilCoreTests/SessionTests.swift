@@ -47,4 +47,15 @@ struct SessionTests {
         let session = Session(start: start, end: .indefinite, allowsDisplaySleep: false)
         #expect(session.extended(by: 600) == session)
     }
+
+    @Test func eventBasedSessionsHaveNoEndTime() {
+        let app = WatchedApp(bundleIdentifier: "com.apple.Safari", name: "Safari")
+        let ends: [SessionEnd] = [.whileAppRunning(app), .whileDownloading(URL(filePath: "/tmp/file.part"))]
+        for end in ends {
+            let session = Session(start: start, end: end, allowsDisplaySleep: false)
+            #expect(session.endDate == nil)
+            #expect(!session.isFinished(at: start.addingTimeInterval(1_000_000)))
+            #expect(session.extended(by: 600) == session)
+        }
+    }
 }

@@ -5,6 +5,7 @@ struct SessionSettingsView: View {
     @AppStorage(Preferences.Key.batteryFloorEnabled) private var batteryFloorEnabled = false
     @AppStorage(Preferences.Key.batteryFloorPercent)
     private var batteryFloorPercent = Preferences.defaultBatteryFloorPercent
+    @AppStorage(Preferences.Key.endsWhenUnplugged) private var endsWhenUnplugged = false
     @AppStorage(Preferences.Key.notifiesOnSessionEnd) private var notifiesOnSessionEnd = true
 
     var body: some View {
@@ -17,13 +18,14 @@ struct SessionSettingsView: View {
             }
 
             Section {
+                Toggle("End sessions when unplugged from power", isOn: $endsWhenUnplugged)
                 Toggle("End sessions when the battery is low", isOn: $batteryFloorEnabled)
                 Stepper(value: $batteryFloorPercent, in: 5...50, step: 5) {
                     Text("Below \(batteryFloorPercent)%")
                 }
                 .disabled(!batteryFloorEnabled)
             } footer: {
-                Text("Only applies while running on battery.")
+                Text("The low-battery rule only applies while running on battery.")
                     .foregroundStyle(.secondary)
             }
 
