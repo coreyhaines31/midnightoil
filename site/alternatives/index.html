@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alternatives to Amphetamine, Caffeine, caffeinate, and mouse jigglers for Mac</title>
+  <meta name="description" content="Honest comparisons of the ways people keep a Mac awake, and where Midnight Oil fits: the free, open-source keep-awake app built for overnight AI-agent runs and closed-lid work.">
+  <link rel="canonical" href="https://midnightoil.app/alternatives/">
+  <meta property="og:title" content="Alternatives to Amphetamine, Caffeine, caffeinate, and mouse jigglers for Mac">
+  <meta property="og:description" content="Honest comparisons of the ways people keep a Mac awake, and where Midnight Oil fits: the free, open-source keep-awake app built for overnight AI-agent runs and closed-lid work.">
+  <meta property="og:image" content="https://midnightoil.app/images/icon.png">
+  <meta property="og:url" content="https://midnightoil.app/alternatives/">
+  <link rel="icon" href="/images/icon.png">
+  <link rel="apple-touch-icon" href="/images/icon.png">
+  <link rel="stylesheet" href="/site.css">
+  <style>
+    .sub-hero { padding: 72px 0 40px; }
+    .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
+    .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
+    .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
+    .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
+    .sub-hero .actions { display: flex; align-items: center; gap: 22px; margin-top: 28px; flex-wrap: wrap; }
+    .tldr { background: var(--gray); border-radius: var(--radius); padding: 26px 28px; margin: 44px 0 0; max-width: 900px; }
+    .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
+    .prose { max-width: 760px; }
+    .prose h2 { font-size: clamp(28px, 3.6vw, 40px); margin: 0 0 16px; }
+    .prose h3 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 8px; }
+    .prose p, .prose li { color: var(--muted); font-size: 17px; line-height: 1.6; }
+    .prose p strong { color: var(--text); font-weight: 600; }
+    .prose ul { padding-left: 20px; margin: 0 0 8px; }
+    .prose li { margin-bottom: 6px; }
+    .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
+    .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    .prose blockquote { margin: 18px 0; padding: 14px 20px; border-left: 3px solid var(--gold); background: var(--gray); border-radius: 0 12px 12px 0; }
+    .prose blockquote p { margin: 0; font-size: 16px; }
+    .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
+    .prose blockquote cite a { color: var(--faint); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+    .two > div { background: var(--gray); border-radius: 16px; padding: 22px; }
+    .two h3 { margin: 0 0 10px; font-size: 18px; }
+    .two ul { margin: 0; padding-left: 18px; }
+    .two li { font-size: 15px; margin-bottom: 6px; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
+    .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
+    .glance { max-width: 760px; margin: 0 0 44px; }
+    .glance .compare td:first-child { font-weight: 500; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+    .related a { display: block; background: #fff; border-radius: 14px; padding: 18px 20px; text-decoration: none; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
+    .related a:hover { box-shadow: 0 0 0 0.5px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.06); }
+    .related b { display: block; margin-bottom: 4px; }
+    .related span { color: var(--muted); font-size: 14px; }
+    section.tight { padding: 64px 0; }
+    @media (max-width: 720px) { .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; } }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
+      <nav>
+        <a href="/#features">Features</a>
+        <a href="/alternatives/">Alternatives</a>
+        <a href="/#faq">FAQ</a>
+        <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
+        <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
+      </nav>
+    </div>
+  </div>
+  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">Alternatives</div>
+      <h1>Every way to keep a Mac awake,<br>compared honestly.</h1>
+      <p class="lede">Five ways people do this, what each does well, and where it stops. Sometimes the other tool is the right one; we say so.</p>
+    </div>
+    <section class="tight">
+      <div class="wrap">
+        <div class="glance"><table class="compare">
+          <thead><tr><th>You want…</th><th class="us">Use</th></tr></thead>
+          <tbody><tr><td>One click, lid open, nothing else</td><td class="">Caffeine or KeepingYouAwake</td></tr><tr><td>A command in a script or CI job</td><td class="">caffeinate</td></tr><tr><td>Slack or Teams to show you as active</td><td class="">A mouse jiggler (and maybe a rethink)</td></tr><tr><td>Fifteen kinds of triggers and AppleScript, on an old macOS</td><td class="">Amphetamine, as long as it still runs</td></tr><tr><td>An overnight agent run, the lid closed, sleep restored when it&#x27;s done</td><td class="us y">Midnight Oil</td></tr></tbody>
+        </table></div>
+        <div class="related">
+          <a href="/alternatives/amphetamine"><b>Amphetamine</b><span>Last update 2023. Closed-lid mode takes a script, a sudoers file, and a Terminal command.</span></a>
+          <a href="/alternatives/caffeine"><b>Caffeine</b><span>The 2006 original. One click, and that&#x27;s the whole app: no timers, triggers, or lid mode.</span></a>
+          <a href="/alternatives/caffeinate"><b>caffeinate command</b><span>Built in and free. Stops at a closed lid, and dies with the terminal.</span></a>
+          <a href="/alternatives/keepingyouawake"><b>KeepingYouAwake</b><span>Maintained, minimal, open source. Refuses closed-lid mode on principle.</span></a>
+          <a href="/alternatives/mouse-jiggler"><b>Mouse jigglers</b><span>Fake input to look busy. Detectable, and no help once the lid closes.</span></a>
+        </div>
+      </div>
+    </section>
+    <section class="tight gray">
+      <div class="wrap"><div class="prose">
+
+        <h2>How we compare</h2>
+        <p>Every page here was researched from the competitor's own App Store listing, GitHub repository, release history, and user reviews as of September 2026, and each states plainly what the other tool does better. If you spot something out of date, <a href="https://github.com/coreyhaines31/midnightoil/issues">open an issue</a> and we'll fix it.</p>
+        <p>The short version of the category: <strong>Amphetamine</strong> has the most features and hasn't shipped since 2023. <strong>KeepingYouAwake</strong> is maintained and minimal, and won't keep a closed lid awake on principle. <strong>Caffeine</strong> is the 2006 original, a cup you click. <strong>caffeinate</strong> is built in and lives in the terminal. <strong>Mouse jigglers</strong> solve a different problem than most people think. Midnight Oil is free and open source like the best of them, and built for the way Macs get kept awake now: overnight, unattended, sometimes closed.</p>
+    
+      </div></div>
+    </section>
+    <section class="cta">
+      <div class="wrap">
+        <h2>Give your agents the night shift.</h2>
+        <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download for macOS</a>
+        <p class="fineprint">Free · Open source · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <span>© 2026 Corey Haines. MIT License.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="/alternatives/">Alternatives</a></span>
+    </div>
+  </footer>
+</body>
+</html>

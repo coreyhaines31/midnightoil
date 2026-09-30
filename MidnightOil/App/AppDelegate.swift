@@ -21,6 +21,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
-        sessions.end()
+        sessions.end(reason: .quit)
     }
 }

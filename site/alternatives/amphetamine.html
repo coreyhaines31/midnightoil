@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Amphetamine for Mac: what happened, and the alternative</title>
+  <meta name="description" content="Amphetamine, the Mac keep-awake app, hasn&#x27;t shipped an update since November 2023. Midnight Oil is the free, open-source replacement: same sessions and triggers, one-toggle closed-lid mode, and built for overnight AI-agent runs.">
+  <link rel="canonical" href="https://midnightoil.app/alternatives/amphetamine">
+  <meta property="og:title" content="Amphetamine for Mac: what happened, and the alternative">
+  <meta property="og:description" content="Amphetamine, the Mac keep-awake app, hasn&#x27;t shipped an update since November 2023. Midnight Oil is the free, open-source replacement: same sessions and triggers, one-toggle closed-lid mode, and built for overnight AI-agent runs.">
+  <meta property="og:image" content="https://midnightoil.app/images/icon.png">
+  <meta property="og:url" content="https://midnightoil.app/alternatives/amphetamine">
+  <link rel="icon" href="/images/icon.png">
+  <link rel="apple-touch-icon" href="/images/icon.png">
+  <link rel="stylesheet" href="/site.css">
+  <style>
+    .sub-hero { padding: 72px 0 40px; }
+    .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
+    .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
+    .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
+    .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
+    .sub-hero .actions { display: flex; align-items: center; gap: 22px; margin-top: 28px; flex-wrap: wrap; }
+    .tldr { background: var(--gray); border-radius: var(--radius); padding: 26px 28px; margin: 44px 0 0; max-width: 900px; }
+    .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
+    .prose { max-width: 760px; }
+    .prose h2 { font-size: clamp(28px, 3.6vw, 40px); margin: 0 0 16px; }
+    .prose h3 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 8px; }
+    .prose p, .prose li { color: var(--muted); font-size: 17px; line-height: 1.6; }
+    .prose p strong { color: var(--text); font-weight: 600; }
+    .prose ul { padding-left: 20px; margin: 0 0 8px; }
+    .prose li { margin-bottom: 6px; }
+    .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
+    .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    .prose blockquote { margin: 18px 0; padding: 14px 20px; border-left: 3px solid var(--gold); background: var(--gray); border-radius: 0 12px 12px 0; }
+    .prose blockquote p { margin: 0; font-size: 16px; }
+    .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
+    .prose blockquote cite a { color: var(--faint); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+    .two > div { background: var(--gray); border-radius: 16px; padding: 22px; }
+    .two h3 { margin: 0 0 10px; font-size: 18px; }
+    .two ul { margin: 0; padding-left: 18px; }
+    .two li { font-size: 15px; margin-bottom: 6px; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
+    .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
+    .glance { max-width: 760px; margin: 0 0 44px; }
+    .glance .compare td:first-child { font-weight: 500; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+    .related a { display: block; background: #fff; border-radius: 14px; padding: 18px 20px; text-decoration: none; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
+    .related a:hover { box-shadow: 0 0 0 0.5px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.06); }
+    .related b { display: block; margin-bottom: 4px; }
+    .related span { color: var(--muted); font-size: 14px; }
+    section.tight { padding: 64px 0; }
+    @media (max-width: 720px) { .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; } }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
+      <nav>
+        <a href="/#features">Features</a>
+        <a href="/alternatives/">Alternatives</a>
+        <a href="/#faq">FAQ</a>
+        <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
+        <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
+      </nav>
+    </div>
+  </div>
+  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">Amphetamine alternative</div>
+      <h1>Amphetamine's last update was 2023.<br>Your agents run in 2026.</h1>
+      <p class="lede">Amphetamine was the best keep-awake app on the Mac, and it's still free. It's also been frozen at version 5.3.2 since November 10, 2023, with issues piling up unanswered. Midnight Oil is the maintained, open-source replacement built for the way people keep Macs awake now: overnight agent runs, long builds, the laptop closed in a bag.</p>
+      <div class="actions">
+        <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download Midnight Oil</a>
+        <a class="link" href="#compare">See the comparison</a>
+      </div>
+      <div class="tldr"><h2>The short version</h2><p>Amphetamine still works and has more trigger types than anything else, but it's unmaintained, closed source, and its closed-lid mode is a three-part install. Midnight Oil does the same core job with a one-checkbox closed-lid mode, installs from Homebrew, and ships updates.</p></div>
+    </div>
+    <section class="tight" id="why">
+      <div class="wrap"><div class="prose">
+
+        <h2>Why people are leaving Amphetamine</h2>
+        <p>Amphetamine earned its reputation. It's free with no catch, it has a 4.8-star rating from more than 3,000 reviews, and for years it shipped updates faster than most paid apps. The problem is what happened after November 2023.</p>
+        <h3>It stopped shipping</h3>
+        <p>The App Store lists <strong>version 5.3.2, released November 10, 2023</strong>, as current. On the project's GitHub issue tracker, 19 of the 20 open issues have no reply from the developer, going back to December 2023. Those issues include <em>“Amphetamine no effect on macOS 15.3.x”</em> on an M4 Max, a recurring Location Services prompt on launch, an expired certificate, and Drive Alive silently stopping after a few days.</p>
+        <h3>Closed-lid mode is a project</h3>
+        <p>Because Amphetamine lives in the sandboxed App Store, keeping a MacBook awake with the lid shut takes three extra pieces: the separate <strong>Power Protect</strong> script from GitHub, a <strong>sudoers</strong> file so it can run <code>pmset disablesleep</code> without a password, and a <code>defaults write</code> command in Terminal. Even then, a 2026 issue reports closed-display mode <em>“silently dropped for timed sessions when no external display is attached,”</em> and another reports a black screen on wake from deep sleep on macOS Tahoe.</p>
+        <h3>App Store only</h3>
+        <p>There's no DMG and no Homebrew cask. Users have been asking for both since 2024. If you manage Macs with a script, or your work Mac blocks the App Store, you're stuck.</p>
+        <h3>The name</h3>
+        <p>Apple tried to remove it over the name in 2021 and backed down. Some managed and corporate environments never did.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight gray" id="compare">
+      <div class="wrap"><div class="prose">
+
+        <h2>Midnight Oil vs Amphetamine</h2>
+        <p>Where it matters, side by side. Amphetamine facts are from the App Store listing and the project's GitHub as of September 2026.</p>
+                <div class="table-scroll"><table class="compare">
+          <thead><tr><th></th><th class="us">Midnight Oil</th><th>Amphetamine</th></tr></thead><tbody>
+            <tr><td>Price</td><td class="us y">Free</td><td>Free</td></tr>
+            <tr><td>Open source</td><td class="us y">Yes, MIT</td><td>No</td></tr>
+            <tr><td>Last release</td><td class="us y">September 2026</td><td>November 10, 2023</td></tr>
+            <tr><td>Install</td><td class="us y">Homebrew cask or DMG</td><td>Mac App Store only</td></tr>
+            <tr><td>Sessions: minutes, hours, until a time, while an app runs, while a download finishes</td><td class="us y">Yes</td><td>Yes</td></tr>
+            <tr><td>Closed-lid mode</td><td class="us y">One checkbox; helper approved once</td><td>Separate script + sudoers file + Terminal command</td></tr>
+            <tr><td>Sleep restored if the app crashes</td><td class="us y">Yes, within a second</td><td>Not with Power Protect (manual reset)</td></tr>
+            <tr><td>Triggers</td><td class="us y">Wi-Fi, USB, Bluetooth, display, power, battery, app, IP, schedule, idle</td><td>Those plus VPN, DNS, audio, drives, CPU</td></tr>
+            <tr><td>AppleScript</td><td class="us y">No</td><td>Yes</td></tr>
+            <tr><td>Battery floor and unplug rules</td><td class="us y">Yes</td><td>Yes</td></tr>
+            <tr><td>Lid-close alarm on battery</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Drive Alive</td><td class="us y">Yes</td><td>Yes (reports of it stopping)</td></tr>
+            <tr><td>Download size</td><td class="us y">3 MB</td><td>6.7 MB</td></tr>
+            <tr><td>Minimum macOS</td><td class="us y">14 Sonoma</td><td>10.13 High Sierra</td></tr>
+          </tbody></table></div>
+        <h3>What Amphetamine still does better</h3>
+        <p>Breadth. Amphetamine has around fifteen trigger types, including Cisco AnyConnect VPN, DNS server, audio output in use, mounted drives, and CPU load, plus AppleScript support and a periodic cursor-mover. If your workflow depends on one of those, Amphetamine is still the only app that has it, and it's still free.</p>
+        <h3>What Midnight Oil does better</h3>
+        <p>It's maintained, it's open source, and the closed-lid feature is a checkbox rather than an installation guide. It installs from Homebrew or a notarized DMG. And it was built around the job most people have now: an AI agent, a build, or a render that needs the Mac to stay up while you're somewhere else.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight" id="switch">
+      <div class="wrap"><div class="prose">
+
+        <h2>Switching takes about a minute</h2>
+        <ol class="steps">
+          <li><b>Install Midnight Oil.</b> <code>brew install --cask coreyhaines31/tap/midnightoil</code>, or download the DMG and drag it to Applications.</li>
+          <li><b>Recreate your triggers.</b> Amphetamine's settings don't export. Most people have one or two: “docked to a display and on power” and “while Terminal is running” take about thirty seconds each in Settings › Triggers.</li>
+          <li><b>Set up closed-lid mode, if you use it.</b> Check “Stay awake with lid closed” in a session; the first time, Midnight Oil asks to install its helper and macOS asks you to approve it in Login Items. That's it.</li>
+          <li><b>Undo Power Protect.</b> If you installed Amphetamine's Power Protect, remove its sudoers entry so nothing else can toggle sleep without a password. The Power Protect README has the uninstall steps.</li>
+          <li><b>Quit Amphetamine.</b> Keep it installed if you rely on a trigger Midnight Oil doesn't have. Otherwise, drag it to the Trash.</li>
+        </ol>
+        <h3>Who should stay on Amphetamine</h3>
+        <p>If you're on a Mac older than macOS 14, or you depend on AppleScript control or one of the exotic triggers, stay. It still works for plenty of people. Just know nothing is coming to fix it when it doesn't.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight gray">
+      <div class="wrap">
+        <div class="section-head"><h2>Other ways people keep a Mac awake</h2></div>
+        <div class="related">
+          <a href="/alternatives/caffeine"><b>Caffeine</b><span>The 2006 original. One click, and that&#x27;s the whole app: no timers, triggers, or lid mode.</span></a>
+          <a href="/alternatives/caffeinate"><b>caffeinate command</b><span>Built in and free. Stops at a closed lid, and dies with the terminal.</span></a>
+          <a href="/alternatives/keepingyouawake"><b>KeepingYouAwake</b><span>Maintained, minimal, open source. Refuses closed-lid mode on principle.</span></a>
+          <a href="/alternatives/mouse-jiggler"><b>Mouse jigglers</b><span>Fake input to look busy. Detectable, and no help once the lid closes.</span></a>
+        </div>
+      </div>
+    </section>
+    <section class="cta">
+      <div class="wrap">
+        <h2>Switch in about a minute.</h2>
+        <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download for macOS</a>
+        <p class="fineprint">Free · Open source · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <span>© 2026 Corey Haines. MIT License.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="/alternatives/">Alternatives</a></span>
+    </div>
+  </footer>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is Amphetamine still being updated?", "acceptedAnswer": {"@type": "Answer", "text": "No. The current Mac App Store version is 5.3.2, released November 10, 2023. Its GitHub issue tracker shows no maintainer replies since December 2023, with reports of it not working on newer Macs and macOS releases."}}, {"@type": "Question", "name": "Is Midnight Oil free like Amphetamine?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Midnight Oil is free and MIT-licensed, with the full source on GitHub. There's no Pro tier, no account, and no telemetry."}}, {"@type": "Question", "name": "Does Midnight Oil have Amphetamine's closed-display mode?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. It's a checkbox called Stay Awake with Lid Closed. A small helper you approve once in System Settings handles it, and it restores normal sleep when the session ends, when the app quits, or if the app crashes. No script download, no sudoers file."}}, {"@type": "Question", "name": "Can I install Midnight Oil with Homebrew?", "acceptedAnswer": {"@type": "Answer", "text": "Yes: brew install --cask coreyhaines31/tap/midnightoil. Or download the notarized DMG from GitHub Releases."}}]}</script>
+</body>
+</html>

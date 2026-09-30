@@ -75,6 +75,13 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         if let session = sessions.session {
             addCurrentSessionItems(for: session, to: menu)
             menu.addItem(.separator())
+        } else if let recap = LastSessionView.recap(from: sessions.history.records) {
+            let view = NSHostingView(rootView: LastSessionView(record: recap))
+            view.frame.size = view.fittingSize
+            let item = NSMenuItem()
+            item.view = view
+            menu.addItem(item)
+            menu.addItem(.separator())
         }
 
         menu.addItem(startItem("Keep Awake Indefinitely", end: .indefinite, keyEquivalent: "i"))

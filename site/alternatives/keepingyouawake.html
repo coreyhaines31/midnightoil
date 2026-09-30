@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KeepingYouAwake alternative with closed-lid mode: Midnight Oil</title>
+  <meta name="description" content="KeepingYouAwake is a well-maintained, open-source keep-awake app for Mac. It deliberately doesn&#x27;t support a closed lid or app-based triggers. Midnight Oil is the open-source alternative that does.">
+  <link rel="canonical" href="https://midnightoil.app/alternatives/keepingyouawake">
+  <meta property="og:title" content="KeepingYouAwake alternative with closed-lid mode: Midnight Oil">
+  <meta property="og:description" content="KeepingYouAwake is a well-maintained, open-source keep-awake app for Mac. It deliberately doesn&#x27;t support a closed lid or app-based triggers. Midnight Oil is the open-source alternative that does.">
+  <meta property="og:image" content="https://midnightoil.app/images/icon.png">
+  <meta property="og:url" content="https://midnightoil.app/alternatives/keepingyouawake">
+  <link rel="icon" href="/images/icon.png">
+  <link rel="apple-touch-icon" href="/images/icon.png">
+  <link rel="stylesheet" href="/site.css">
+  <style>
+    .sub-hero { padding: 72px 0 40px; }
+    .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
+    .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
+    .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
+    .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
+    .sub-hero .actions { display: flex; align-items: center; gap: 22px; margin-top: 28px; flex-wrap: wrap; }
+    .tldr { background: var(--gray); border-radius: var(--radius); padding: 26px 28px; margin: 44px 0 0; max-width: 900px; }
+    .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
+    .prose { max-width: 760px; }
+    .prose h2 { font-size: clamp(28px, 3.6vw, 40px); margin: 0 0 16px; }
+    .prose h3 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 8px; }
+    .prose p, .prose li { color: var(--muted); font-size: 17px; line-height: 1.6; }
+    .prose p strong { color: var(--text); font-weight: 600; }
+    .prose ul { padding-left: 20px; margin: 0 0 8px; }
+    .prose li { margin-bottom: 6px; }
+    .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
+    .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    .prose blockquote { margin: 18px 0; padding: 14px 20px; border-left: 3px solid var(--gold); background: var(--gray); border-radius: 0 12px 12px 0; }
+    .prose blockquote p { margin: 0; font-size: 16px; }
+    .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
+    .prose blockquote cite a { color: var(--faint); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+    .two > div { background: var(--gray); border-radius: 16px; padding: 22px; }
+    .two h3 { margin: 0 0 10px; font-size: 18px; }
+    .two ul { margin: 0; padding-left: 18px; }
+    .two li { font-size: 15px; margin-bottom: 6px; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
+    .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
+    .glance { max-width: 760px; margin: 0 0 44px; }
+    .glance .compare td:first-child { font-weight: 500; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+    .related a { display: block; background: #fff; border-radius: 14px; padding: 18px 20px; text-decoration: none; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
+    .related a:hover { box-shadow: 0 0 0 0.5px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.06); }
+    .related b { display: block; margin-bottom: 4px; }
+    .related span { color: var(--muted); font-size: 14px; }
+    section.tight { padding: 64px 0; }
+    @media (max-width: 720px) { .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; } }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
+      <nav>
+        <a href="/#features">Features</a>
+        <a href="/alternatives/">Alternatives</a>
+        <a href="/#faq">FAQ</a>
+        <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
+        <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
+      </nav>
+    </div>
+  </div>
+  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">KeepingYouAwake alternative</div>
+      <h1>KeepingYouAwake stops at the lid.<br>Midnight Oil doesn't.</h1>
+      <p class="lede">KeepingYouAwake is the app most people recommend after Amphetamine: free, MIT-licensed, actively maintained, a Homebrew cask, one click. It also draws a line at closed-lid mode, on purpose, and its most-requested feature in 2026 is exactly that. Midnight Oil is the open-source alternative that crosses the line carefully.</p>
+      <div class="actions">
+        <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download Midnight Oil</a>
+        <a class="link" href="#compare">See the comparison</a>
+      </div>
+      <div class="tldr"><h2>The short version</h2><p>Lid open and just need on/off with a timer? KeepingYouAwake is excellent; keep it. Running agents overnight with the lid closed, or want sessions tied to an app? Midnight Oil adds those on the same free, open-source terms.</p></div>
+    </div>
+    <section class="tight" id="why">
+      <div class="wrap"><div class="prose">
+
+        <h2>What KeepingYouAwake gets right</h2>
+        <p>Plenty. It's been shipping since 2014, the maintainer still pushes releases (1.6.8 in September 2025, with 1.6.9 in progress), it has nearly 7,000 GitHub stars and around 230,000 downloads of the current version. It's sandboxed, notarized, translated into twenty languages, and it wraps Apple's own <code>caffeinate</code> so the mechanism is beyond reproach. If you want a thin, trustworthy on/off switch with a timer, this is the one.</p>
+        <h2>Where it stops</h2>
+        <h3>No closed-lid mode, on purpose</h3>
+        <p>The README is explicit: it <em>“will only prevent sleep on desktop Macs and portable Macs with an open lid,”</em> out of thermal considerations. That's a reasonable position. It's also the project's most-requested feature. An August 2026 issue asks for an optional lid-closed mode because it <em>“would help many users who run autonomous agents or even just long build tasks on their MacBooks.”</em> A commenter adds: <em>“I faced the same issue with Claude Code running out overnight.”</em> A pull request offering the feature followed in late September.</p>
+        <h3>One trigger</h3>
+        <p>It can activate when an external display connects, and several issues report even that as unreliable. There's no “while this app is running,” no schedule, no Wi-Fi or power trigger.</p>
+        <h3>No “until”</h3>
+        <p>Durations only. You can't say “until 7 AM,” and there's no live countdown in the menu (issue #241 asks for one).</p>
+            
+      </div></div>
+    </section>
+    <section class="tight gray" id="compare">
+      <div class="wrap"><div class="prose">
+
+        <h2>Midnight Oil vs KeepingYouAwake</h2>
+                <div class="table-scroll"><table class="compare">
+          <thead><tr><th></th><th class="us">Midnight Oil</th><th>KeepingYouAwake</th></tr></thead><tbody>
+            <tr><td>Price</td><td class="us y">Free</td><td>Free</td></tr>
+            <tr><td>Open source</td><td class="us y">Yes, MIT</td><td>Yes, MIT</td></tr>
+            <tr><td>Actively maintained</td><td class="us y">Yes</td><td>Yes</td></tr>
+            <tr><td>Install</td><td class="us y">Homebrew cask or DMG</td><td>Homebrew cask or zip</td></tr>
+            <tr><td>One-click on and off</td><td class="us y">Yes</td><td>Yes</td></tr>
+            <tr><td>Timed sessions</td><td class="us y">Yes, with a live countdown</td><td>Yes, no countdown</td></tr>
+            <tr><td>Keep awake until a time</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>While an app is running</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Closed-lid mode</td><td class="us y">Yes, opt-in, with safeguards</td><td>No, by design</td></tr>
+            <tr><td>Triggers</td><td class="us y">10 kinds</td><td>External display only</td></tr>
+            <tr><td>End on low battery / Low Power Mode</td><td class="us y">Yes</td><td>Yes</td></tr>
+            <tr><td>Lid-close alarm on battery</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Sandboxed</td><td class="us y">No (helper needs root for lid mode)</td><td>Yes</td></tr>
+            <tr><td>Languages</td><td class="us y">English</td><td>About 20</td></tr>
+            <tr><td>Minimum macOS</td><td class="us y">14 Sonoma</td><td>10.13 (12 from 1.6.9)</td></tr>
+          </tbody></table></div>
+        <h3>What KeepingYouAwake does better</h3>
+        <p>It's smaller, it runs on macOS 10.13 through Tahoe, it's translated into twenty languages, it's sandboxed, and it has a decade of track record. If those matter more to you than lid support, stay.</p>
+        <h3>What Midnight Oil does better</h3>
+        <p>Closed-lid mode with real safeguards, sessions tied to an app or a clock time, a live countdown, ten trigger types, battery rules, hot keys, and statistics. Same license, same price.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight" id="switch">
+      <div class="wrap"><div class="prose">
+
+        <h2>Switching</h2>
+        <ol class="steps">
+          <li><b>Install Midnight Oil.</b> <code>brew install --cask coreyhaines31/tap/midnightoil</code></li>
+          <li><b>Set your defaults.</b> Settings › Sessions has the same allow-display-sleep and low-battery options you're used to. Settings › General has launch at login.</li>
+          <li><b>Add the trigger you wanted.</b> Settings › Triggers › Add Trigger › App Running › Terminal, or a schedule.</li>
+          <li><b>Turn on closed-lid mode when you need it.</b> It's a checkbox in a running session. Approve the helper once.</li>
+          <li><b>Quit KeepingYouAwake.</b> <code>brew uninstall --cask keepingyouawake</code> if you're done with it.</li>
+        </ol>
+            
+      </div></div>
+    </section>
+    <section class="tight gray">
+      <div class="wrap">
+        <div class="section-head"><h2>Other ways people keep a Mac awake</h2></div>
+        <div class="related">
+          <a href="/alternatives/amphetamine"><b>Amphetamine</b><span>Last update 2023. Closed-lid mode takes a script, a sudoers file, and a Terminal command.</span></a>
+          <a href="/alternatives/caffeine"><b>Caffeine</b><span>The 2006 original. One click, and that&#x27;s the whole app: no timers, triggers, or lid mode.</span></a>
+          <a href="/alternatives/caffeinate"><b>caffeinate command</b><span>Built in and free. Stops at a closed lid, and dies with the terminal.</span></a>
+          <a href="/alternatives/mouse-jiggler"><b>Mouse jigglers</b><span>Fake input to look busy. Detectable, and no help once the lid closes.</span></a>
+        </div>
+      </div>
+    </section>
+    <section class="cta">
+      <div class="wrap">
+        <h2>Same values. More coverage.</h2>
+        <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download for macOS</a>
+        <p class="fineprint">Free · Open source · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <span>© 2026 Corey Haines. MIT License.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="/alternatives/">Alternatives</a></span>
+    </div>
+  </footer>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does KeepingYouAwake work with the lid closed?", "acceptedAnswer": {"@type": "Answer", "text": "No. Its README says it only prevents sleep on desktop Macs and portables with an open lid, out of thermal considerations. A 2026 issue requesting the feature notes it would help users who run autonomous agents or long build tasks."}}, {"@type": "Question", "name": "Why does Midnight Oil allow closed-lid mode if KeepingYouAwake won't?", "acceptedAnswer": {"@type": "Answer", "text": "Because the risk can be managed rather than avoided. Midnight Oil's helper restores normal sleep the moment a session ends, when the app quits, or if the app crashes; sessions can end below a battery level or when unplugged; and an alarm sounds if the lid closes on battery. The feature is off unless you check it."}}, {"@type": "Question", "name": "Is Midnight Oil open source like KeepingYouAwake?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. MIT license, full source on GitHub, Homebrew cask, notarized DMG."}}, {"@type": "Question", "name": "Can I run both?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, but there's no reason to. Two keep-awake apps hold two assertions and do the same thing."}}]}</script>
+</body>
+</html>
