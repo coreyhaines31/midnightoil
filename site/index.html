@@ -268,7 +268,16 @@
     .compare .note { display: block; font-weight: 400; color: var(--muted); font-size: 13px; margin-top: 2px; }
 
     /* Proof */
-    .proof { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .proof { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+    .proof span a { color: var(--text); }
+    .proof b span { font-size: inherit; display: inline; color: inherit; }
+    .stars {
+      display: inline-flex; align-items: center; gap: 6px; margin-top: 22px;
+      padding: 7px 14px; border-radius: 980px; background: var(--gray); color: var(--text);
+      font-size: 14px; font-weight: 500; text-decoration: none;
+    }
+    .stars:hover { background: #ebebef; }
+    .stars svg { color: var(--gold); }
     .proof div { background: #fff; border-radius: 16px; padding: 22px; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
     .proof b { display: block; font-size: 28px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 4px; }
     .proof span { color: var(--muted); font-size: 14px; line-height: 1.4; display: block; }
@@ -324,6 +333,10 @@
         <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download for macOS</a>
         <a class="link" href="#how">See how it works</a>
       </div>
+      <a class="stars" href="https://github.com/coreyhaines31/midnightoil" data-stars hidden>
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 .25a.75.75 0 0 1 .67.42l1.88 3.81 4.2.61a.75.75 0 0 1 .42 1.28l-3.04 2.97.72 4.19a.75.75 0 0 1-1.09.79L8 12.35l-3.76 1.97a.75.75 0 0 1-1.09-.79l.72-4.19L.83 6.37a.75.75 0 0 1 .42-1.28l4.2-.61L7.33.67A.75.75 0 0 1 8 .25z"/></svg>
+        <span data-stars-count>0</span> <span data-stars-label>stars</span> on GitHub
+      </a>
       <p class="fineprint">Free · Open source · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
     </div>
 
@@ -531,6 +544,7 @@
           <p>No account, no subscription, no telemetry. Everything it does is in the source.</p>
         </div>
         <div class="proof">
+          <div><b><span data-stars-count>—</span></b><span>GitHub stars, live. <a href="https://github.com/coreyhaines31/midnightoil">Add yours.</a></span></div>
           <div><b>MIT</b><span>Licensed. Fork it, audit it, ship your own build.</span></div>
           <div><b>3 MB</b><span>The whole download. Native Swift, no Electron.</span></div>
           <div><b>0</b><span>Trackers, analytics, or network calls, apart from checking for updates.</span></div>
@@ -573,5 +587,20 @@
       <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a></span>
     </div>
   </footer>
+  <script>
+    // Live GitHub star count. Fails quietly: the page never depends on it.
+    (async () => {
+      try {
+        const res = await fetch("https://api.github.com/repos/coreyhaines31/midnightoil", { headers: { Accept: "application/vnd.github+json" } });
+        if (!res.ok) return;
+        const { stargazers_count: stars } = await res.json();
+        if (typeof stars !== "number") return;
+        const text = new Intl.NumberFormat("en-US", { notation: stars >= 10000 ? "compact" : "standard" }).format(stars);
+        document.querySelectorAll("[data-stars-count]").forEach(el => { el.textContent = text; });
+        document.querySelectorAll("[data-stars-label]").forEach(el => { el.textContent = stars === 1 ? "star" : "stars"; });
+        document.querySelectorAll("[data-stars]").forEach(el => { el.hidden = false; });
+      } catch (_) { /* offline or rate-limited: leave the fallback text */ }
+    })();
+  </script>
 </body>
 </html>
