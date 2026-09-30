@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mouse jiggler for Mac? You probably need a keep-awake app instead</title>
+  <meta name="description" content="Mouse jigglers fake input to look active. If your actual problem is a Mac that sleeps during a download, a build, or an AI-agent run, a keep-awake app does the job properly: no Accessibility permission, nothing for IT to detect, and it works with the lid closed.">
+  <link rel="canonical" href="https://midnightoil.app/alternatives/mouse-jiggler">
+  <meta property="og:title" content="Mouse jiggler for Mac? You probably need a keep-awake app instead">
+  <meta property="og:description" content="Mouse jigglers fake input to look active. If your actual problem is a Mac that sleeps during a download, a build, or an AI-agent run, a keep-awake app does the job properly: no Accessibility permission, nothing for IT to detect, and it works with the lid closed.">
+  <meta property="og:image" content="https://midnightoil.app/images/icon.png">
+  <meta property="og:url" content="https://midnightoil.app/alternatives/mouse-jiggler">
+  <link rel="icon" href="/images/icon.png">
+  <link rel="apple-touch-icon" href="/images/icon.png">
+  <link rel="stylesheet" href="/site.css">
+  <style>
+    .sub-hero { padding: 72px 0 40px; }
+    .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
+    .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
+    .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
+    .sub-hero .actions { display: flex; align-items: center; gap: 22px; margin-top: 28px; flex-wrap: wrap; }
+    .tldr { background: var(--gray); border-radius: var(--radius); padding: 26px 28px; margin: 44px 0 0; max-width: 900px; }
+    .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
+    .prose { max-width: 760px; }
+    .prose h2 { font-size: clamp(28px, 3.6vw, 40px); margin: 0 0 16px; }
+    .prose h3 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 8px; }
+    .prose p, .prose li { color: var(--muted); font-size: 17px; line-height: 1.6; }
+    .prose p strong { color: var(--text); font-weight: 600; }
+    .prose ul { padding-left: 20px; margin: 0 0 8px; }
+    .prose li { margin-bottom: 6px; }
+    .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
+    .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    .prose blockquote { margin: 18px 0; padding: 14px 20px; border-left: 3px solid var(--gold); background: var(--gray); border-radius: 0 12px 12px 0; }
+    .prose blockquote p { margin: 0; font-size: 16px; }
+    .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
+    .prose blockquote cite a { color: var(--faint); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+    .two > div { background: var(--gray); border-radius: 16px; padding: 22px; }
+    .two h3 { margin: 0 0 10px; font-size: 18px; }
+    .two ul { margin: 0; padding-left: 18px; }
+    .two li { font-size: 15px; margin-bottom: 6px; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
+    .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .related a { display: block; background: #fff; border-radius: 14px; padding: 18px 20px; text-decoration: none; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
+    .related a:hover { box-shadow: 0 0 0 0.5px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.06); }
+    .related b { display: block; margin-bottom: 4px; }
+    .related span { color: var(--muted); font-size: 14px; }
+    section.tight { padding: 64px 0; }
+    @media (max-width: 720px) { .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; } }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
+      <nav>
+        <a href="/#features">Features</a>
+        <a href="/alternatives/">Alternatives</a>
+        <a href="/#faq">FAQ</a>
+        <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
+        <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
+      </nav>
+    </div>
+  </div>
+  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">Mouse jiggler alternative</div>
+      <h1>Before you buy a mouse jiggler for your Mac, ask what problem you're solving.</h1>
+      <p class="lede">A mouse jiggler wiggles the cursor so the computer thinks you're there. That's the right tool for exactly one job: keeping a chat status green. If what you want is for your Mac to stay awake through a download, a render, a build, or an overnight agent run, a jiggler is the wrong tool, and a keep-awake app is the right one.</p>
+      <div class="actions">
+        <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download Midnight Oil</a>
+        <a class="link" href="#compare">See the comparison</a>
+      </div>
+      <div class="tldr"><h2>The short version</h2><p>Jigglers fake input. Keep-awake apps ask macOS for a power assertion, the same thing Xcode does. Midnight Oil keeps the Mac awake without moving your cursor, without Accessibility permission, without anything that shows up on a compliance report, and it works with the lid closed, which no jiggler can.</p></div>
+    </div>
+    <section class="tight" id="why">
+      <div class="wrap"><div class="prose">
+
+        <h2>Two different problems</h2>
+        <p>“Mouse jiggler” is one of the most-searched Mac utilities there is, and most of the people searching don't actually want a jiggler. They have one of two problems that look alike from the outside.</p>
+        <h3>Problem one: your status goes yellow</h3>
+        <p>Slack and Teams mark you away after a few minutes without input. A jiggler fixes that by pretending you're typing. If this is your problem, a keep-awake app won't help; it doesn't send input. You'll want to think about whether faking presence is worth the risk (see below), but that's a different page.</p>
+        <h3>Problem two: your Mac goes to sleep</h3>
+        <p>The download stalls, the SSH session drops, the render stops, the agent freezes mid-task. A jiggler sort of fixes this, by resetting the idle timer every thirty seconds with a fake mouse event. A keep-awake app fixes it properly, by telling macOS not to sleep. That's what Midnight Oil does.</p>
+        <h2>Why a jiggler is the wrong fix for sleep</h2>
+        <h3>It can't survive a closed lid</h3>
+        <p>Close the MacBook and it sleeps, <em>“jiggler or not, unless it's plugged into power and an external display.”</em> Some Mac jiggler apps say so in their own descriptions. Midnight Oil's closed-lid mode keeps the laptop working in a bag.</p>
+        <h3>It's detectable, and it looks like what it is</h3>
+        <p>A USB jiggler works by telling the computer it's a mouse, and that's also how it's found. A software jiggler needs Accessibility access, which management tools can list. The movement arrives every 30 or 60 seconds on the dot. Endpoint tools flag all of this, and in 2024 Wells Fargo dismissed more than a dozen employees over <em>“simulation of keyboard activity.”</em> A keep-awake app holds an ordinary power assertion. There's nothing to detect because there's nothing being faked.</p>
+        <h3>It interferes with the work</h3>
+        <p>A cursor that moves on its own can steal focus or misclick during exactly the unattended run you set it up for.</p>
+        <h3>Corporate Macs block it anyway</h3>
+        <p>Management profiles can lock energy settings, block apps from outside the App Store, and pre-empty the Accessibility list. A jiggler needs one of those; Midnight Oil's basic sessions need none.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight gray" id="compare">
+      <div class="wrap"><div class="prose">
+
+        <h2>Midnight Oil vs a mouse jiggler</h2>
+                <div class="table-scroll"><table class="compare">
+          <thead><tr><th></th><th class="us">Midnight Oil</th><th>Mouse jiggler</th></tr></thead><tbody>
+            <tr><td>Keeps the Mac awake</td><td class="us y">Yes, via a power assertion</td><td>Indirectly, by faking input</td></tr>
+            <tr><td>Keeps Slack or Teams green</td><td class="us y">No, by design</td><td>Yes</td></tr>
+            <tr><td>Works with the lid closed</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Moves your cursor</td><td class="us y">Never</td><td>Every 30–60 seconds</td></tr>
+            <tr><td>Needs Accessibility permission</td><td class="us y">No</td><td>Software jigglers: yes</td></tr>
+            <tr><td>Visible to device management</td><td class="us y">A normal power assertion</td><td>Extra mouse device or Accessibility grant</td></tr>
+            <tr><td>Timed and until-a-time sessions</td><td class="us y">Yes</td><td>Rarely</td></tr>
+            <tr><td>Ends when an app quits</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Battery safety</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Price</td><td class="us y">Free, open source</td><td>Free to $25</td></tr>
+          </tbody></table></div>
+        <h3>When a jiggler is the right tool</h3>
+        <p>When the only thing you need is a green status dot and you've made peace with the risk. Stick Software's Jiggler is free, open source, and has been around for years.</p>
+        <h3>When Midnight Oil is</h3>
+        <p>When the Mac itself needs to stay up: downloads, builds, renders, presentations, and especially AI agents working while you're away.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight" id="switch">
+      <div class="wrap"><div class="prose">
+
+        <h2>If sleep was your real problem</h2>
+        <ol class="steps">
+          <li><b>Install Midnight Oil.</b> <code>brew install --cask coreyhaines31/tap/midnightoil</code>, or the DMG from GitHub.</li>
+          <li><b>Click the flame and pick how long.</b> Indefinitely, 8 hours, until 7 AM, or while Terminal is running.</li>
+          <li><b>Closing the laptop?</b> Check “Stay awake with lid closed.”</li>
+          <li><b>Unplug the jiggler.</b> Or quit it. Your cursor will stay where you left it.</li>
+        </ol>
+            
+      </div></div>
+    </section>
+    <section class="tight gray">
+      <div class="wrap">
+        <div class="section-head"><h2>Other ways people keep a Mac awake</h2></div>
+        <div class="related">
+          <a href="/alternatives/amphetamine"><b>Amphetamine</b><span>The former default. Frozen since 2023; closed-lid mode needs a three-part install.</span></a>
+          <a href="/alternatives/caffeine"><b>Caffeine</b><span>The 2006 original. One-click and tiny, with no timers, triggers, or closed-lid mode.</span></a>
+          <a href="/alternatives/caffeinate"><b>caffeinate command</b><span>Built in and free. No lid support, no status, dies with the terminal.</span></a>
+          <a href="/alternatives/keepingyouawake"><b>KeepingYouAwake</b><span>Maintained, minimal, open source. No closed-lid mode, by design.</span></a>
+        </div>
+      </div>
+    </section>
+    <section class="cta">
+      <div class="wrap">
+        <h2>Keep it awake, honestly.</h2>
+        <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download for macOS</a>
+        <p class="fineprint">Free · Open source · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <span>© 2026 Corey Haines. MIT License.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="/alternatives/">Alternatives</a></span>
+    </div>
+  </footer>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is Midnight Oil a mouse jiggler?", "acceptedAnswer": {"@type": "Answer", "text": "No. It never moves your cursor or sends fake input. It holds a macOS power-management assertion, which is what stops the Mac from sleeping. It won't keep Slack or Teams showing you as active, by design."}}, {"@type": "Question", "name": "Will a mouse jiggler keep my MacBook awake with the lid closed?", "acceptedAnswer": {"@type": "Answer", "text": "No. Closing the lid puts a MacBook to sleep regardless of cursor movement. Midnight Oil's closed-lid mode is built for that case."}}, {"@type": "Question", "name": "Can IT detect a mouse jiggler?", "acceptedAnswer": {"@type": "Answer", "text": "Usually. A USB jiggler enumerates as a mouse the computer keeps a record of; a software jiggler needs Accessibility access that device-management tools can report; and the movement is perfectly periodic. In 2024 Wells Fargo dismissed more than a dozen employees for simulated activity. A keep-awake app is a normal power assertion, the same one Xcode and Final Cut use."}}, {"@type": "Question", "name": "Does Midnight Oil need Accessibility permission?", "acceptedAnswer": {"@type": "Answer", "text": "No. It needs no special permissions for ordinary sessions. Closed-lid mode uses a helper you approve once in System Settings."}}]}</script>
+</body>
+</html>

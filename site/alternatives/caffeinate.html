@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>caffeinate on Mac: the command, its flags, and when you want an app instead</title>
+  <meta name="description" content="How the built-in macOS caffeinate command works (-d, -i, -s, -u, -t, -w), what it can&#x27;t do, and why people running Claude Code or long jobs overnight end up wanting a menu bar app with closed-lid mode.">
+  <link rel="canonical" href="https://midnightoil.app/alternatives/caffeinate">
+  <meta property="og:title" content="caffeinate on Mac: the command, its flags, and when you want an app instead">
+  <meta property="og:description" content="How the built-in macOS caffeinate command works (-d, -i, -s, -u, -t, -w), what it can&#x27;t do, and why people running Claude Code or long jobs overnight end up wanting a menu bar app with closed-lid mode.">
+  <meta property="og:image" content="https://midnightoil.app/images/icon.png">
+  <meta property="og:url" content="https://midnightoil.app/alternatives/caffeinate">
+  <link rel="icon" href="/images/icon.png">
+  <link rel="apple-touch-icon" href="/images/icon.png">
+  <link rel="stylesheet" href="/site.css">
+  <style>
+    .sub-hero { padding: 72px 0 40px; }
+    .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
+    .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
+    .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
+    .sub-hero .actions { display: flex; align-items: center; gap: 22px; margin-top: 28px; flex-wrap: wrap; }
+    .tldr { background: var(--gray); border-radius: var(--radius); padding: 26px 28px; margin: 44px 0 0; max-width: 900px; }
+    .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
+    .prose { max-width: 760px; }
+    .prose h2 { font-size: clamp(28px, 3.6vw, 40px); margin: 0 0 16px; }
+    .prose h3 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 8px; }
+    .prose p, .prose li { color: var(--muted); font-size: 17px; line-height: 1.6; }
+    .prose p strong { color: var(--text); font-weight: 600; }
+    .prose ul { padding-left: 20px; margin: 0 0 8px; }
+    .prose li { margin-bottom: 6px; }
+    .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
+    .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    .prose blockquote { margin: 18px 0; padding: 14px 20px; border-left: 3px solid var(--gold); background: var(--gray); border-radius: 0 12px 12px 0; }
+    .prose blockquote p { margin: 0; font-size: 16px; }
+    .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
+    .prose blockquote cite a { color: var(--faint); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+    .two > div { background: var(--gray); border-radius: 16px; padding: 22px; }
+    .two h3 { margin: 0 0 10px; font-size: 18px; }
+    .two ul { margin: 0; padding-left: 18px; }
+    .two li { font-size: 15px; margin-bottom: 6px; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
+    .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .related a { display: block; background: #fff; border-radius: 14px; padding: 18px 20px; text-decoration: none; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
+    .related a:hover { box-shadow: 0 0 0 0.5px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.06); }
+    .related b { display: block; margin-bottom: 4px; }
+    .related span { color: var(--muted); font-size: 14px; }
+    section.tight { padding: 64px 0; }
+    @media (max-width: 720px) { .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; } }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
+      <nav>
+        <a href="/#features">Features</a>
+        <a href="/alternatives/">Alternatives</a>
+        <a href="/#faq">FAQ</a>
+        <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
+        <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
+      </nav>
+    </div>
+  </div>
+  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">caffeinate vs an app</div>
+      <h1>caffeinate is built into your Mac. Here's how to use it, and when it isn't enough.</h1>
+      <p class="lede">Every Mac ships with <code>caffeinate</code>, a Terminal command that keeps the machine awake. It's free, it's already installed, and for a one-off job it's fine. This page covers the flags, the gotchas, and the point where a menu bar app is the better tool.</p>
+      <div class="actions">
+        <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download Midnight Oil</a>
+        <a class="link" href="#compare">See the comparison</a>
+      </div>
+      <div class="tldr"><h2>The short version</h2><p>Run <code>caffeinate -i</code> in a terminal and your Mac won't idle-sleep until you press Ctrl-C. It can't survive a closed lid, it has no status indicator, it dies when the terminal closes, and a couple of its flags silently do nothing on battery. Midnight Oil uses the same power assertion under the hood, and adds the parts caffeinate can't: closed-lid mode, a countdown in the menu bar, triggers, and battery safety.</p></div>
+    </div>
+    <section class="tight" id="why">
+      <div class="wrap"><div class="prose">
+
+        <h2>How caffeinate works</h2>
+        <p><code>/usr/bin/caffeinate</code> has shipped with every Mac since 2012. It asks the power manager for an assertion, the same mechanism Xcode, Final Cut, and Midnight Oil use, and holds it until the command exits. The man page hasn't changed since it was written, which tells you how simple it is.</p>
+        <h3>The flags</h3>
+        <pre><code>caffeinate            # prevent idle sleep until Ctrl-C
+caffeinate -d         # also keep the display on
+caffeinate -i         # prevent idle system sleep (the default)
+caffeinate -s         # prevent system sleep; only works on AC power
+caffeinate -u -t 5    # declare the user active for 5 seconds
+caffeinate -t 3600    # for one hour
+caffeinate -w 12345   # until process 12345 exits
+caffeinate -i make    # for as long as this command runs
+caffeinate -dimsu     # everything</code></pre>
+        <p>Check what's holding the Mac awake with <code>pmset -g assertions</code>. Stop a stray one with <code>killall caffeinate</code>.</p>
+        <h2>Where it falls down</h2>
+        <h3>A closed lid beats it</h3>
+        <p>An assertion holds off <em>idle</em> sleep. Closing the lid isn't idle; it's an explicit request, and as one guide puts it, <em>“no assertion overrides it.”</em> The workaround is <code>sudo pmset -a disablesleep 1</code>, which needs an admin password, applies to the whole machine, and stays on until you remember to turn it off. A MacBook still running in a bag with sleep disabled has nowhere to put its heat.</p>
+        <h3>It has no face</h3>
+        <p>Nothing in the menu bar tells you caffeinate is running, or for how long. You find out it wasn't when the SSH session is gone in the morning.</p>
+        <h3>It dies with the terminal</h3>
+        <p>Close the window, quit Terminal, or have it crash, and the assertion goes with it. The community answer is to wrap it in tmux, which works, and is one more thing to remember at 11 PM.</p>
+        <h3>Some flags silently do nothing</h3>
+        <p><code>-s</code> is a no-op on battery. <code>-t</code> is ignored when you wrap a command. <code>-u</code> expires after five seconds unless you say otherwise. Each of these has a Stack Exchange thread from someone who thought it worked.</p>
+        <h3>No triggers, no schedule</h3>
+        <p>It can't start when you dock, stop when the battery gets low, or say “until 7 AM and then let it sleep.” You'd script all of that yourself.</p>
+        <h2>The overnight agent problem, specifically</h2>
+        <p>People running Claude Code, Codex, and Cursor agents overnight have converged on the same recipe: <code>tmux new-session -d -s agent 'caffeinate -i claude'</code>, sometimes wired into Claude Code's hooks so it starts automatically. It works, as long as the lid stays open and you never need to see whether it's still running. There are half a dozen wrapper projects on GitHub whose only job is to make caffeinate less annoying.</p>
+        <p>Midnight Oil is what that recipe wants to be. Start a session <strong>while Terminal is running</strong> and it ends when the agent's app quits. Or <strong>until 7 AM</strong>. Check <strong>Stay awake with lid closed</strong> and you can shut the laptop. The flame in the menu bar shows time remaining, and normal sleep comes back on its own when the session ends, when the app quits, or if anything crashes.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight gray" id="compare">
+      <div class="wrap"><div class="prose">
+
+        <h2>Midnight Oil vs caffeinate</h2>
+                <div class="table-scroll"><table class="compare">
+          <thead><tr><th></th><th class="us">Midnight Oil</th><th>caffeinate</th></tr></thead><tbody>
+            <tr><td>Price</td><td class="us y">Free</td><td>Free, preinstalled</td></tr>
+            <tr><td>Mechanism</td><td class="us y">IOKit power assertion</td><td>IOKit power assertion</td></tr>
+            <tr><td>Shows it's running and time left</td><td class="us y">Menu bar flame and countdown</td><td>Nothing; check pmset</td></tr>
+            <tr><td>Survives closing the terminal</td><td class="us y">Yes</td><td>No (unless wrapped in tmux)</td></tr>
+            <tr><td>Keep awake until a clock time</td><td class="us y">Yes</td><td>No (seconds only, via -t)</td></tr>
+            <tr><td>While an app is running</td><td class="us y">Yes, pick from a list</td><td>Yes, one process, via -w or wrapping</td></tr>
+            <tr><td>Closed-lid mode</td><td class="us y">Yes; sleep restored automatically</td><td>No; sudo pmset workaround, manual reset</td></tr>
+            <tr><td>Triggers and schedules</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>End on low battery or unplug</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Works from a script</td><td class="us y">Hot keys; CLI planned</td><td>Yes</td></tr>
+            <tr><td>Install</td><td class="us y">Homebrew cask or DMG</td><td>None needed</td></tr>
+          </tbody></table></div>
+        <h3>When caffeinate is the right tool</h3>
+        <p>Scripts and CI. If you're already in a shell and the job is <code>caffeinate -i ./build.sh</code>, there's no reason to open an app. It's also the only option on a Mac where you can't install anything.</p>
+        <h3>When an app is</h3>
+        <p>Anything you'd want to see, extend, or forget about: an overnight run, a download, a render, a presentation, or a laptop you're about to close.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight" id="switch">
+      <div class="wrap"><div class="prose">
+
+        <h2>Replacing your caffeinate habit</h2>
+        <ol class="steps">
+          <li><b>Install Midnight Oil.</b> <code>brew install --cask coreyhaines31/tap/midnightoil</code></li>
+          <li><b>Start the agent</b> in Terminal, Cursor, or wherever it lives.</li>
+          <li><b>Click the flame › While App Is Running › Terminal.</b> Or Keep Awake Until › 7:00 AM. Check “Stay awake with lid closed” if you're closing the laptop.</li>
+          <li><b>Leave.</b> When the app quits or the time arrives, your Mac goes back to its normal sleep schedule.</li>
+        </ol>
+        <p>Keep <code>caffeinate</code> in your scripts. Use Midnight Oil for everything you'd otherwise have to remember.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight gray">
+      <div class="wrap">
+        <div class="section-head"><h2>Other ways people keep a Mac awake</h2></div>
+        <div class="related">
+          <a href="/alternatives/amphetamine"><b>Amphetamine</b><span>The former default. Frozen since 2023; closed-lid mode needs a three-part install.</span></a>
+          <a href="/alternatives/caffeine"><b>Caffeine</b><span>The 2006 original. One-click and tiny, with no timers, triggers, or closed-lid mode.</span></a>
+          <a href="/alternatives/keepingyouawake"><b>KeepingYouAwake</b><span>Maintained, minimal, open source. No closed-lid mode, by design.</span></a>
+          <a href="/alternatives/mouse-jiggler"><b>Mouse jigglers</b><span>Fake input to look active. Detectable, and useless with the lid closed.</span></a>
+        </div>
+      </div>
+    </section>
+    <section class="cta">
+      <div class="wrap">
+        <h2>The same assertion, with a menu bar.</h2>
+        <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download for macOS</a>
+        <p class="fineprint">Free · Open source · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <span>© 2026 Corey Haines. MIT License.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="/alternatives/">Alternatives</a></span>
+    </div>
+  </footer>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What does caffeinate do on a Mac?", "acceptedAnswer": {"@type": "Answer", "text": "caffeinate creates a power-management assertion that stops macOS from sleeping. With no flags it prevents idle sleep until you stop it. You can scope it to a command (caffeinate -i make), a duration (caffeinate -t 3600), or a process (caffeinate -w PID)."}}, {"@type": "Question", "name": "Does caffeinate keep a MacBook awake with the lid closed?", "acceptedAnswer": {"@type": "Answer", "text": "No. Closing the lid is an explicit sleep request that a power assertion can't override. The workaround, sudo pmset -a disablesleep 1, needs an admin password and must be reverted by hand. Midnight Oil's closed-lid mode does this through a helper that restores sleep automatically."}}, {"@type": "Question", "name": "How do I keep my Mac awake while Claude Code runs overnight?", "acceptedAnswer": {"@type": "Answer", "text": "The command-line way is tmux new-session -d 'caffeinate -i claude', which keeps the assertion alive even if the terminal closes. The simpler way is Midnight Oil: start a session while Terminal is running, or until 7 AM, and check Stay Awake with Lid Closed if you're closing the laptop."}}, {"@type": "Question", "name": "How do I stop caffeinate?", "acceptedAnswer": {"@type": "Answer", "text": "Press Ctrl-C in the terminal that started it, or run killall caffeinate. Check what's holding your Mac awake with pmset -g assertions."}}]}</script>
+</body>
+</html>
