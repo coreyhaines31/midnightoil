@@ -16,9 +16,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     /// The countdown line in the open menu, retitled every tick so it stays live.
     private weak var detailsItem: NSMenuItem?
 
-    init(sessions: SessionController) {
+    init(sessions: SessionController, triggers: TriggerStore) {
         self.sessions = sessions
-        settingsWindow = SettingsWindow(helper: sessions.helper)
+        settingsWindow = SettingsWindow(helper: sessions.helper, triggers: triggers)
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         super.init()
 
@@ -101,6 +101,12 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         details.isEnabled = false
         menu.addItem(details)
         detailsItem = details
+
+        if case .trigger(_, let name) = session.source {
+            let source = NSMenuItem(title: "Started by the “\(name)” trigger", action: nil, keyEquivalent: "")
+            source.isEnabled = false
+            menu.addItem(source)
+        }
 
         let displaySleep = ClosureMenuItem("Allow Display Sleep") { [weak self] in
             self?.sessions.setAllowsDisplaySleep(!session.allowsDisplaySleep)
