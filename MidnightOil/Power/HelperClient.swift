@@ -28,8 +28,10 @@ final class HelperClient {
     func install() {
         do {
             try service.register()
+        } catch where service.status == .requiresApproval {
+            // Expected on first install: macOS won't start it until the user approves.
         } catch {
-            Self.logger.error("Helper registration failed: \(error.localizedDescription)")
+            Self.logger.error("Helper registration failed: \(error.localizedDescription, privacy: .public)")
         }
         if service.status == .requiresApproval {
             SMAppService.openSystemSettingsLoginItems()
@@ -42,7 +44,7 @@ final class HelperClient {
         do {
             try await service.unregister()
         } catch {
-            Self.logger.error("Helper removal failed: \(error.localizedDescription)")
+            Self.logger.error("Helper removal failed: \(error.localizedDescription, privacy: .public)")
         }
     }
 
@@ -52,7 +54,7 @@ final class HelperClient {
         let connection = currentConnection()
         return await withCheckedContinuation { continuation in
             let proxy = connection.remoteObjectProxyWithErrorHandler { error in
-                Self.logger.error("Helper call failed: \(error.localizedDescription)")
+                Self.logger.error("Helper call failed: \(error.localizedDescription, privacy: .public)")
                 continuation.resume(returning: false)
             }
             guard let helper = proxy as? HelperProtocol else {
