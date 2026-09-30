@@ -20,10 +20,8 @@ final class SessionHistory {
         records = Self.load()
     }
 
-    func record(_ session: Session, endedAt end: Date) {
-        var triggerName: String?
-        if case .trigger(_, let name) = session.source { triggerName = name }
-        records.append(SessionRecord(start: session.start, end: end, triggerName: triggerName))
+    func record(_ record: SessionRecord) {
+        records.append(record)
         if records.count > Self.limit { records.removeFirst(records.count - Self.limit) }
         save()
     }

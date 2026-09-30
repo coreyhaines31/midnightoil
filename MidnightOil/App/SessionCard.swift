@@ -97,3 +97,51 @@ struct SessionCardView: View {
         .frame(width: 290, alignment: .leading)
     }
 }
+
+/// Shown at the top of the idle menu after a session that ran while you were away.
+struct LastSessionView: View {
+    let record: SessionRecord
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(nsImage: FlameIcon.menuBarImage(lit: false, size: 20))
+                .renderingMode(.template)
+                .foregroundStyle(.secondary)
+                .frame(width: 24, height: 24)
+            VStack(alignment: .leading, spacing: 2) {
+                Text("While you were away")
+                    .font(.system(size: 13, weight: .semibold))
+                Text(summary)
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+                Text(ending)
+                    .font(.system(size: 11))
+                    .foregroundStyle(.tertiary)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.leading, 14)
+        .padding(.trailing, 16)
+        .padding(.vertical, 4)
+        .frame(width: 290, alignment: .leading)
+    }
+
+    private var summary: String {
+        "Kept working \(RemainingTime.short(record.away)) of a \(RemainingTime.short(record.awake)) session"
+    }
+
+    private var ending: String {
+        let time = SessionCardModel.clockTime(record.end)
+        guard let cause = record.endCause else { return "Ended \(time)" }
+        return "Ended \(time) · \(cause.label)"
+    }
+
+    /// The last session worth recapping: recent, and mostly unattended.
+    static func recap(from records: [SessionRecord], now: Date = .now) -> SessionRecord? {
+        guard let last = records.last,
+              now.timeIntervalSince(last.end) < 18 * 3_600,
+              last.away >= 10 * 60
+        else { return nil }
+        return last
+    }
+}

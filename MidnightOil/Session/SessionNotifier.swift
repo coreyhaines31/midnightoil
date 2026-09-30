@@ -1,10 +1,18 @@
+import MidnightOilCore
 import UserNotifications
 
 /// Tells the user when a session ended without them ending it.
 enum SessionNotifier {
-    static func sessionEnded(_ reason: SessionEndReason) {
+    /// Away this long and the notification becomes a recap of what happened.
+    private static let recapThreshold: TimeInterval = 10 * 60
+
+    static func sessionEnded(_ reason: SessionEndReason, record: SessionRecord) {
         guard Preferences.notifiesOnSessionEnd, let body = message(for: reason) else { return }
-        post(title: "Session ended", body: body)
+        if record.away >= recapThreshold {
+            post(title: "While you were away", body: "\(record.headline). \(body)")
+        } else {
+            post(title: "Session ended", body: body)
+        }
     }
 
     static func sessionStarted(byTrigger name: String) {
@@ -35,7 +43,7 @@ enum SessionNotifier {
 
     private static func message(for reason: SessionEndReason) -> String? {
         switch reason {
-        case .user: nil
+        case .user, .replaced, .quit: nil
         case .timeUp: "Your Mac can sleep normally again."
         case .appQuit(let name): "\(name) quit, so your Mac can sleep again."
         case .downloadFinished(let name): "“\(name)” finished downloading, so your Mac can sleep again."
