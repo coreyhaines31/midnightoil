@@ -40,7 +40,7 @@
     .nav nav a.pill { color: #fff; }
 
     /* Hero */
-    .hero { text-align: center; padding: 84px 0 24px; }
+    .hero { text-align: center; padding: 84px 0 0; }
     .hero h1 {
       font-size: clamp(44px, 7.2vw, 80px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.02;
     }
@@ -150,14 +150,14 @@
     .case .ill svg { width: 100%; max-width: 300px; height: auto; display: block; }
 
     /* Showcase: day fades to night */
-    .showcase { padding: 8px 0 0; background: #fff; color: #f5f5f7; overflow: hidden; }
+    .showcase { padding: 140px 0 0; background: #fff; color: #f5f5f7; overflow: hidden; }
     .showcase .wrap { max-width: none; padding: 0; }
     .showcase-head { padding: 0 22px; }
     .night-stage {
-      padding: 120px 22px 48px;
+      padding: 150px 22px 48px;
       background: linear-gradient(180deg, #ffffff 0%, #eceef4 12%, #b9bdd0 28%, #4a4e74 48%, #1b1e36 66%, #0b0d1c 82%, #0b0d1c 100%);
     }
-    .showcase-head { text-align: center; max-width: 720px; margin: 0 auto -60px; color: var(--text); position: relative; z-index: 1; }
+    .showcase-head { text-align: center; max-width: 720px; margin: 0 auto -40px; color: var(--text); position: relative; z-index: 1; }
     .showcase-head h2 { color: inherit; }
     .showcase-head p { font-size: clamp(17px, 1.8vw, 20px); color: var(--muted); margin: 16px 0 0; line-height: 1.45; }
     .laptop { position: relative; max-width: 900px; margin: 0 auto; }
@@ -210,8 +210,9 @@
     @keyframes blink { 50% { opacity: 0; } }
     @media (max-width: 720px) {
       .showcase-head h2 br { display: none; }
-      .showcase-head { margin-bottom: -40px; }
-      .night-stage { padding-top: 90px; }
+      .showcase { padding-top: 88px; }
+      .showcase-head { margin-bottom: -30px; }
+      .night-stage { padding-top: 100px; }
       .laptop .notch { display: none; }
       .laptop .base { margin: 0 -10px; }
       .term { left: 3%; right: 3%; top: 32px; bottom: 12px; font-size: 8.5px; }
