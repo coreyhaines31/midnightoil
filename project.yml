@@ -20,9 +20,20 @@ targets:
   MidnightOil:
     type: application
     platform: macOS
-    sources: [MidnightOil]
+    sources:
+      - MidnightOil
+      - Shared
+      - path: LaunchDaemons
+        buildPhase:
+          copyFiles:
+            destination: wrapper
+            subpath: Contents/Library/LaunchDaemons
     dependencies:
       - package: MidnightOilCore
+      - target: MidnightOilHelper
+        copy:
+          destination: executables
+        codeSignOnCopy: true
     info:
       path: MidnightOil/Info.plist
       properties:
@@ -37,6 +48,17 @@ targets:
         PRODUCT_NAME: Midnight Oil
         PRODUCT_MODULE_NAME: MidnightOil
         PRODUCT_BUNDLE_IDENTIFIER: app.midnightoil.MidnightOil
+  MidnightOilHelper:
+    type: tool
+    platform: macOS
+    sources: [MidnightOilHelper, Shared]
+    settings:
+      base:
+        PRODUCT_NAME: MidnightOilHelper
+        PRODUCT_BUNDLE_IDENTIFIER: app.midnightoil.MidnightOil.Helper
+        SKIP_INSTALL: YES
+        GENERATE_INFOPLIST_FILE: YES
+        CREATE_INFOPLIST_SECTION_IN_BINARY: YES
 schemes:
   MidnightOil:
     build:
