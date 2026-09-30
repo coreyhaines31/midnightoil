@@ -7,11 +7,14 @@ import MidnightOilCore
 final class StatusItemController: NSObject, NSMenuDelegate {
     private static let minuteChoices = [5, 10, 15, 30, 45]
     private static let hourChoices = [1, 2, 3, 4, 6, 8, 12]
+    private static let extendChoices = [5, 15, 30, 60, 120]
 
     private let statusItem: NSStatusItem
     private let sessions: SessionController
     private let customEndWindow = CustomEndWindow()
     private let settingsWindow = SettingsWindow()
+    /// The countdown line in the open menu, retitled every tick so it stays live.
+    private weak var detailsItem: NSMenuItem?
 
     init(sessions: SessionController) {
         self.sessions = sessions
@@ -48,6 +51,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         if statusItem.button?.title != title {
             statusItem.button?.title = title
         }
+        if let session = sessions.session {
+            detailsItem?.title = Self.describe(session)
+        }
     }
 
     // MARK: - Menu
@@ -56,28 +62,17 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         menu.removeAllItems()
 
         if let session = sessions.session {
-            menu.addItem(.sectionHeader(title: "Current Session"))
-            let details = NSMenuItem(title: Self.describe(session), action: nil, keyEquivalent: "")
-            details.isEnabled = false
-            menu.addItem(details)
-
-            let displaySleep = ClosureMenuItem("Allow Display Sleep") { [weak self] in
-                self?.sessions.setAllowsDisplaySleep(!session.allowsDisplaySleep)
-            }
-            displaySleep.state = session.allowsDisplaySleep ? .on : .off
-            menu.addItem(displaySleep)
-
-            menu.addItem(ClosureMenuItem("End Session") { [weak self] in self?.sessions.end() })
+            addCurrentSessionItems(for: session, to: menu)
             menu.addItem(.separator())
         }
 
         menu.addItem(.sectionHeader(title: "Start New Session"))
-        menu.addItem(startItem("Indefinitely", end: .indefinite))
+        menu.addItem(startItem("Indefinitely", end: .indefinite, keyEquivalent: "i"))
         menu.addItem(submenuItem("Minutes", items: Self.minuteChoices.map {
-            startItem("\($0) minutes", end: .after(TimeInterval($0 * 60)))
+            startItem(Self.durationTitle(minutes: $0), end: .after(TimeInterval($0 * 60)))
         }))
         menu.addItem(submenuItem("Hours", items: Self.hourChoices.map {
-            startItem($0 == 1 ? "1 hour" : "\($0) hours", end: .after(TimeInterval($0 * 3_600)))
+            startItem(Self.durationTitle(minutes: $0 * 60), end: .after(TimeInterval($0 * 3_600)))
         }))
         menu.addItem(submenuItem("Until", items: untilItems()))
 
@@ -85,8 +80,39 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         menu.addItem(ClosureMenuItem("Settings…", keyEquivalent: ",") { [weak self] in
             self?.settingsWindow.show()
         })
+        menu.addItem(ClosureMenuItem("About \(Brand.name)") {
+            NSApp.activate()
+            NSApp.orderFrontStandardAboutPanel(nil)
+        })
+        menu.addItem(.separator())
         menu.addItem(ClosureMenuItem("Quit \(Brand.name)", keyEquivalent: "q") {
             NSApp.terminate(nil)
+        })
+    }
+
+    private func addCurrentSessionItems(for session: Session, to menu: NSMenu) {
+        menu.addItem(.sectionHeader(title: "Current Session"))
+        let details = NSMenuItem(title: Self.describe(session), action: nil, keyEquivalent: "")
+        details.isEnabled = false
+        menu.addItem(details)
+        detailsItem = details
+
+        let displaySleep = ClosureMenuItem("Allow Display Sleep") { [weak self] in
+            self?.sessions.setAllowsDisplaySleep(!session.allowsDisplaySleep)
+        }
+        displaySleep.state = session.allowsDisplaySleep ? .on : .off
+        menu.addItem(displaySleep)
+
+        if session.endDate != nil {
+            menu.addItem(submenuItem("Extend Session", items: Self.extendChoices.map { minutes in
+                ClosureMenuItem("+ " + Self.durationTitle(minutes: minutes)) { [weak self] in
+                    self?.sessions.extend(by: TimeInterval(minutes * 60))
+                }
+            }))
+        }
+
+        menu.addItem(ClosureMenuItem("End Current Session", keyEquivalent: "x") { [weak self] in
+            self?.sessions.end()
         })
     }
 
@@ -101,8 +127,16 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         return items
     }
 
-    private func startItem(_ title: String, end: SessionEnd) -> NSMenuItem {
-        ClosureMenuItem(title) { [weak self] in self?.sessions.start(end) }
+    private func startItem(_ title: String, end: SessionEnd, keyEquivalent: String = "") -> NSMenuItem {
+        ClosureMenuItem(title, keyEquivalent: keyEquivalent) { [weak self] in self?.sessions.start(end) }
+    }
+
+    private static func durationTitle(minutes: Int) -> String {
+        switch minutes {
+        case 60: "1 hour"
+        case let minutes where minutes % 60 == 0: "\(minutes / 60) hours"
+        default: "\(minutes) minutes"
+        }
     }
 
     private func submenuItem(_ title: String, items: [NSMenuItem]) -> NSMenuItem {
@@ -117,7 +151,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         guard let endDate = session.endDate, let remaining = session.remaining(at: .now) else {
             return "Running until you end it"
         }
-        return "Ends in \(RemainingTime.short(remaining)) (\(clockTime(endDate)))"
+        return "\(RemainingTime.detailed(remaining)) remaining (\(clockTime(endDate)))"
     }
 
     /// "5:00 PM" today, "Wed 1:00 AM" on another day.

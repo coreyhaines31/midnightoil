@@ -48,6 +48,11 @@ final class SessionController {
         onChange?()
     }
 
+    func extend(by interval: TimeInterval) {
+        session = session?.extended(by: interval)
+        onChange?()
+    }
+
     func setAllowsDisplaySleep(_ allowed: Bool) {
         session?.allowsDisplaySleep = allowed
         applyAssertions()
