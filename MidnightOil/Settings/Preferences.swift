@@ -13,6 +13,9 @@ enum Preferences {
         static let showsRemainingInMenuBar = "showsRemainingInMenuBar"
         static let notifiesOnSessionEnd = "notifiesOnSessionEnd"
         static let triggersEnabled = "triggersEnabled"
+        static let driveAliveEnabled = "driveAliveEnabled"
+        static let driveAliveInterval = "driveAliveInterval"
+        static let driveAliveVolumes = "driveAliveVolumes"
     }
 
     static let defaultBatteryFloorPercent = 20
@@ -29,7 +32,9 @@ enum Preferences {
             Key.endsWhenUnplugged: false,
             Key.showsRemainingInMenuBar: false,
             Key.notifiesOnSessionEnd: true,
-            Key.triggersEnabled: true
+            Key.triggersEnabled: true,
+            Key.driveAliveEnabled: false,
+            Key.driveAliveInterval: 10
         ])
     }
 
@@ -50,4 +55,18 @@ enum Preferences {
     static var notifiesOnSessionEnd: Bool { defaults.bool(forKey: Key.notifiesOnSessionEnd) }
 
     static var triggersEnabled: Bool { defaults.bool(forKey: Key.triggersEnabled) }
+
+    static var driveAliveEnabled: Bool { defaults.bool(forKey: Key.driveAliveEnabled) }
+
+    static var driveAliveInterval: Int { defaults.integer(forKey: Key.driveAliveInterval) }
+
+    static var driveAliveVolumes: [DriveAliveVolume] {
+        get {
+            guard let data = defaults.data(forKey: Key.driveAliveVolumes) else { return [] }
+            return (try? JSONDecoder().decode([DriveAliveVolume].self, from: data)) ?? []
+        }
+        set {
+            defaults.set(try? JSONEncoder().encode(newValue), forKey: Key.driveAliveVolumes)
+        }
+    }
 }
