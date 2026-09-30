@@ -32,5 +32,11 @@
 	<string>Midnight Oil needs your location to read the current Wi-Fi network name for Wi-Fi triggers.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Midnight Oil needs your location to read the current Wi-Fi network name for Wi-Fi triggers.</string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
+	<key>SUFeedURL</key>
+	<string>https://github.com/coreyhaines31/midnightoil/releases/latest/download/appcast.xml</string>
+	<key>SUPublicEDKey</key>
+	<string>5MTMTktA0NUipG5n3iJy+27VbXN9uKgO2BbCgK8yUKU=</string>
 </dict>
 </plist>

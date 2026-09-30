@@ -47,7 +47,7 @@ enum Preferences {
             Key.lidAlarmSound: defaultLidAlarmSound,
             Key.triggersEnabled: true,
             Key.driveAliveEnabled: false,
-            Key.statusIconStyle: StatusIcon.Style.flame.rawValue,
+            Key.statusIconStyle: StatusIcon.Style.lamp.rawValue,
             Key.customIconsAreTemplates: true,
             Key.driveAliveInterval: 10
         ])
@@ -80,7 +80,7 @@ enum Preferences {
     static var triggersEnabled: Bool { defaults.bool(forKey: Key.triggersEnabled) }
 
     static var statusIconStyle: StatusIcon.Style {
-        StatusIcon.Style(rawValue: defaults.string(forKey: Key.statusIconStyle) ?? "") ?? .flame
+        StatusIcon.Style(rawValue: defaults.string(forKey: Key.statusIconStyle) ?? "") ?? .lamp
     }
 
     static var customIconsAreTemplates: Bool { defaults.bool(forKey: Key.customIconsAreTemplates) }

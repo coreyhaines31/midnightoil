@@ -18,6 +18,24 @@ final class HelperClient {
     /// launch, so anything still wanted must be requested again.
     var onHelperRestarted: (() -> Void)?
 
+    private static let registeredVersionKey = "helperRegisteredVersion"
+
+    /// Re-registers an installed helper after an app update so launchd picks up
+    /// any changes to the helper or its launchd plist.
+    func refreshAfterUpdate() {
+        guard status == .installed else { return }
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? ""
+        let defaults = UserDefaults.standard
+        guard defaults.string(forKey: Self.registeredVersionKey) != version else { return }
+        do {
+            try service.register()
+            defaults.set(version, forKey: Self.registeredVersionKey)
+            Self.logger.notice("Re-registered helper for build \(version, privacy: .public)")
+        } catch {
+            Self.logger.error("Helper re-registration failed: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+
     var status: Status {
         switch service.status {
         case .enabled: .installed

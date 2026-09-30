@@ -3,6 +3,7 @@ import AppKit
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private let sessions = SessionController(helper: HelperClient())
+    private let updater = Updater()
     private let triggerStore = TriggerStore()
     private var triggerController: TriggerController?
     private var driveAlive: DriveAliveController?
@@ -10,7 +11,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         Preferences.registerDefaults()
-        statusItemController = StatusItemController(sessions: sessions, triggers: triggerStore)
+        sessions.helper.refreshAfterUpdate()
+        statusItemController = StatusItemController(sessions: sessions, triggers: triggerStore, updater: updater)
         triggerController = TriggerController(store: triggerStore, sessions: sessions)
         driveAlive = DriveAliveController(sessions: sessions)
         if Preferences.startsSessionAtLaunch {

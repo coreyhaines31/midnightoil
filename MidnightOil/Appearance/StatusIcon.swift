@@ -3,6 +3,7 @@ import AppKit
 /// The menu bar image for each state: built-in symbols, or the user's own images.
 enum StatusIcon {
     enum Style: String, CaseIterable {
+        case lamp
         case flame
         case custom
     }
@@ -25,10 +26,13 @@ enum StatusIcon {
                 return custom
             }
         }
-        let symbol = state == .active ? "flame.fill" : "flame"
-        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
-        image?.isTemplate = true
-        return image
+        if Preferences.statusIconStyle == .flame {
+            let symbol = state == .active ? "flame.fill" : "flame"
+            let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
+            image?.isTemplate = true
+            return image
+        }
+        return LampIcon.menuBarImage(lit: state == .active)
     }
 
     static func customImageURL(for state: State) -> URL {

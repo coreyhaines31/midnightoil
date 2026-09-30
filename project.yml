@@ -19,6 +19,9 @@ packages:
   KeyboardShortcuts:
     url: https://github.com/sindresorhus/KeyboardShortcuts
     exactVersion: "2.4.0"
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    exactVersion: "2.10.0"
 targets:
   MidnightOil:
     type: application
@@ -34,6 +37,7 @@ targets:
     dependencies:
       - package: MidnightOilCore
       - package: KeyboardShortcuts
+      - package: Sparkle
       - target: MidnightOilHelper
         copy:
           destination: executables
@@ -50,11 +54,15 @@ targets:
         NSLocationUsageDescription: Midnight Oil needs your location to read the current Wi-Fi network name for Wi-Fi triggers.
         NSLocationWhenInUseUsageDescription: Midnight Oil needs your location to read the current Wi-Fi network name for Wi-Fi triggers.
         NSBluetoothAlwaysUsageDescription: Midnight Oil checks which Bluetooth devices are connected for Bluetooth triggers.
+        SUFeedURL: https://github.com/coreyhaines31/midnightoil/releases/latest/download/appcast.xml
+        SUPublicEDKey: 5MTMTktA0NUipG5n3iJy+27VbXN9uKgO2BbCgK8yUKU=
+        SUEnableAutomaticChecks: true
     settings:
       base:
         PRODUCT_NAME: Midnight Oil
         PRODUCT_MODULE_NAME: MidnightOil
         PRODUCT_BUNDLE_IDENTIFIER: app.midnightoil.MidnightOil
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
   MidnightOilHelper:
     type: tool
     platform: macOS
