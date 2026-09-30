@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Caffeine for Mac: the original keep-awake app, and a modern alternative</title>
+  <meta name="description" content="Caffeine is the one-click coffee cup that&#x27;s kept Macs awake since 2006. It still works, but it has no timers you can see, no triggers, and no closed-lid mode. Midnight Oil is the free, open-source alternative for longer jobs.">
+  <link rel="canonical" href="https://midnightoil.app/alternatives/caffeine">
+  <meta property="og:title" content="Caffeine for Mac: the original keep-awake app, and a modern alternative">
+  <meta property="og:description" content="Caffeine is the one-click coffee cup that&#x27;s kept Macs awake since 2006. It still works, but it has no timers you can see, no triggers, and no closed-lid mode. Midnight Oil is the free, open-source alternative for longer jobs.">
+  <meta property="og:image" content="https://midnightoil.app/images/icon.png">
+  <meta property="og:url" content="https://midnightoil.app/alternatives/caffeine">
+  <link rel="icon" href="/images/icon.png">
+  <link rel="apple-touch-icon" href="/images/icon.png">
+  <link rel="stylesheet" href="/site.css">
+  <style>
+    .sub-hero { padding: 72px 0 40px; }
+    .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
+    .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
+    .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
+    .sub-hero .actions { display: flex; align-items: center; gap: 22px; margin-top: 28px; flex-wrap: wrap; }
+    .tldr { background: var(--gray); border-radius: var(--radius); padding: 26px 28px; margin: 44px 0 0; max-width: 900px; }
+    .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
+    .prose { max-width: 760px; }
+    .prose h2 { font-size: clamp(28px, 3.6vw, 40px); margin: 0 0 16px; }
+    .prose h3 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 8px; }
+    .prose p, .prose li { color: var(--muted); font-size: 17px; line-height: 1.6; }
+    .prose p strong { color: var(--text); font-weight: 600; }
+    .prose ul { padding-left: 20px; margin: 0 0 8px; }
+    .prose li { margin-bottom: 6px; }
+    .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
+    .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    .prose blockquote { margin: 18px 0; padding: 14px 20px; border-left: 3px solid var(--gold); background: var(--gray); border-radius: 0 12px 12px 0; }
+    .prose blockquote p { margin: 0; font-size: 16px; }
+    .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
+    .prose blockquote cite a { color: var(--faint); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+    .two > div { background: var(--gray); border-radius: 16px; padding: 22px; }
+    .two h3 { margin: 0 0 10px; font-size: 18px; }
+    .two ul { margin: 0; padding-left: 18px; }
+    .two li { font-size: 15px; margin-bottom: 6px; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
+    .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+    .related a { display: block; background: #fff; border-radius: 14px; padding: 18px 20px; text-decoration: none; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
+    .related a:hover { box-shadow: 0 0 0 0.5px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.06); }
+    .related b { display: block; margin-bottom: 4px; }
+    .related span { color: var(--muted); font-size: 14px; }
+    section.tight { padding: 64px 0; }
+    @media (max-width: 720px) { .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; } }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
+      <nav>
+        <a href="/#features">Features</a>
+        <a href="/alternatives/">Alternatives</a>
+        <a href="/#faq">FAQ</a>
+        <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
+        <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
+      </nav>
+    </div>
+  </div>
+  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">Caffeine alternative</div>
+      <h1>Caffeine for Mac is a great one-click toggle. Here's what it can't do.</h1>
+      <p class="lede">Caffeine is the app that started this category: click the cup, your Mac stays awake. Two decades on it's still free and still tiny, and for a lot of people that's exactly enough. If you need it to run for a set time, react to what's happening, or keep a closed laptop working, you've outgrown it.</p>
+      <div class="actions">
+        <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download Midnight Oil</a>
+        <a class="link" href="#compare">See the comparison</a>
+      </div>
+      <div class="tldr"><h2>The short version</h2><p>Keep Caffeine if all you ever do is click the cup. Get Midnight Oil if you want sessions that end on their own, triggers, closed-lid mode, battery safety, and a countdown in the menu bar. Both are free and open source; Midnight Oil needs macOS 14 or later.</p></div>
+    </div>
+    <section class="tight" id="why">
+      <div class="wrap"><div class="prose">
+
+        <h2>What Caffeine does, and where it stops</h2>
+        <p>Caffeine has one control: a coffee cup in the menu bar. Full cup, your Mac won't sleep. Empty cup, it will. Right-click for a handful of preferences: activate at launch, start at login, a default duration. Under a megabyte, free, and after a 2025 handoff to IntelliScape it runs natively on Apple Silicon and macOS Tahoe.</p>
+        <p>That simplicity is the product. It's also the ceiling.</p>
+        <h3>No visible timer</h3>
+        <p>You can set a default duration in preferences, but there's no countdown, no “until 7 AM,” and no way to extend a running session. You click the cup and hope you remember to click it again.</p>
+        <h3>No triggers</h3>
+        <p>Caffeine can't turn itself on when you plug in a display, join your office Wi-Fi, or launch Terminal, and it can't turn itself off when a build finishes or an app quits. It's manual, always.</p>
+        <h3>No closed-lid mode</h3>
+        <p>Close the MacBook and it sleeps, cup or no cup. For a download or a render at your desk that's fine. For an agent run you want to carry to the next room, it isn't.</p>
+        <h3>Three apps, one name</h3>
+        <p>At least three projects call themselves Caffeine for Mac and use the same cup icon: IntelliScape's, a fork at caffeine-app.net, and another on GitHub. Reviews and Homebrew point at different ones. It's not a dealbreaker, but it's confusing when something breaks.</p>
+        <h3>The analytics ping</h3>
+        <p>A 2023 MacUpdate reviewer asked why the app <em>“pings analytics.intelliscapesolutions.com every 2 minutes.”</em> Midnight Oil makes no network calls except to check for updates, and you can turn that off.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight gray" id="compare">
+      <div class="wrap"><div class="prose">
+
+        <h2>Midnight Oil vs Caffeine</h2>
+                <div class="table-scroll"><table class="compare">
+          <thead><tr><th></th><th class="us">Midnight Oil</th><th>Caffeine</th></tr></thead><tbody>
+            <tr><td>Price</td><td class="us y">Free</td><td>Free (donations)</td></tr>
+            <tr><td>Open source</td><td class="us y">Yes, MIT</td><td>Yes, MIT</td></tr>
+            <tr><td>One-click on and off</td><td class="us y">Yes</td><td>Yes</td></tr>
+            <tr><td>Timed sessions with a visible countdown</td><td class="us y">Yes</td><td>Default duration only, no countdown</td></tr>
+            <tr><td>Keep awake until a time</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>While an app is running / while a file downloads</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Triggers (display, power, Wi-Fi, app, schedule, …)</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Closed-lid mode</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>End on low battery or unplug</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Hot keys</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Network activity</td><td class="us y">Update check only, can be disabled</td><td>Analytics ping reported by users</td></tr>
+            <tr><td>Download size</td><td class="us y">3 MB</td><td>Under 1 MB</td></tr>
+            <tr><td>Minimum macOS</td><td class="us y">14 Sonoma</td><td>11.5 Big Sur</td></tr>
+          </tbody></table></div>
+        <h3>What Caffeine does better</h3>
+        <p>It's smaller (under 1 MB), it runs back to macOS 11, and there's nothing to learn. If your whole use case is “don't sleep during this presentation,” Caffeine is the right amount of app.</p>
+        <h3>What Midnight Oil does better</h3>
+        <p>Everything that happens after the click. Sessions that end at a time or when an app quits, a countdown in the menu bar, triggers that start sessions on their own, closed-lid mode, and battery rules so a laptop never cooks in a bag.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight" id="switch">
+      <div class="wrap"><div class="prose">
+
+        <h2>Switching</h2>
+        <ol class="steps">
+          <li><b>Install Midnight Oil.</b> <code>brew install --cask coreyhaines31/tap/midnightoil</code>, or the DMG from GitHub.</li>
+          <li><b>Click the flame instead of the cup.</b> “Keep Awake Indefinitely” is the same thing Caffeine did. The menu also offers minutes, hours, a clock time, or while an app runs.</li>
+          <li><b>Quit Caffeine.</b> Two keep-awake apps at once is harmless but pointless.</li>
+        </ol>
+        <h3>Who should stay on Caffeine</h3>
+        <p>Anyone on macOS 11–13, and anyone who wants the smallest possible app with no options. There's no shame in a cup.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight gray">
+      <div class="wrap">
+        <div class="section-head"><h2>Other ways people keep a Mac awake</h2></div>
+        <div class="related">
+          <a href="/alternatives/amphetamine"><b>Amphetamine</b><span>The former default. Frozen since 2023; closed-lid mode needs a three-part install.</span></a>
+          <a href="/alternatives/caffeinate"><b>caffeinate command</b><span>Built in and free. No lid support, no status, dies with the terminal.</span></a>
+          <a href="/alternatives/keepingyouawake"><b>KeepingYouAwake</b><span>Maintained, minimal, open source. No closed-lid mode, by design.</span></a>
+          <a href="/alternatives/mouse-jiggler"><b>Mouse jigglers</b><span>Fake input to look active. Detectable, and useless with the lid closed.</span></a>
+        </div>
+      </div>
+    </section>
+    <section class="cta">
+      <div class="wrap">
+        <h2>More than a cup.</h2>
+        <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download for macOS</a>
+        <p class="fineprint">Free · Open source · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <span>© 2026 Corey Haines. MIT License.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="/alternatives/">Alternatives</a></span>
+    </div>
+  </footer>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is Caffeine for Mac still maintained?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. IntelliScape Solutions continues the original Lighthead app; version 1.1.4 shipped in September 2025 with native Apple Silicon support and macOS Tahoe compatibility. Note there are at least three projects named Caffeine with the same coffee-cup icon, which causes confusion about which one you have."}}, {"@type": "Question", "name": "Does Caffeine work with the lid closed?", "acceptedAnswer": {"@type": "Answer", "text": "No. Caffeine has no closed-lid support. Closing the lid puts the MacBook to sleep. Midnight Oil's Stay Awake with Lid Closed option handles that through a helper you approve once."}}, {"@type": "Question", "name": "Can Caffeine turn itself on when I open an app or plug in a display?", "acceptedAnswer": {"@type": "Answer", "text": "No. Caffeine has no triggers. Midnight Oil can start a session when a display is connected, on power, on a Wi-Fi network, while a specific app is running, on a schedule, and more."}}, {"@type": "Question", "name": "Is Midnight Oil free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Free, MIT-licensed, source on GitHub, no telemetry."}}]}</script>
+</body>
+</html>
