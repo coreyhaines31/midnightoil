@@ -1,14 +1,27 @@
 import Foundation
 
+public struct WatchedApp: Equatable, Sendable {
+    public let bundleIdentifier: String
+    public let name: String
+
+    public init(bundleIdentifier: String, name: String) {
+        self.bundleIdentifier = bundleIdentifier
+        self.name = name
+    }
+}
+
 /// When a keep-awake session should stop on its own.
 public enum SessionEnd: Equatable, Sendable {
     case indefinite
     case after(TimeInterval)
     case until(Date)
+    case whileAppRunning(WatchedApp)
+    case whileDownloading(URL)
 
+    /// Nil when the session ends on an event rather than at a time.
     public func endDate(from start: Date) -> Date? {
         switch self {
-        case .indefinite: nil
+        case .indefinite, .whileAppRunning, .whileDownloading: nil
         case .after(let interval): start.addingTimeInterval(interval)
         case .until(let date): date
         }
@@ -37,7 +50,7 @@ public struct Session: Equatable, Sendable {
     public func extended(by interval: TimeInterval) -> Session {
         let newEnd: SessionEnd
         switch end {
-        case .indefinite: return self
+        case .indefinite, .whileAppRunning, .whileDownloading: return self
         case .after(let duration): newEnd = .after(duration + interval)
         case .until(let date): newEnd = .until(date.addingTimeInterval(interval))
         }
