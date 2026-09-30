@@ -18,12 +18,22 @@ final class SessionController {
     /// Called whenever the session starts, ends, changes, or ticks.
     var onChange: (() -> Void)?
 
+    let helper: HelperClient
     private let assertions = AssertionManager()
+    /// What we last asked the helper for, so it's only messaged on changes.
+    private var lidModeRequested = false
+    private var lastLidClosed: Bool?
     private var ticker: Task<Void, Never>?
     private var download: DownloadProgress?
     private var lastPower: PowerState?
 
-    init() {
+    init(helper: HelperClient) {
+        self.helper = helper
+        helper.onHelperRestarted = { [weak self] in
+            guard let self else { return }
+            lidModeRequested = false
+            syncLidClosedMode()
+        }
         // A sleeping Mac doesn't tick; re-check as soon as it wakes.
         NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.didWakeNotification,
@@ -37,13 +47,19 @@ final class SessionController {
     var isActive: Bool { session != nil }
 
     func start(_ end: SessionEnd) {
-        session = Session(start: .now, end: end, allowsDisplaySleep: Preferences.allowsDisplaySleep)
+        session = Session(
+            start: .now,
+            end: end,
+            allowsDisplaySleep: Preferences.allowsDisplaySleep,
+            staysAwakeWithLidClosed: Preferences.staysAwakeWithLidClosed && helper.status == .installed
+        )
         if case .whileDownloading(let file) = end {
             download = DownloadProgress(file: file, startedAt: .now)
         } else {
             download = nil
         }
         applyAssertions()
+        syncLidClosedMode()
         startTicker()
         onChange?()
     }
@@ -53,9 +69,11 @@ final class SessionController {
         session = nil
         download = nil
         lastPower = nil
+        lastLidClosed = nil
         ticker?.cancel()
         ticker = nil
         assertions.releaseAll()
+        syncLidClosedMode()
         SessionNotifier.sessionEnded(reason)
         onChange?()
     }
@@ -69,6 +87,27 @@ final class SessionController {
         session?.allowsDisplaySleep = allowed
         applyAssertions()
         onChange?()
+    }
+
+    func setStaysAwakeWithLidClosed(_ staysAwake: Bool) {
+        session?.staysAwakeWithLidClosed = staysAwake
+        syncLidClosedMode()
+        onChange?()
+    }
+
+    private func syncLidClosedMode() {
+        let wanted = session?.staysAwakeWithLidClosed ?? false
+        guard wanted != lidModeRequested else { return }
+        lidModeRequested = wanted
+        Task {
+            let applied = await helper.setSleepDisabled(wanted)
+            // If the helper couldn't do it, don't pretend the lid is covered.
+            if wanted, !applied, lidModeRequested {
+                lidModeRequested = false
+                session?.staysAwakeWithLidClosed = false
+                onChange?()
+            }
+        }
     }
 
     private func applyAssertions() {
@@ -90,7 +129,18 @@ final class SessionController {
         if let reason = endReason(for: session) {
             end(reason: reason)
         } else {
+            soundLidAlarmIfNeeded(for: session)
             onChange?()
+        }
+    }
+
+    private func soundLidAlarmIfNeeded(for session: Session) {
+        guard session.staysAwakeWithLidClosed, Preferences.soundsLidAlarm else { return }
+        let isClosed = LidState.isClosed() ?? false
+        defer { lastLidClosed = isClosed }
+        let isOnBattery = lastPower?.isOnBattery ?? false
+        if LidAlarm.shouldSound(wasClosed: lastLidClosed, isClosed: isClosed, isOnBattery: isOnBattery) {
+            NSSound(named: "Sosumi")?.play()
         }
     }
 

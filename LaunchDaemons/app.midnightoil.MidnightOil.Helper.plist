@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>app.midnightoil.MidnightOil.Helper</string>
+	<key>BundleProgram</key>
+	<string>Contents/MacOS/MidnightOilHelper</string>
+	<key>MachServices</key>
+	<dict>
+		<key>app.midnightoil.MidnightOil.Helper</key>
+		<true/>
+	</dict>
+	<key>AssociatedBundleIdentifiers</key>
+	<array>
+		<string>app.midnightoil.MidnightOil</string>
+	</array>
+	<!-- Launch at boot so sleep left disabled by a crash or power loss is restored right away. -->
+	<key>RunAtLoad</key>
+	<true/>
+	<!-- Restart right after a crash so the restore-on-launch safety check runs immediately. -->
+	<key>KeepAlive</key>
+	<true/>
+</dict>
+</plist>

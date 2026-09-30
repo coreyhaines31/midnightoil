@@ -1,5 +1,7 @@
 included:
   - MidnightOil
+  - MidnightOilHelper
+  - Shared
   - Packages/MidnightOilCore/Sources
   - Packages/MidnightOilCore/Tests
 excluded:

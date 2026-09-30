@@ -31,10 +31,11 @@ struct SessionTests {
     }
 
     @Test func extendingATimedSessionPushesItsEnd() {
-        let session = Session(start: start, end: .after(600), allowsDisplaySleep: true)
+        let session = Session(start: start, end: .after(600), allowsDisplaySleep: true, staysAwakeWithLidClosed: true)
         let extended = session.extended(by: 900)
         #expect(extended.endDate == start.addingTimeInterval(1_500))
         #expect(extended.allowsDisplaySleep)
+        #expect(extended.staysAwakeWithLidClosed)
     }
 
     @Test func extendingAnUntilSessionPushesItsEnd() {

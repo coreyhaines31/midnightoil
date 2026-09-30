@@ -12,12 +12,13 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private let statusItem: NSStatusItem
     private let sessions: SessionController
     private let customEndWindow = CustomEndWindow()
-    private let settingsWindow = SettingsWindow()
+    private let settingsWindow: SettingsWindow
     /// The countdown line in the open menu, retitled every tick so it stays live.
     private weak var detailsItem: NSMenuItem?
 
     init(sessions: SessionController) {
         self.sessions = sessions
+        settingsWindow = SettingsWindow(helper: sessions.helper)
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         super.init()
 
@@ -107,6 +108,14 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         displaySleep.state = session.allowsDisplaySleep ? .on : .off
         menu.addItem(displaySleep)
 
+        if LidState.hasLid {
+            let lidClosed = ClosureMenuItem("Stay Awake with Lid Closed") { [weak self] in
+                self?.toggleLidClosedMode(for: session)
+            }
+            lidClosed.state = session.staysAwakeWithLidClosed ? .on : .off
+            menu.addItem(lidClosed)
+        }
+
         if session.endDate != nil {
             menu.addItem(submenuItem("Extend Session", items: Self.extendChoices.map { minutes in
                 ClosureMenuItem("+ " + Self.durationTitle(minutes: minutes)) { [weak self] in
@@ -118,6 +127,27 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         menu.addItem(ClosureMenuItem("End Current Session", keyEquivalent: "x") { [weak self] in
             self?.sessions.end()
         })
+    }
+
+    private func toggleLidClosedMode(for session: Session) {
+        if session.staysAwakeWithLidClosed || sessions.helper.status == .installed {
+            sessions.setStaysAwakeWithLidClosed(!session.staysAwakeWithLidClosed)
+            return
+        }
+        let alert = NSAlert()
+        alert.messageText = "Install the Closed-Lid Helper?"
+        alert.informativeText = """
+            macOS sleeps a laptop when its lid closes, no matter what apps ask. \
+            \(Brand.name) needs a small helper, approved once in System Settings › Login Items, \
+            to turn that off during a session. Sleep is restored as soon as the session ends \
+            or \(Brand.name) quits.
+            """
+        alert.addButton(withTitle: "Install Helper")
+        alert.addButton(withTitle: "Cancel")
+        NSApp.activate()
+        if alert.runModal() == .alertFirstButtonReturn {
+            sessions.helper.install()
+        }
     }
 
     private func untilItems() -> [NSMenuItem] {
