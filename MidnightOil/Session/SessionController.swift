@@ -6,6 +6,7 @@ enum SessionEndReason {
     case timeUp
     case lowBattery
     case appQuit(String)
+    case downloadFinished(String)
 }
 
 /// Runs the current keep-awake session: holds the power assertions and ends the
@@ -18,6 +19,7 @@ final class SessionController {
 
     private let assertions = AssertionManager()
     private var ticker: Task<Void, Never>?
+    private var download: DownloadProgress?
 
     init() {
         // A sleeping Mac doesn't tick; re-check as soon as it wakes.
@@ -34,6 +36,11 @@ final class SessionController {
 
     func start(_ end: SessionEnd) {
         session = Session(start: .now, end: end, allowsDisplaySleep: Preferences.allowsDisplaySleep)
+        if case .whileDownloading(let file) = end {
+            download = DownloadProgress(file: file, startedAt: .now)
+        } else {
+            download = nil
+        }
         applyAssertions()
         startTicker()
         onChange?()
@@ -42,6 +49,7 @@ final class SessionController {
     func end(reason: SessionEndReason = .user) {
         guard session != nil else { return }
         session = nil
+        download = nil
         ticker?.cancel()
         ticker = nil
         assertions.releaseAll()
@@ -83,6 +91,8 @@ final class SessionController {
         }
     }
 
+    /// Checks every way the session can end. Not pure: it also advances the
+    /// download watcher, so call it once per tick.
     private func endReason(for session: Session) -> SessionEndReason? {
         if session.isFinished(at: .now) {
             return .timeUp
@@ -91,6 +101,9 @@ final class SessionController {
            NSRunningApplication.runningApplications(withBundleIdentifier: app.bundleIdentifier).isEmpty {
             return .appQuit(app.name)
         }
+        if case .whileDownloading(let file) = session.end, !advanceDownload(file) {
+            return .downloadFinished(DownloadProgress.displayName(for: file))
+        }
         if BatteryGuard.shouldEndSession(
             power: PowerSourceReader.current(),
             floorPercent: Preferences.batteryFloorPercent
@@ -98,5 +111,17 @@ final class SessionController {
             return .lowBattery
         }
         return nil
+    }
+
+    /// Returns whether the file is still downloading.
+    private func advanceDownload(_ file: URL) -> Bool {
+        guard var progress = download else { return false }
+        // Browser partial files only need to exist; skip sizing Safari's package every second.
+        let size = progress.isPartialFile
+            ? (FileManager.default.fileExists(atPath: file.path) ? 0 : nil)
+            : FileSizeReader.size(of: file)
+        let stillDownloading = progress.update(size: size, at: .now)
+        download = progress
+        return stillDownloading
     }
 }

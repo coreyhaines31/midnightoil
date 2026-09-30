@@ -22,6 +22,7 @@ enum SessionNotifier {
         case .user: nil
         case .timeUp: "Your Mac can sleep normally again."
         case .appQuit(let name): "\(name) quit, so your Mac can sleep again."
+        case .downloadFinished(let name): "“\(name)” finished downloading, so your Mac can sleep again."
         case .lowBattery:
             "Your battery dropped below \(Preferences.batteryFloorPercent ?? 0)%, so your Mac can sleep again."
         }

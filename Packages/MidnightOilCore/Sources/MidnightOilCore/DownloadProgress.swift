@@ -22,6 +22,13 @@ public struct DownloadProgress: Sendable {
         lastChange = now
     }
 
+    /// The name the file will have once it finishes: "setup.dmg" for "setup.dmg.crdownload".
+    public static func displayName(for file: URL) -> String {
+        partialExtensions.contains(file.pathExtension.lowercased())
+            ? file.deletingPathExtension().lastPathComponent
+            : file.lastPathComponent
+    }
+
     /// Feed the file's current size (nil if it no longer exists). Returns
     /// whether the download is still in progress.
     public mutating func update(size: Int64?, at now: Date) -> Bool {

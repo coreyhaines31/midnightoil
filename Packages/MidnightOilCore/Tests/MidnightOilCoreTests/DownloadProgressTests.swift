@@ -34,4 +34,9 @@ struct DownloadProgressTests {
     @Test func missingRegularFileIsFinished() {
         #expect(run("/tmp/gone.iso", samples: [(1, nil)]) == [false])
     }
+
+    @Test func displayNameDropsTheBrowserSuffix() {
+        #expect(DownloadProgress.displayName(for: URL(filePath: "/tmp/setup.dmg.crdownload")) == "setup.dmg")
+        #expect(DownloadProgress.displayName(for: URL(filePath: "/tmp/setup.dmg")) == "setup.dmg")
+    }
 }

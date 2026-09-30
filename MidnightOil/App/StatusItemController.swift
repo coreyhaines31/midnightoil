@@ -76,6 +76,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         }))
         menu.addItem(submenuItem("Until", items: untilItems()))
         menu.addItem(submenuItem("While App is Running", items: runningAppItems()))
+        menu.addItem(ClosureMenuItem("While File is Downloading…", keyEquivalent: "f") { [weak self] in
+            DownloadPicker.choose { file in self?.sessions.start(.whileDownloading(file)) }
+        })
 
         menu.addItem(.separator())
         menu.addItem(ClosureMenuItem("Settings…", keyEquivalent: ",") { [weak self] in
@@ -175,7 +178,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private static func describe(_ session: Session) -> String {
         switch session.end {
         case .whileAppRunning(let app): return "While \(app.name) is running"
-        case .whileDownloading(let file): return "While “\(file.lastPathComponent)” is downloading"
+        case .whileDownloading(let file): return "While “\(DownloadProgress.displayName(for: file))” is downloading"
         case .indefinite, .after, .until: break
         }
         guard let endDate = session.endDate, let remaining = session.remaining(at: .now) else {
