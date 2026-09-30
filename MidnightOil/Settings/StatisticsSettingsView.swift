@@ -96,6 +96,8 @@ private struct WeekChart: View {
                     .foregroundStyle(by: .value("Kind", "With you"))
             }
         }
+        // Keep at least an hour of scale so short weeks get sensible ticks (0, 15m, 30m…).
+        .chartYScale(domain: 0...max(1, days.map { $0.awake / 3_600 }.max() ?? 0))
         .chartForegroundStyleScale([
             "While you were away": Color.orange,
             "With you": Color.secondary.opacity(0.35)
@@ -174,7 +176,7 @@ private struct SessionRow: View {
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            Text(StatisticsSettingsView.hours(record.awake))
+            Text(RemainingTime.short(record.awake))
                 .monospacedDigit()
         }
     }
