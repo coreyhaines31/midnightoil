@@ -13,6 +13,7 @@ final class SessionWebhookSender {
 
     private let license: TeamsLicense
     private let defaults: UserDefaults
+    private var inFlight: [UUID: Task<Void, Never>] = [:]
     /// Never follows redirects: a redirect could send the signed body somewhere the profile didn't name.
     private nonisolated static let session = URLSession(
         configuration: .ephemeral, delegate: RefuseRedirects(), delegateQueue: nil
@@ -30,9 +31,23 @@ final class SessionWebhookSender {
         else { return }
         let payload = WebhookPayload(event, device: TeamsDeviceInfo.current(defaults: defaults))
         let secret = defaults.string(forKey: TeamsSettingKey.webhookSecret)
-        Task.detached(priority: .utility) {
+        let id = UUID()
+        inFlight[id] = Task.detached(priority: .utility) { [weak self] in
             await Self.deliver(payload, to: url, secret: secret)
+            await self?.finished(id)
         }
+    }
+
+    /// Lets the last event (usually `session.ended` on quit) go out before the app exits.
+    func waitForDeliveries(timeout: Duration) async {
+        let deadline = ContinuousClock.now + timeout
+        while !inFlight.isEmpty, ContinuousClock.now < deadline {
+            try? await Task.sleep(for: .milliseconds(100))
+        }
+    }
+
+    private func finished(_ id: UUID) {
+        inFlight[id] = nil
     }
 
     /// https anywhere, or plain http to this Mac itself (a local relay or a test receiver).

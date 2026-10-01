@@ -34,6 +34,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        // End the session now so its webhook event can go out, then give it a moment.
+        sessions.end(reason: .quit)
+        Task {
+            await webhook.waitForDeliveries(timeout: .seconds(3))
+            sender.reply(toApplicationShouldTerminate: true)
+        }
+        return .terminateLater
+    }
+
     func applicationWillTerminate(_ notification: Notification) {
         sessions.end(reason: .quit)
     }
