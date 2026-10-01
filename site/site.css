@@ -109,6 +109,13 @@
     .tile .art img { border-radius: 10px 0 0 0; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
     .tile .art.center { padding: 0 20px 20px; align-items: center; justify-content: center; }
     .tile .art.center svg { width: 100%; max-width: 100%; height: auto; }
+    .extras-head { text-align: center; margin: 72px 0 28px; }
+    .extras-head h3 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+    .extras { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 40px; max-width: 980px; margin: 0 auto; }
+    .extra svg { width: 26px; height: 26px; margin-bottom: 10px; }
+    .extra h4 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 4px; }
+    .extra p { margin: 0; font-size: 15px; line-height: 1.45; color: var(--muted); }
+    section.dark .extra p { color: #a1a1a6; }
     .span-4 { grid-column: span 4; }
     .span-2 { grid-column: span 2; }
     .lampart {
@@ -305,6 +312,8 @@
     @media (max-width: 900px) {
       .bento { grid-template-columns: 1fr 1fr; }
       .span-4, .span-2 { grid-column: span 2; }
+      .extras { grid-template-columns: 1fr 1fr; gap: 26px 28px; }
+      .extras-head { margin-top: 56px; }
       .trust { grid-template-columns: 1fr; gap: 28px; }
     }
     @media (max-width: 720px) {
@@ -386,3 +395,4 @@
     div.openmenu { font-size: clamp(7px, 0.86vw, 13px); box-shadow: none; border-radius: 0; }
     .openmenu .mk-nsmenu { width: 100%; }
 
+    @media (max-width: 720px) { .extras { grid-template-columns: 1fr; gap: 22px; } }
