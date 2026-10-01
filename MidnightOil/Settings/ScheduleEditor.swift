@@ -55,3 +55,10 @@ extension Schedule {
         return date.formatted(.dateTime.hour().minute())
     }
 }
+
+extension AwakeSchedule {
+    /// "Weekdays · 9:00 AM – 5:00 PM · On power adapter"
+    var summary: String {
+        ([schedule.summary] + conditions.map(\.summary)).joined(separator: " · ")
+    }
+}

@@ -34,7 +34,7 @@ struct SchedulesSettingsView: View {
                             .help(Help.scheduleSwitch)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(schedule.name)
-                            Text(schedule.schedule.summary)
+                            Text(schedule.summary)
                                 .font(.callout)
                                 .foregroundStyle(.secondary)
                                 .lineLimit(1)

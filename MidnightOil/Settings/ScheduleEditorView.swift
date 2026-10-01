@@ -32,6 +32,16 @@ struct ScheduleEditorView: View {
                 }
 
                 Section {
+                    ConditionList(
+                        criteria: $schedule.conditions,
+                        emptyText: "None. The schedule runs for its whole window.",
+                        kinds: CriterionKind.allCases.filter { $0 != .schedule }
+                    )
+                } header: {
+                    InfoLabel("Only While", info: Help.scheduleConditions)
+                }
+
+                Section {
                     Toggle(isOn: $schedule.allowsDisplaySleep) {
                         InfoLabel("Allow display sleep", info: Help.allowDisplaySleep)
                     }
@@ -62,7 +72,7 @@ struct ScheduleEditorView: View {
             }
             .padding(16)
         }
-        .frame(width: 560, height: 430)
+        .frame(width: 600, height: 560)
     }
 
     /// Why the schedule can't be saved yet, if anything.

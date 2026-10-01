@@ -1,8 +1,9 @@
 // Every explanation the app shows in one place: pane intros, info popovers,
 // hover tooltips, and menu item tooltips. Keep each one true to what the code
 // does, short enough to read at a glance, and free of jargon.
-// Copy reads best unwrapped, and one case per condition type is clearer than any split.
-// swiftlint:disable line_length cyclomatic_complexity
+// Copy reads best unwrapped, one case per condition type is clearer than any split, and
+// keeping every string in one type is the point of this file.
+// swiftlint:disable line_length cyclomatic_complexity type_body_length
 
 enum Help {
     struct Intro {
@@ -123,6 +124,10 @@ enum Help {
     static let scheduleWhen = """
         The days and hours this schedule keeps your Mac awake. If the end time is earlier than the start, \
         the window runs past midnight and ends the next morning.
+        """
+    static let scheduleConditions = """
+        Optional. Narrow the schedule so it only keeps your Mac awake while these also hold, like \
+        being plugged in. If one stops holding, the session pauses and picks up again when it holds.
         """
     static let scheduleSessionOptions = "How the session behaves while this schedule is running it."
     static let scheduleSkip = """
@@ -292,4 +297,4 @@ enum Help {
     }
 }
 
-// swiftlint:enable line_length cyclomatic_complexity
+// swiftlint:enable line_length cyclomatic_complexity type_body_length
