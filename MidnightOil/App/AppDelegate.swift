@@ -1,4 +1,5 @@
 import AppKit
+import MidnightOilTeams
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -14,6 +15,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
         Preferences.registerDefaults()
         sessions.helper.refreshAfterUpdate()
+        sessions.policy = { [teamsLicense] in
+            TeamsPolicy.read(from: .standard, licensed: teamsLicense.unlocks(.policies))
+        }
         statusItemController = StatusItemController(
             sessions: sessions,
             triggers: triggerStore,

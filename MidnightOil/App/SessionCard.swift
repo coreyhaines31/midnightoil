@@ -10,7 +10,7 @@ final class SessionCardModel {
     var allowsDisplaySleep = false
     var staysAwakeWithLidClosed = false
 
-    func update(from session: Session, schedules: [AwakeSchedule]) {
+    func update(from session: Session, schedules: [AwakeSchedule], policy: SessionPolicy = .none) {
         detail = Self.describe(session)
         allowsDisplaySleep = session.allowsDisplaySleep
         staysAwakeWithLidClosed = session.staysAwakeWithLidClosed
@@ -25,6 +25,14 @@ final class SessionCardModel {
             }
         case .manual:
             triggerLine = nil
+            // An organization's time limit ends manual sessions that would otherwise run longer.
+            if let limit = policy.maxManualSession {
+                let cutoff = session.start.addingTimeInterval(limit)
+                if (session.endDate ?? .distantFuture) > cutoff {
+                    detail = "Ends by \(Self.clockTime(cutoff))"
+                    triggerLine = "Limit set by your organization"
+                }
+            }
         }
     }
 

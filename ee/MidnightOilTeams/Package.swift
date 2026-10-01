@@ -7,8 +7,11 @@ let package = Package(
     products: [
         .library(name: "MidnightOilTeams", targets: ["MidnightOilTeams"])
     ],
+    dependencies: [
+        .package(path: "../../Packages/MidnightOilCore")
+    ],
     targets: [
-        .target(name: "MidnightOilTeams"),
+        .target(name: "MidnightOilTeams", dependencies: ["MidnightOilCore"]),
         .testTarget(name: "MidnightOilTeamsTests", dependencies: ["MidnightOilTeams"])
     ]
 )

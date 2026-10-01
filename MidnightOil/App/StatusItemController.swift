@@ -73,7 +73,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             statusItem.button?.title = title
         }
         if let session = sessions.session {
-            card.update(from: session, schedules: schedules.schedules)
+            card.update(from: session, schedules: schedules.schedules, policy: sessions.policy())
         }
     }
 
@@ -126,10 +126,10 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     private func addCurrentSessionItems(for session: Session, to menu: NSMenu) {
-        card.update(from: session, schedules: schedules.schedules)
+        card.update(from: session, schedules: schedules.schedules, policy: sessions.policy())
         let cardView = SessionCardView(
             model: card,
-            showsLidOption: LidState.hasLid,
+            showsLidOption: LidState.hasLid && !sessions.policy().disallowsClosedLid,
             onAllowDisplaySleep: { [weak self] allowed in self?.sessions.setAllowsDisplaySleep(allowed) },
             onStayAwakeWithLidClosed: { [weak self] _ in
                 guard let self, let session = sessions.session else { return }
