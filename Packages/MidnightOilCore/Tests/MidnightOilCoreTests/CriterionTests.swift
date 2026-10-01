@@ -109,6 +109,49 @@ struct ScheduleTests {
         #expect(!schedule.contains(wednesday(2), calendar: calendar))
         #expect(!schedule.contains(wednesday(23), calendar: calendar))
     }
+
+    @Test func windowEndIsTodaysCloseForADaytimeWindow() {
+        let schedule = Schedule(days: [2, 3, 4, 5, 6], startMinute: 9 * 60, endMinute: 17 * 60)
+        #expect(schedule.windowEnd(containing: tuesday(10, 15), calendar: calendar) == tuesday(17))
+        #expect(schedule.windowEnd(containing: tuesday(18), calendar: calendar) == nil)
+    }
+
+    @Test func windowEndOfAnOvernightWindowIsTheNextMorning() {
+        let schedule = Schedule(days: [3], startMinute: 22 * 60, endMinute: 2 * 60)
+        #expect(schedule.windowEnd(containing: tuesday(23), calendar: calendar) == wednesday(2))
+        #expect(schedule.windowEnd(containing: wednesday(1), calendar: calendar) == wednesday(2))
+    }
+
+    @Test func nextStartSkipsDaysOffAndTheCurrentWindow() {
+        let workHours = Schedule(days: [2, 3, 4, 5, 6], startMinute: 9 * 60, endMinute: 17 * 60)
+        #expect(workHours.nextStart(after: tuesday(8), calendar: calendar) == tuesday(9))
+        #expect(workHours.nextStart(after: tuesday(9), calendar: calendar) == wednesday(9))
+        let friday = calendar.date(from: DateComponents(year: 2026, month: 10, day: 2, hour: 17)) ?? .distantPast
+        let monday = calendar.date(from: DateComponents(year: 2026, month: 10, day: 5, hour: 9)) ?? .distantPast
+        #expect(workHours.nextStart(after: friday, calendar: calendar) == monday)
+        // Sunday-only wraps around the week from a Tuesday.
+        let sundays = Schedule(days: [1], startMinute: 0, endMinute: 60)
+        let sunday = calendar.date(from: DateComponents(year: 2026, month: 10, day: 4)) ?? .distantPast
+        #expect(sundays.nextStart(after: tuesday(12), calendar: calendar) == sunday)
+        let noDays = Schedule(days: [], startMinute: 0, endMinute: 60)
+        #expect(noDays.nextStart(after: tuesday(12), calendar: calendar) == nil)
+    }
+
+    @Test func daysSummaryReadsLikeAPerson() {
+        var calendar = calendar
+        calendar.locale = Locale(identifier: "en_US")
+        func summary(_ days: Set<Int>) -> String {
+            Schedule(days: days, startMinute: 0, endMinute: 60).daysSummary(calendar: calendar)
+        }
+        #expect(summary([1, 2, 3, 4, 5, 6, 7]) == "Every day")
+        #expect(summary([2, 3, 4, 5, 6]) == "Weekdays")
+        #expect(summary([1, 7]) == "Weekends")
+        #expect(summary([2, 3, 4, 5]) == "Mon–Thu")
+        #expect(summary([5, 6, 7, 1]) == "Thu–Sun")
+        #expect(summary([2, 4, 6]) == "Mon, Wed, Fri")
+        #expect(summary([2, 3]) == "Mon, Tue")
+        #expect(summary([]) == "No days")
+    }
 }
 
 struct TriggerEngineTests {

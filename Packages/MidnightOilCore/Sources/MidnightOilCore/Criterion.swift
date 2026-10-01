@@ -35,6 +35,53 @@ public struct Schedule: Codable, Equatable, Sendable {
         let yesterday = weekday == 1 ? 7 : weekday - 1
         return now < endMinute && days.contains(yesterday)
     }
+
+    /// When the window `date` falls in closes, or nil if `date` is outside every window.
+    public func windowEnd(containing date: Date, calendar: Calendar) -> Date? {
+        guard contains(date, calendar: calendar) else { return nil }
+        let parts = calendar.dateComponents([.hour, .minute], from: date)
+        let now = (parts.hour ?? 0) * 60 + (parts.minute ?? 0)
+        // An overnight window entered this evening closes tomorrow morning.
+        let closesTomorrow = startMinute > endMinute && now >= startMinute
+        let day = closesTomorrow ? calendar.date(byAdding: .day, value: 1, to: date) ?? date : date
+        return Self.time(endMinute, on: day, calendar: calendar)
+    }
+
+    /// The next time a window opens strictly after `date`, or nil with no days picked.
+    public func nextStart(after date: Date, calendar: Calendar) -> Date? {
+        let today = calendar.startOfDay(for: date)
+        for offset in 0...7 {
+            guard let day = calendar.date(byAdding: .day, value: offset, to: today),
+                  days.contains(calendar.component(.weekday, from: day)),
+                  let start = Self.time(startMinute, on: day, calendar: calendar),
+                  start > date
+            else { continue }
+            return start
+        }
+        return nil
+    }
+
+    /// "Every day", "Weekdays", "Weekends", "Mon–Thu", or "Mon, Wed, Fri".
+    public func daysSummary(calendar: Calendar) -> String {
+        // Calendar weekdays start on Sunday; people read a work week from Monday.
+        let order = [2, 3, 4, 5, 6, 7, 1]
+        let picked = order.filter(days.contains)
+        switch Set(picked) {
+        case Set(order): return "Every day"
+        case [2, 3, 4, 5, 6]: return "Weekdays"
+        case [7, 1]: return "Weekends"
+        case []: return "No days"
+        default: break
+        }
+        let names = picked.map { calendar.shortWeekdaySymbols[$0 - 1] }
+        let positions = picked.compactMap { order.firstIndex(of: $0) }
+        let isRun = positions.count >= 3 && positions.last! - positions.first! == positions.count - 1
+        return isRun ? "\(names.first!)–\(names.last!)" : names.joined(separator: ", ")
+    }
+
+    private static func time(_ minute: Int, on day: Date, calendar: Calendar) -> Date? {
+        calendar.date(bySettingHour: minute / 60, minute: minute % 60, second: 0, of: day)
+    }
 }
 
 /// One condition inside a trigger. Lists match if any entry matches.
