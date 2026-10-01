@@ -13,6 +13,10 @@ final class SessionWebhookSender {
 
     private let license: TeamsLicense
     private let defaults: UserDefaults
+    /// Never follows redirects: a redirect could send the signed body somewhere the profile didn't name.
+    private nonisolated static let session = URLSession(
+        configuration: .ephemeral, delegate: RefuseRedirects(), delegateQueue: nil
+    )
 
     init(license: TeamsLicense, defaults: UserDefaults = .standard) {
         self.license = license
@@ -63,11 +67,11 @@ final class SessionWebhookSender {
         for (attempt, delay) in ([0] + retryDelays).enumerated() {
             if delay > 0 { try? await Task.sleep(for: .seconds(delay)) }
             do {
-                let (_, response) = try await URLSession.shared.data(for: request)
+                let (_, response) = try await session.data(for: request)
                 let status = (response as? HTTPURLResponse)?.statusCode ?? 0
                 if (200..<300).contains(status) { return }
-                // 4xx other than 429 won't get better by retrying.
-                if (400..<500).contains(status), status != 429 {
+                // Redirects are refused, and 4xx other than 429 won't get better by retrying.
+                if (300..<500).contains(status), status != 429 {
                     logger.error("Webhook rejected with \(status)")
                     return
                 }
@@ -76,5 +80,16 @@ final class SessionWebhookSender {
             }
         }
         logger.error("Gave up delivering \(payload.event, privacy: .public) \(payload.id, privacy: .public)")
+    }
+}
+
+private final class RefuseRedirects: NSObject, URLSessionTaskDelegate {
+    func urlSession(
+        _ session: URLSession,
+        task: URLSessionTask,
+        willPerformHTTPRedirection response: HTTPURLResponse,
+        newRequest request: URLRequest
+    ) async -> URLRequest? {
+        nil
     }
 }
