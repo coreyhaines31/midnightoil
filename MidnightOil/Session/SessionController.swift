@@ -45,6 +45,8 @@ final class SessionController {
     /// The organization's rules for sessions, from Midnight Oil for Teams. Read on every check,
     /// so a newly deployed profile applies right away.
     var policy: () -> SessionPolicy = { .none }
+    /// Called when a session starts or ends. Midnight Oil for Teams reports these.
+    var onSessionEvent: ((SessionEvent) -> Void)?
     /// Called when the user ends a session a trigger or schedule started, with its id.
     var onUserEndedAutomaticSession: ((UUID) -> Void)?
 
@@ -132,6 +134,7 @@ final class SessionController {
         applyAssertions()
         syncLidClosedMode()
         startTicker()
+        onSessionEvent?(.started(newSession))
         onChange?()
     }
 
@@ -201,6 +204,7 @@ final class SessionController {
             batteryEnd: PowerSourceReader.current().batteryPercent
         )
         history.record(record)
+        onSessionEvent?(.ended(session, record))
         return record
     }
 

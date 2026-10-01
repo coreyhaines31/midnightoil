@@ -24,6 +24,7 @@ final class TeamsLicense {
 
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private var observer: NSObjectProtocol?
+    @ObservationIgnored private var poller: Task<Void, Never>?
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
@@ -33,6 +34,14 @@ final class TeamsLicense {
             forName: UserDefaults.didChangeNotification, object: defaults, queue: .main
         ) { [weak self] _ in
             MainActor.assumeIsolated { self?.reload() }
+        }
+        // Profiles are installed and removed outside the app, which posts no notification here.
+        poller = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(10))
+                guard let self else { return }
+                self.reload()
+            }
         }
     }
 
