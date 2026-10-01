@@ -6,6 +6,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let updater = Updater()
     private let triggerStore = TriggerStore()
     private let scheduleStore = ScheduleStore()
+    private let teamsLicense = TeamsLicense()
     private var triggerController: TriggerController?
     private var driveAlive: DriveAliveController?
     private var statusItemController: StatusItemController?
@@ -17,6 +18,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             sessions: sessions,
             triggers: triggerStore,
             schedules: scheduleStore,
+            teams: teamsLicense,
             updater: updater
         )
         triggerController = TriggerController(store: triggerStore, schedules: scheduleStore, sessions: sessions)

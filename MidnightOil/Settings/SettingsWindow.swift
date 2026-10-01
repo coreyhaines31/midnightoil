@@ -10,6 +10,7 @@ final class SettingsWindow {
     private let helper: HelperClient
     private let triggers: TriggerStore
     private let schedules: ScheduleStore
+    private let teams: TeamsLicense
     private let history: SessionHistory
     private let updater: Updater
     private var window: NSWindow?
@@ -18,12 +19,14 @@ final class SettingsWindow {
         helper: HelperClient,
         triggers: TriggerStore,
         schedules: ScheduleStore,
+        teams: TeamsLicense,
         history: SessionHistory,
         updater: Updater
     ) {
         self.helper = helper
         self.triggers = triggers
         self.schedules = schedules
+        self.teams = teams
         self.history = history
         self.updater = updater
     }
@@ -39,7 +42,7 @@ final class SettingsWindow {
     private func makeWindow() -> NSWindow {
         let tabs = SettingsTabController()
         tabs.tabStyle = .toolbar
-        tabs.add("General", symbol: "gearshape", view: GeneralSettingsView(updater: updater))
+        tabs.add("General", symbol: "gearshape", view: GeneralSettingsView(updater: updater, teams: teams))
         tabs.add("Sessions", symbol: "timer", view: SessionSettingsView())
         tabs.add("Schedules", symbol: "calendar.badge.clock", view: SchedulesSettingsView(store: schedules))
         tabs.add("Triggers", symbol: "bolt", view: TriggersSettingsView(store: triggers))

@@ -7,13 +7,15 @@ struct GeneralSettingsView: View {
     private static let logger = Logger(subsystem: "app.midnightoil.MidnightOil", category: "Settings")
 
     let updater: Updater
+    let teams: TeamsLicense
     @State private var checksForUpdates: Bool
 
     @AppStorage(Preferences.Key.startsSessionAtLaunch) private var startsSessionAtLaunch = false
     @State private var launchesAtLogin = SMAppService.mainApp.status == .enabled
 
-    init(updater: Updater) {
+    init(updater: Updater, teams: TeamsLicense) {
         self.updater = updater
+        self.teams = teams
         _checksForUpdates = State(initialValue: updater.checksAutomatically)
     }
 
@@ -44,6 +46,8 @@ struct GeneralSettingsView: View {
                         .help(Help.checkNow)
                 }
             }
+
+            TeamsSection(license: teams)
         }
         .formStyle(.grouped)
     }

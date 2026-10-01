@@ -18,7 +18,13 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private let schedules: ScheduleStore
     private let card = SessionCardModel()
 
-    init(sessions: SessionController, triggers: TriggerStore, schedules: ScheduleStore, updater: Updater) {
+    init(
+        sessions: SessionController,
+        triggers: TriggerStore,
+        schedules: ScheduleStore,
+        teams: TeamsLicense,
+        updater: Updater
+    ) {
         self.sessions = sessions
         self.updater = updater
         self.schedules = schedules
@@ -26,6 +32,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             helper: sessions.helper,
             triggers: triggers,
             schedules: schedules,
+            teams: teams,
             history: sessions.history,
             updater: updater
         )

@@ -16,6 +16,8 @@ settings:
 packages:
   MidnightOilCore:
     path: Packages/MidnightOilCore
+  MidnightOilTeams:
+    path: ee/MidnightOilTeams
   KeyboardShortcuts:
     url: https://github.com/sindresorhus/KeyboardShortcuts
     exactVersion: "2.4.0"
@@ -29,6 +31,7 @@ targets:
     sources:
       - MidnightOil
       - Shared
+      - ee/App
       - path: LaunchDaemons
         buildPhase:
           copyFiles:
@@ -36,6 +39,7 @@ targets:
             subpath: Contents/Library/LaunchDaemons
     dependencies:
       - package: MidnightOilCore
+      - package: MidnightOilTeams
       - package: KeyboardShortcuts
       - package: Sparkle
       - target: MidnightOilHelper
@@ -82,3 +86,4 @@ schemes:
     test:
       targets:
         - package: MidnightOilCore/MidnightOilCoreTests
+        - package: MidnightOilTeams/MidnightOilTeamsTests
