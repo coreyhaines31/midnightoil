@@ -9,6 +9,7 @@ public enum SessionEndCause: String, Codable, Sendable, CaseIterable {
     case lowBattery
     case unplugged
     case triggerEnded
+    case scheduleEnded
     case replaced
     case midnightOilQuit
     /// A value written by a newer version of the app.
@@ -28,6 +29,7 @@ public enum SessionEndCause: String, Codable, Sendable, CaseIterable {
         case .lowBattery: "Battery got low"
         case .unplugged: "Unplugged"
         case .triggerEnded: "Trigger stopped matching"
+        case .scheduleEnded: "Schedule ended"
         case .replaced: "Replaced by a new session"
         case .midnightOilQuit: "Midnight Oil quit"
         case .unknown: "Ended"
@@ -43,6 +45,8 @@ public struct SessionRecord: Codable, Equatable, Identifiable, Sendable {
     public var end: Date
     /// The trigger that started it, or nil for a manual session.
     public var triggerName: String?
+    /// The schedule that started it, if any.
+    public var scheduleName: String?
     public var endCause: SessionEndCause?
     /// The app or file the session followed, if any.
     public var subject: String?
@@ -60,6 +64,7 @@ public struct SessionRecord: Codable, Equatable, Identifiable, Sendable {
         start: Date,
         end: Date,
         triggerName: String? = nil,
+        scheduleName: String? = nil,
         endCause: SessionEndCause? = nil,
         subject: String? = nil,
         awakeTime: TimeInterval? = nil,
@@ -73,6 +78,7 @@ public struct SessionRecord: Codable, Equatable, Identifiable, Sendable {
         self.start = start
         self.end = end
         self.triggerName = triggerName
+        self.scheduleName = scheduleName
         self.endCause = endCause
         self.subject = subject
         self.awakeTime = awakeTime
