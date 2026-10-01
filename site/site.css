@@ -109,6 +109,13 @@
     .tile .art img { border-radius: 10px 0 0 0; box-shadow: 0 10px 30px rgba(0,0,0,0.25); }
     .tile .art.center { padding: 0 20px 20px; align-items: center; justify-content: center; }
     .tile .art.center svg { width: 100%; max-width: 100%; height: auto; }
+    .extras-head { text-align: center; margin: 72px 0 28px; }
+    .extras-head h3 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+    .extras { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 40px; max-width: 980px; margin: 0 auto; }
+    .extra svg { width: 26px; height: 26px; margin-bottom: 10px; }
+    .extra h4 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 4px; }
+    .extra p { margin: 0; font-size: 15px; line-height: 1.45; color: var(--muted); }
+    section.dark .extra p { color: #a1a1a6; }
     .span-4 { grid-column: span 4; }
     .span-2 { grid-column: span 2; }
     .lampart {
@@ -283,13 +290,13 @@
     .founder p { margin: 0; }
     .founder strong { color: var(--text); font-weight: 600; }
     .founder cite { display: block; font-style: normal; font-size: 14px; color: var(--faint); margin-top: 10px; }
-    .frames { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: start; }
+    .frames { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: start; }
     .frame { background: #fff; border-radius: var(--radius); padding: 18px; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
     .frame .shot { height: 300px; display: flex; align-items: flex-start; justify-content: center; overflow: hidden; background: var(--gray); border-radius: 12px; padding: 22px 18px 0; }
     .frame img { width: auto; max-width: 100%; max-height: 100%; height: auto; border-radius: 8px; box-shadow: 0 12px 30px rgba(0,0,0,0.14), 0 0 0 0.5px rgba(0,0,0,0.1); }
-    .frame div { padding: 16px 4px 2px; }
-    .frame b { display: block; font-size: 17px; margin-bottom: 4px; letter-spacing: -0.01em; }
-    .frame span { color: var(--muted); font-size: 15px; line-height: 1.45; }
+    .frame > div:not(.shot) { padding: 16px 4px 2px; }
+    .frame > div:not(.shot) b { display: block; font-size: 17px; margin-bottom: 4px; letter-spacing: -0.01em; }
+    .frame > div:not(.shot) span { color: var(--muted); font-size: 15px; line-height: 1.45; }
     @media (max-width: 900px) { .frames { grid-template-columns: 1fr; } .founder { flex-direction: column; } }
 
     @media (max-width: 900px) {
@@ -305,6 +312,8 @@
     @media (max-width: 900px) {
       .bento { grid-template-columns: 1fr 1fr; }
       .span-4, .span-2 { grid-column: span 2; }
+      .extras { grid-template-columns: 1fr 1fr; gap: 26px 28px; }
+      .extras-head { margin-top: 56px; }
       .trust { grid-template-columns: 1fr; gap: 28px; }
     }
     @media (max-width: 720px) {
@@ -313,3 +322,77 @@
 
       section { padding: 64px 0; }
     }
+
+    /* Hi-fi Mac UI mockups, drawn in code. Light Settings-window look, sized like the old 640px screenshots. */
+    .mk-win { width: 640px; height: 400px; overflow: hidden; background: #fff; color: #1d1d1f; border-radius: 12px 12px 0 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25); font: 13px/1.35 -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; text-align: left; position: relative; }
+    .mk-toolbar { display: flex; justify-content: safe center; gap: 1px; padding: 9px 8px 7px; border-bottom: 1px solid #e6e6e9; background: #fbfbfd; }
+    .mk-tab { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 5px 6px 4px; border-radius: 8px; font-size: 10.5px; color: #6e6e73; white-space: nowrap; }
+    .mk-tab svg { width: 21px; height: 21px; fill: none; stroke: #77777c; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .mk-tab.on { background: #ececf0; color: #0a64e8; }
+    .mk-tab.on svg { stroke: #0a64e8; }
+    .mk-pane { padding: 16px 20px; }
+    .mk-intro { display: flex; gap: 11px; background: #f5f5f7; border-radius: 10px; padding: 11px 13px; color: #6e6e73; font-size: 12px; line-height: 1.4; }
+    .mk-intro svg { flex: none; width: 20px; height: 20px; fill: none; stroke: #ff8c42; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; margin-top: 1px; }
+    .mk-h { font-size: 12.5px; font-weight: 600; margin: 16px 4px 7px; }
+    .mk-group { background: #f5f5f7; border-radius: 10px; padding: 0 13px; }
+    .mk-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid #e3e3e7; }
+    .mk-row:last-child { border-bottom: 0; }
+    .mk-row .mk-text { flex: 1; min-width: 0; }
+    .mk-title { font-size: 13px; }
+    .mk-sub { font-size: 11.5px; color: #86868b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mk-switch { flex: none; width: 31px; height: 18px; border-radius: 9px; background: #0a64e8; position: relative; }
+    .mk-switch::after { content: ""; position: absolute; top: 1.5px; right: 1.5px; width: 15px; height: 15px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.25); }
+    .mk-switch.off { background: #e1e1e6; }
+    .mk-switch.off::after { right: auto; left: 1.5px; }
+    .mk-btn { flex: none; font-size: 11.5px; background: #e6e6eb; border-radius: 6px; padding: 3px 10px; }
+    .mk-minus { flex: none; width: 15px; height: 15px; border-radius: 50%; border: 1.3px solid #8e8e93; position: relative; }
+    .mk-minus::after { content: ""; position: absolute; left: 3px; right: 3px; top: 6px; height: 1.3px; background: #8e8e93; }
+    .mk-add { display: inline-block; margin: 9px 0; font-size: 12px; background: #e6e6eb; border-radius: 6px; padding: 4px 11px; }
+    /* A menu bar dropdown floating over a mockup: the running-session card. */
+    .mk-menu { position: absolute; right: 18px; bottom: 18px; width: 262px; padding: 11px 13px; border-radius: 11px;
+      background: rgba(40, 42, 58, 0.92); color: #f5f5f7; box-shadow: 0 16px 40px rgba(0,0,0,0.45), 0 0 0 0.5px rgba(255,255,255,0.12);
+      -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); display: flex; gap: 10px; }
+    .mk-menu svg { flex: none; width: 22px; height: 22px; }
+    .mk-menu b { display: block; font-size: 12.5px; font-weight: 600; }
+    .mk-menu span { display: block; font-size: 11.5px; color: #c7c7cc; font-variant-numeric: tabular-nums; }
+    .mk-menu small { display: block; font-size: 10.5px; color: #8e8e93; margin-top: 1px; }
+
+    /* Code-drawn NSMenu. Sized in em so it scales: set font-size on the wrapper. */
+    .mk-menus { display: flex; align-items: flex-start; font-size: 13px; text-align: left; }
+    .mk-nsmenu { width: 18.5em; padding: 0.38em 0.38em; border-radius: 0.8em; background: rgba(246,246,248,0.97); color: #1d1d1f;
+      box-shadow: 0 0.9em 2.3em rgba(0,0,0,0.16), 0 0 0 0.5px rgba(0,0,0,0.14); font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif; line-height: 1.25; }
+    .mk-nsmenu.dark { background: rgba(44,44,48,0.94); color: #f2f2f4; box-shadow: 0 1.8em 4.5em rgba(0,0,0,0.55), 0 0 0 0.5px rgba(255,255,255,0.14); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); }
+    .mk-nsmenu.sub { width: 8.6em; margin: 6.05em 0 0 -0.25em; }
+    .mk-item { display: flex; align-items: center; justify-content: space-between; padding: 0.22em 0.62em; border-radius: 0.35em; font-size: 1em; white-space: nowrap; }
+    .mk-item .k { color: #b0b0b5; font-size: 0.92em; }
+    .mk-nsmenu.dark .mk-item .k { color: #7c7c82; }
+    .mk-item .chev { width: 0.45em; height: 0.45em; border: solid currentColor; border-width: 0.12em 0.12em 0 0; transform: rotate(45deg); margin-right: 0.2em; opacity: 0.8; }
+    .mk-item.hl { background: #0a64e8; color: #fff; }
+    .mk-item.hl .k { color: rgba(255,255,255,0.75); }
+    .mk-sep { height: 1px; margin: 0.32em 0.62em; background: rgba(0,0,0,0.1); }
+    .mk-nsmenu.dark .mk-sep { background: rgba(255,255,255,0.12); }
+    .mk-card { display: flex; gap: 0.7em; padding: 0.3em 0.62em 0.45em; }
+    .mk-card > svg { flex: none; width: 1.75em; height: 1.75em; fill: #ff8c42; margin-top: 0.1em; }
+    .mk-card b { display: block; font-weight: 600; }
+    .mk-card .d { display: block; font-size: 0.92em; color: #8a8a8f; font-variant-numeric: tabular-nums; }
+    .mk-nsmenu.dark .mk-card .d { color: #a1a1a6; }
+    .mk-card .t { display: block; font-size: 0.85em; color: #a1a1a6; margin-top: 0.05em; }
+    .mk-check { display: flex; align-items: center; gap: 0.45em; font-size: 0.92em; margin-top: 0.38em; }
+    .mk-check i { width: 1.05em; height: 1.05em; border-radius: 0.25em; background: #fff; box-shadow: inset 0 0 0 0.5px rgba(0,0,0,0.25); position: relative; }
+    .mk-nsmenu.dark .mk-check i { background: rgba(255,255,255,0.14); box-shadow: none; }
+    .mk-check i.on { background: #0a64e8; box-shadow: none; }
+    .mk-check i.on::after { content: ""; position: absolute; left: 0.34em; top: 0.12em; width: 0.28em; height: 0.56em; border: solid #fff; border-width: 0 0.13em 0.13em 0; transform: rotate(45deg); }
+    .mk-check + .mk-check { margin-top: 0.22em; }
+    .mk-bar { display: flex; justify-content: flex-end; gap: 0.9em; align-items: center; padding: 0.3em 0.8em; margin: -0.2em 0 0.45em; font-size: 0.95em; color: #1d1d1f; }
+    .mk-bar svg { width: 0.95em; height: 1.2em; fill: none; stroke: #1d1d1f; stroke-width: 2.2; }
+    .mk-bar .lit { background: rgba(0,0,0,0.1); border-radius: 0.3em; padding: 0.15em 0.45em; display: flex; }
+    .frame .shot .mk-menus { font-size: 12px; }
+    /* The menu plus its submenu: drop the shortcut column so both fit the frame. */
+    .frame .shot .mk-menus.wide { font-size: 11px; }
+    .mk-menus.wide .mk-nsmenu:not(.sub) { width: 14.6em; }
+    .mk-menus.wide .mk-nsmenu:not(.sub) .k { display: none; }
+    div.openmenu { font-size: clamp(7px, 0.86vw, 13px); box-shadow: none; border-radius: 0; }
+    .openmenu .mk-nsmenu { width: 100%; }
+
+    @media (max-width: 720px) { .extras { grid-template-columns: 1fr; gap: 22px; } }
