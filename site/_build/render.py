@@ -110,6 +110,7 @@ def head(title, description, path):
   <link rel="apple-touch-icon" href="/images/icon.png">
   <link rel="stylesheet" href="/site.css">
   <style>{PAGE_CSS}  </style>
+  <script async src="https://tracerkit.com/t.js" data-key="tk__vMOLefQSrM_pLCt"></script>
 </head>
 <body>
 '''
