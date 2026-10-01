@@ -45,7 +45,7 @@ PAGES = [
             """, "table": [
                 ("Price", "Free", "Free"),
                 ("Open source", "Yes, MIT", "No"),
-                ("Last release", "September 2026", "November 10, 2023"),
+                ("Last release", "October 2026", "November 10, 2023"),
                 ("Install", "Homebrew cask or DMG", "Mac App Store only"),
                 ("Sessions: minutes, hours, until a time, while an app runs, while a download finishes", "Yes", "Yes"),
                 ("Closed-lid mode", "One checkbox; helper approved once", "Separate script + sudoers file + Terminal command"),
