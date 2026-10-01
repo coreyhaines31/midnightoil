@@ -64,7 +64,6 @@
       <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
-        <a href="/alternatives/">Alternatives</a>
         <a href="/#faq">FAQ</a>
         <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
         <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
@@ -108,7 +107,7 @@ caffeinate -dimsu     # everything</code></pre>
         <h3>Some flags silently do nothing</h3>
         <p><code>-s</code> is a no-op on battery. <code>-t</code> is ignored when you wrap a command. <code>-u</code> expires after five seconds unless you say otherwise. Each of these has a Stack Exchange thread from someone who thought it worked.</p>
         <h3>No triggers, no schedule</h3>
-        <p>It can't start when you dock, stop when the battery gets low, or say “until 7 AM and then let it sleep.” You'd script all of that yourself.</p>
+        <p>It can't start when you dock, stop when the battery gets low, say “until 7 AM and then let it sleep,” or hold your Mac awake every weekday from 9 to 5. You'd script all of that yourself, cron included.</p>
         <h2>The overnight agent problem, specifically</h2>
         <p>People running Claude Code, Codex, and Cursor agents overnight have converged on the same recipe: <code>tmux new-session -d -s agent 'caffeinate -i claude'</code>, sometimes wired into Claude Code's hooks so it starts automatically. It works, as long as the lid stays open and you never need to see whether it's still running. There are half a dozen wrapper projects on GitHub whose only job is to make caffeinate less annoying.</p>
         <p>Midnight Oil is what that recipe wants to be. Start a session <strong>while Terminal is running</strong> and it ends when the agent's app quits. Or <strong>until 7 AM</strong>. Check <strong>Stay awake with lid closed</strong> and you can shut the laptop. The flame in the menu bar shows time remaining, and normal sleep comes back on its own when the session ends, when the app quits, or if anything crashes.</p>
@@ -128,7 +127,8 @@ caffeinate -dimsu     # everything</code></pre>
             <tr><td>Keep awake until a clock time</td><td class="us y">Yes</td><td>No (seconds only, via -t)</td></tr>
             <tr><td>While an app is running</td><td class="us y">Yes, pick from a list</td><td>Yes, one process, via -w or wrapping</td></tr>
             <tr><td>Closed-lid mode</td><td class="us y">Yes; sleep restored automatically</td><td>No; sudo pmset workaround, manual reset</td></tr>
-            <tr><td>Triggers and schedules</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Triggers</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Weekly schedules, like work hours</td><td class="us y">Yes</td><td>No (cron plus a script)</td></tr>
             <tr><td>End on low battery or unplug</td><td class="us y">Yes</td><td>No</td></tr>
             <tr><td>Works from a script</td><td class="us y">Hot keys; CLI planned</td><td>Yes</td></tr>
             <tr><td>Install</td><td class="us y">Homebrew cask or DMG</td><td>None needed</td></tr>
@@ -169,14 +169,15 @@ caffeinate -dimsu     # everything</code></pre>
       <div class="wrap">
         <h2>The same assertion, with a menu bar.</h2>
         <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download for macOS</a>
-        <p class="fineprint">Free · Open source · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+        <p class="fineprint">Free · Source on GitHub · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
       </div>
     </section>
   </main>
   <footer>
     <div class="wrap">
-      <span>© 2026 Corey Haines. MIT License.</span>
-      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="/alternatives/">Alternatives</a></span>
+      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives/">Alternatives</a><a href="/alternatives/amphetamine">Amphetamine alternative</a><a href="/alternatives/caffeine">Caffeine alternative</a><a href="/alternatives/caffeinate">caffeinate alternative</a><a href="/alternatives/keepingyouawake">KeepingYouAwake alternative</a><a href="/alternatives/mouse-jiggler">Mouse jiggler alternative</a></nav>
+      <span>© 2026 Corey Haines. <a href="https://github.com/coreyhaines31/midnightoil/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a></span>
     </div>
   </footer>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What does caffeinate do on a Mac?", "acceptedAnswer": {"@type": "Answer", "text": "caffeinate creates a power-management assertion that stops macOS from sleeping. With no flags it prevents idle sleep until you stop it. You can scope it to a command (caffeinate -i make), a duration (caffeinate -t 3600), or a process (caffeinate -w PID)."}}, {"@type": "Question", "name": "Does caffeinate keep a MacBook awake with the lid closed?", "acceptedAnswer": {"@type": "Answer", "text": "No. Closing the lid is an explicit sleep request that a power assertion can't override. The workaround, sudo pmset -a disablesleep 1, needs an admin password and must be reverted by hand. Midnight Oil's closed-lid mode does this through a helper that restores sleep automatically."}}, {"@type": "Question", "name": "How do I keep my Mac awake while Claude Code runs overnight?", "acceptedAnswer": {"@type": "Answer", "text": "The command-line way is tmux new-session -d 'caffeinate -i claude', which keeps the assertion alive even if the terminal closes. The simpler way is Midnight Oil: start a session while Terminal is running, or until 7 AM, and check Stay Awake with Lid Closed if you're closing the laptop."}}, {"@type": "Question", "name": "How do I stop caffeinate?", "acceptedAnswer": {"@type": "Answer", "text": "Press Ctrl-C in the terminal that started it, or run killall caffeinate. Check what's holding your Mac awake with pmset -g assertions."}}]}</script>

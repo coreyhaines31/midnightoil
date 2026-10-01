@@ -50,7 +50,7 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.utilities
-        NSHumanReadableCopyright: Copyright © 2026 Corey Haines. MIT License.
+        NSHumanReadableCopyright: Copyright © 2026 Corey Haines. FSL-1.1-MIT.
         NSLocationUsageDescription: Midnight Oil needs your location to read the current Wi-Fi network name for Wi-Fi triggers.
         NSLocationWhenInUseUsageDescription: Midnight Oil needs your location to read the current Wi-Fi network name for Wi-Fi triggers.
         NSBluetoothAlwaysUsageDescription: Midnight Oil checks which Bluetooth devices are connected for Bluetooth triggers.

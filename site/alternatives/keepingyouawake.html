@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>KeepingYouAwake alternative with closed-lid mode: Midnight Oil</title>
-  <meta name="description" content="KeepingYouAwake is a well-maintained, open-source keep-awake app for Mac. It deliberately doesn&#x27;t support a closed lid or app-based triggers. Midnight Oil is the open-source alternative that does.">
+  <meta name="description" content="KeepingYouAwake is a well-maintained, open-source keep-awake app for Mac. It deliberately doesn&#x27;t support a closed lid or app-based triggers. Midnight Oil is the free, source-available alternative that does.">
   <link rel="canonical" href="https://midnightoil.app/alternatives/keepingyouawake">
   <meta property="og:title" content="KeepingYouAwake alternative with closed-lid mode: Midnight Oil">
-  <meta property="og:description" content="KeepingYouAwake is a well-maintained, open-source keep-awake app for Mac. It deliberately doesn&#x27;t support a closed lid or app-based triggers. Midnight Oil is the open-source alternative that does.">
+  <meta property="og:description" content="KeepingYouAwake is a well-maintained, open-source keep-awake app for Mac. It deliberately doesn&#x27;t support a closed lid or app-based triggers. Midnight Oil is the free, source-available alternative that does.">
   <meta property="og:image" content="https://midnightoil.app/images/icon.png">
   <meta property="og:url" content="https://midnightoil.app/alternatives/keepingyouawake">
   <link rel="icon" href="/images/icon.png">
@@ -64,7 +64,6 @@
       <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
-        <a href="/alternatives/">Alternatives</a>
         <a href="/#faq">FAQ</a>
         <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
         <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
@@ -75,12 +74,12 @@
     <div class="wrap sub-hero">
       <div class="eyebrow">KeepingYouAwake alternative</div>
       <h1>KeepingYouAwake stops at the lid.<br>Midnight Oil doesn't.</h1>
-      <p class="lede">KeepingYouAwake is the app most people recommend after Amphetamine: free, MIT-licensed, actively maintained, a Homebrew cask, one click. It also draws a line at closed-lid mode, on purpose, and its most-requested feature in 2026 is exactly that. Midnight Oil is the open-source alternative that crosses the line carefully.</p>
+      <p class="lede">KeepingYouAwake is the app most people recommend after Amphetamine: free, MIT-licensed, actively maintained, a Homebrew cask, one click. It also draws a line at closed-lid mode, on purpose, and its most-requested feature in 2026 is exactly that. Midnight Oil is the free, source-available alternative that crosses the line carefully.</p>
       <div class="actions">
         <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download Midnight Oil</a>
         <a class="link" href="#compare">See the comparison</a>
       </div>
-      <div class="tldr"><h2>The short version</h2><p>Lid open and just need on/off with a timer? KeepingYouAwake is excellent; keep it. Running agents overnight with the lid closed, or want sessions tied to an app? Midnight Oil adds those on the same free, open-source terms.</p></div>
+      <div class="tldr"><h2>The short version</h2><p>Lid open and just need on/off with a timer? KeepingYouAwake is excellent; keep it. Running agents overnight with the lid closed, or want sessions tied to an app? Midnight Oil adds those, and it's free too.</p></div>
     </div>
     <section class="tight" id="why">
       <div class="wrap"><div class="prose">
@@ -104,7 +103,7 @@
                 <div class="table-scroll"><table class="compare">
           <thead><tr><th></th><th class="us">Midnight Oil</th><th>KeepingYouAwake</th></tr></thead><tbody>
             <tr><td>Price</td><td class="us y">Free</td><td>Free</td></tr>
-            <tr><td>Open source</td><td class="us y">Yes, MIT</td><td>Yes, MIT</td></tr>
+            <tr><td>Source code public</td><td class="us y">Yes (FSL, MIT after 2 years)</td><td>Yes, MIT</td></tr>
             <tr><td>Actively maintained</td><td class="us y">Yes</td><td>Yes</td></tr>
             <tr><td>Install</td><td class="us y">Homebrew cask or DMG</td><td>Homebrew cask or zip</td></tr>
             <tr><td>One-click on and off</td><td class="us y">Yes</td><td>Yes</td></tr>
@@ -113,6 +112,7 @@
             <tr><td>While an app is running</td><td class="us y">Yes</td><td>No</td></tr>
             <tr><td>Closed-lid mode</td><td class="us y">Yes, opt-in, with safeguards</td><td>No, by design</td></tr>
             <tr><td>Triggers</td><td class="us y">10 kinds</td><td>External display only</td></tr>
+            <tr><td>Weekly schedules, like work hours</td><td class="us y">Yes</td><td>No</td></tr>
             <tr><td>End on low battery / Low Power Mode</td><td class="us y">Yes</td><td>Yes</td></tr>
             <tr><td>Lid-close alarm on battery</td><td class="us y">Yes</td><td>No</td></tr>
             <tr><td>Sandboxed</td><td class="us y">No (helper needs root for lid mode)</td><td>Yes</td></tr>
@@ -133,7 +133,7 @@
         <ol class="steps">
           <li><b>Install Midnight Oil.</b> <code>brew install --cask coreyhaines31/tap/midnightoil</code></li>
           <li><b>Set your defaults.</b> Settings › Sessions has the same allow-display-sleep and low-battery options you're used to. Settings › General has launch at login.</li>
-          <li><b>Add the trigger you wanted.</b> Settings › Triggers › Add Trigger › App Running › Terminal, or a schedule.</li>
+          <li><b>Add the trigger you wanted.</b> Settings › Triggers › Add Trigger › App Running › Terminal. For work hours, Settings › Schedules › Add “Work hours”.</li>
           <li><b>Turn on closed-lid mode when you need it.</b> It's a checkbox in a running session. Approve the helper once.</li>
           <li><b>Quit KeepingYouAwake.</b> <code>brew uninstall --cask keepingyouawake</code> if you're done with it.</li>
         </ol>
@@ -155,16 +155,17 @@
       <div class="wrap">
         <h2>Same values. More coverage.</h2>
         <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download for macOS</a>
-        <p class="fineprint">Free · Open source · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+        <p class="fineprint">Free · Source on GitHub · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
       </div>
     </section>
   </main>
   <footer>
     <div class="wrap">
-      <span>© 2026 Corey Haines. MIT License.</span>
-      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="/alternatives/">Alternatives</a></span>
+      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives/">Alternatives</a><a href="/alternatives/amphetamine">Amphetamine alternative</a><a href="/alternatives/caffeine">Caffeine alternative</a><a href="/alternatives/caffeinate">caffeinate alternative</a><a href="/alternatives/keepingyouawake">KeepingYouAwake alternative</a><a href="/alternatives/mouse-jiggler">Mouse jiggler alternative</a></nav>
+      <span>© 2026 Corey Haines. <a href="https://github.com/coreyhaines31/midnightoil/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a></span>
     </div>
   </footer>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does KeepingYouAwake work with the lid closed?", "acceptedAnswer": {"@type": "Answer", "text": "No. Its README says it only prevents sleep on desktop Macs and portables with an open lid, out of thermal considerations. A 2026 issue requesting the feature notes it would help users who run autonomous agents or long build tasks."}}, {"@type": "Question", "name": "Why does Midnight Oil allow closed-lid mode if KeepingYouAwake won't?", "acceptedAnswer": {"@type": "Answer", "text": "Because the risk can be managed rather than avoided. Midnight Oil's helper restores normal sleep the moment a session ends, when the app quits, or if the app crashes; sessions can end below a battery level or when unplugged; and an alarm sounds if the lid closes on battery. The feature is off unless you check it."}}, {"@type": "Question", "name": "Is Midnight Oil open source like KeepingYouAwake?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. MIT license, full source on GitHub, Homebrew cask, notarized DMG."}}, {"@type": "Question", "name": "Can I run both?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, but there's no reason to. Two keep-awake apps hold two assertions and do the same thing."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does KeepingYouAwake work with the lid closed?", "acceptedAnswer": {"@type": "Answer", "text": "No. Its README says it only prevents sleep on desktop Macs and portables with an open lid, out of thermal considerations. A 2026 issue requesting the feature notes it would help users who run autonomous agents or long build tasks."}}, {"@type": "Question", "name": "Why does Midnight Oil allow closed-lid mode if KeepingYouAwake won't?", "acceptedAnswer": {"@type": "Answer", "text": "Because the risk can be managed rather than avoided. Midnight Oil's helper restores normal sleep the moment a session ends, when the app quits, or if the app crashes; sessions can end below a battery level or when unplugged; and an alarm sounds if the lid closes on battery. The feature is off unless you check it."}}, {"@type": "Question", "name": "Is Midnight Oil open source like KeepingYouAwake?", "acceptedAnswer": {"@type": "Answer", "text": "Its full source is on GitHub under FSL-1.1-MIT: free to use and modify, but not to resell, and each release becomes MIT two years after it ships. KeepingYouAwake is MIT today. Both install with a Homebrew cask."}}, {"@type": "Question", "name": "Can I run both?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, but there's no reason to. Two keep-awake apps hold two assertions and do the same thing."}}]}</script>
 </body>
 </html>

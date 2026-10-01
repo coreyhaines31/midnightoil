@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Amphetamine for Mac: what happened, and the alternative</title>
-  <meta name="description" content="Amphetamine, the Mac keep-awake app, hasn&#x27;t shipped an update since November 2023. Midnight Oil is the free, open-source replacement: same sessions and triggers, one-toggle closed-lid mode, and built for overnight AI-agent runs.">
+  <meta name="description" content="Amphetamine, the Mac keep-awake app, hasn&#x27;t shipped an update since November 2023. Midnight Oil is the free, source-available replacement: same sessions and triggers, one-toggle closed-lid mode, and built for overnight AI-agent runs.">
   <link rel="canonical" href="https://midnightoil.app/alternatives/amphetamine">
   <meta property="og:title" content="Amphetamine for Mac: what happened, and the alternative">
-  <meta property="og:description" content="Amphetamine, the Mac keep-awake app, hasn&#x27;t shipped an update since November 2023. Midnight Oil is the free, open-source replacement: same sessions and triggers, one-toggle closed-lid mode, and built for overnight AI-agent runs.">
+  <meta property="og:description" content="Amphetamine, the Mac keep-awake app, hasn&#x27;t shipped an update since November 2023. Midnight Oil is the free, source-available replacement: same sessions and triggers, one-toggle closed-lid mode, and built for overnight AI-agent runs.">
   <meta property="og:image" content="https://midnightoil.app/images/icon.png">
   <meta property="og:url" content="https://midnightoil.app/alternatives/amphetamine">
   <link rel="icon" href="/images/icon.png">
@@ -64,7 +64,6 @@
       <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
-        <a href="/alternatives/">Alternatives</a>
         <a href="/#faq">FAQ</a>
         <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
         <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
@@ -75,7 +74,7 @@
     <div class="wrap sub-hero">
       <div class="eyebrow">Amphetamine alternative</div>
       <h1>Amphetamine's last update was 2023.<br>Your agents run in 2026.</h1>
-      <p class="lede">Amphetamine was the best keep-awake app on the Mac, and it's still free. It's also been frozen at version 5.3.2 since November 10, 2023, with issues piling up unanswered. Midnight Oil is the maintained, open-source replacement built for the way people keep Macs awake now: overnight agent runs, long builds, the laptop closed in a bag.</p>
+      <p class="lede">Amphetamine was the best keep-awake app on the Mac, and it's still free. It's also been frozen at version 5.3.2 since November 10, 2023, with issues piling up unanswered. Midnight Oil is the maintained, source-available replacement built for the way people keep Macs awake now: overnight agent runs, long builds, the laptop closed in a bag.</p>
       <div class="actions">
         <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download Midnight Oil</a>
         <a class="link" href="#compare">See the comparison</a>
@@ -106,13 +105,14 @@
                 <div class="table-scroll"><table class="compare">
           <thead><tr><th></th><th class="us">Midnight Oil</th><th>Amphetamine</th></tr></thead><tbody>
             <tr><td>Price</td><td class="us y">Free</td><td>Free</td></tr>
-            <tr><td>Open source</td><td class="us y">Yes, MIT</td><td>No</td></tr>
-            <tr><td>Last release</td><td class="us y">September 2026</td><td>November 10, 2023</td></tr>
+            <tr><td>Source code public</td><td class="us y">Yes (FSL, MIT after 2 years)</td><td>No</td></tr>
+            <tr><td>Last release</td><td class="us y">October 2026</td><td>November 10, 2023</td></tr>
             <tr><td>Install</td><td class="us y">Homebrew cask or DMG</td><td>Mac App Store only</td></tr>
             <tr><td>Sessions: minutes, hours, until a time, while an app runs, while a download finishes</td><td class="us y">Yes</td><td>Yes</td></tr>
             <tr><td>Closed-lid mode</td><td class="us y">One checkbox; helper approved once</td><td>Separate script + sudoers file + Terminal command</td></tr>
             <tr><td>Sleep restored if the app crashes</td><td class="us y">Yes, within a second</td><td>Not with Power Protect (manual reset)</td></tr>
             <tr><td>Triggers</td><td class="us y">Wi-Fi, USB, Bluetooth, display, power, battery, app, IP, schedule, idle</td><td>Those plus VPN, DNS, audio, drives, CPU</td></tr>
+            <tr><td>Weekly schedules, like work hours</td><td class="us y">Own tab, optional conditions, skip a day from the menu</td><td>Via a schedule trigger</td></tr>
             <tr><td>AppleScript</td><td class="us y">No</td><td>Yes</td></tr>
             <tr><td>Battery floor and unplug rules</td><td class="us y">Yes</td><td>Yes</td></tr>
             <tr><td>Lid-close alarm on battery</td><td class="us y">Yes</td><td>No</td></tr>
@@ -123,7 +123,7 @@
         <h3>What Amphetamine still does better</h3>
         <p>Breadth. Amphetamine has around fifteen trigger types, including Cisco AnyConnect VPN, DNS server, audio output in use, mounted drives, and CPU load, plus AppleScript support and a periodic cursor-mover. If your workflow depends on one of those, Amphetamine is still the only app that has it, and it's still free.</p>
         <h3>What Midnight Oil does better</h3>
-        <p>It's maintained, it's open source, and the closed-lid feature is a checkbox rather than an installation guide. It installs from Homebrew or a notarized DMG. And it was built around the job most people have now: an AI agent, a build, or a render that needs the Mac to stay up while you're somewhere else.</p>
+        <p>It's maintained, its source is on GitHub, and the closed-lid feature is a checkbox rather than an installation guide. It installs from Homebrew or a notarized DMG. And it was built around the job most people have now: an AI agent, a build, or a render that needs the Mac to stay up while you're somewhere else.</p>
             
       </div></div>
     </section>
@@ -133,7 +133,7 @@
         <h2>Switching takes about a minute</h2>
         <ol class="steps">
           <li><b>Install Midnight Oil.</b> <code>brew install --cask coreyhaines31/tap/midnightoil</code>, or download the DMG and drag it to Applications.</li>
-          <li><b>Recreate your triggers.</b> Amphetamine's settings don't export. Most people have one or two: “docked to a display and on power” and “while Terminal is running” take about thirty seconds each in Settings › Triggers.</li>
+          <li><b>Recreate your triggers.</b> Amphetamine's settings don't export. Most people have one or two: “docked to a display and on power” and “while Terminal is running” take about thirty seconds each in Settings › Triggers. A schedule-only trigger, like work hours, belongs in Settings › Schedules now.</li>
           <li><b>Set up closed-lid mode, if you use it.</b> Check “Stay awake with lid closed” in a session; the first time, Midnight Oil asks to install its helper and macOS asks you to approve it in Login Items. That's it.</li>
           <li><b>Undo Power Protect.</b> If you installed Amphetamine's Power Protect, remove its sudoers entry so nothing else can toggle sleep without a password. The Power Protect README has the uninstall steps.</li>
           <li><b>Quit Amphetamine.</b> Keep it installed if you rely on a trigger Midnight Oil doesn't have. Otherwise, drag it to the Trash.</li>
@@ -158,16 +158,17 @@
       <div class="wrap">
         <h2>Switch in about a minute.</h2>
         <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download for macOS</a>
-        <p class="fineprint">Free · Open source · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+        <p class="fineprint">Free · Source on GitHub · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
       </div>
     </section>
   </main>
   <footer>
     <div class="wrap">
-      <span>© 2026 Corey Haines. MIT License.</span>
-      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="/alternatives/">Alternatives</a></span>
+      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives/">Alternatives</a><a href="/alternatives/amphetamine">Amphetamine alternative</a><a href="/alternatives/caffeine">Caffeine alternative</a><a href="/alternatives/caffeinate">caffeinate alternative</a><a href="/alternatives/keepingyouawake">KeepingYouAwake alternative</a><a href="/alternatives/mouse-jiggler">Mouse jiggler alternative</a></nav>
+      <span>© 2026 Corey Haines. <a href="https://github.com/coreyhaines31/midnightoil/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a></span>
     </div>
   </footer>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is Amphetamine still being updated?", "acceptedAnswer": {"@type": "Answer", "text": "No. The current Mac App Store version is 5.3.2, released November 10, 2023. Its GitHub issue tracker shows no maintainer replies since December 2023, with reports of it not working on newer Macs and macOS releases."}}, {"@type": "Question", "name": "Is Midnight Oil free like Amphetamine?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Midnight Oil is free and MIT-licensed, with the full source on GitHub. There's no Pro tier, no account, and no telemetry."}}, {"@type": "Question", "name": "Does Midnight Oil have Amphetamine's closed-display mode?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. It's a checkbox called Stay Awake with Lid Closed. A small helper you approve once in System Settings handles it, and it restores normal sleep when the session ends, when the app quits, or if the app crashes. No script download, no sudoers file."}}, {"@type": "Question", "name": "Can I install Midnight Oil with Homebrew?", "acceptedAnswer": {"@type": "Answer", "text": "Yes: brew install --cask coreyhaines31/tap/midnightoil. Or download the notarized DMG from GitHub Releases."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is Amphetamine still being updated?", "acceptedAnswer": {"@type": "Answer", "text": "No. The current Mac App Store version is 5.3.2, released November 10, 2023. Its GitHub issue tracker shows no maintainer replies since December 2023, with reports of it not working on newer Macs and macOS releases."}}, {"@type": "Question", "name": "Is Midnight Oil free like Amphetamine?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Midnight Oil is free to use, at home or at work, with the full source on GitHub. No account and no telemetry."}}, {"@type": "Question", "name": "Does Midnight Oil have Amphetamine's closed-display mode?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. It's a checkbox called Stay Awake with Lid Closed. A small helper you approve once in System Settings handles it, and it restores normal sleep when the session ends, when the app quits, or if the app crashes. No script download, no sudoers file."}}, {"@type": "Question", "name": "Can I install Midnight Oil with Homebrew?", "acceptedAnswer": {"@type": "Answer", "text": "Yes: brew install --cask coreyhaines31/tap/midnightoil. Or download the notarized DMG from GitHub Releases."}}]}</script>
 </body>
 </html>

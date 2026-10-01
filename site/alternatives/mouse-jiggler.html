@@ -64,7 +64,6 @@
       <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
-        <a href="/alternatives/">Alternatives</a>
         <a href="/#faq">FAQ</a>
         <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
         <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
@@ -117,8 +116,9 @@
             <tr><td>Visible to device management</td><td class="us y">A normal power assertion</td><td>Extra mouse device or Accessibility grant</td></tr>
             <tr><td>Timed and until-a-time sessions</td><td class="us y">Yes</td><td>Rarely</td></tr>
             <tr><td>Ends when an app quits</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Weekly schedules, like work hours</td><td class="us y">Yes</td><td>Rarely</td></tr>
             <tr><td>Battery safety</td><td class="us y">Yes</td><td>No</td></tr>
-            <tr><td>Price</td><td class="us y">Free, open source</td><td>Free to $25</td></tr>
+            <tr><td>Price</td><td class="us y">Free, source on GitHub</td><td>Free to $25</td></tr>
           </tbody></table></div>
         <h3>When a jiggler is the right tool</h3>
         <p>When the only thing you need is a green status dot and you've made peace with the risk. Stick Software's Jiggler is free, open source, and has been around for years.</p>
@@ -155,14 +155,15 @@
       <div class="wrap">
         <h2>Keep it awake, honestly.</h2>
         <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download for macOS</a>
-        <p class="fineprint">Free · Open source · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+        <p class="fineprint">Free · Source on GitHub · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
       </div>
     </section>
   </main>
   <footer>
     <div class="wrap">
-      <span>© 2026 Corey Haines. MIT License.</span>
-      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="/alternatives/">Alternatives</a></span>
+      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives/">Alternatives</a><a href="/alternatives/amphetamine">Amphetamine alternative</a><a href="/alternatives/caffeine">Caffeine alternative</a><a href="/alternatives/caffeinate">caffeinate alternative</a><a href="/alternatives/keepingyouawake">KeepingYouAwake alternative</a><a href="/alternatives/mouse-jiggler">Mouse jiggler alternative</a></nav>
+      <span>© 2026 Corey Haines. <a href="https://github.com/coreyhaines31/midnightoil/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a></span>
     </div>
   </footer>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Is Midnight Oil a mouse jiggler?", "acceptedAnswer": {"@type": "Answer", "text": "No. It never moves your cursor or sends fake input. It holds a macOS power-management assertion, which is what stops the Mac from sleeping. It won't keep Slack or Teams showing you as active, by design."}}, {"@type": "Question", "name": "Will a mouse jiggler keep my MacBook awake with the lid closed?", "acceptedAnswer": {"@type": "Answer", "text": "No. Closing the lid puts a MacBook to sleep regardless of cursor movement. Midnight Oil's closed-lid mode is built for that case."}}, {"@type": "Question", "name": "Can IT detect a mouse jiggler?", "acceptedAnswer": {"@type": "Answer", "text": "Usually. A USB jiggler enumerates as a mouse the computer keeps a record of; a software jiggler needs Accessibility access that device-management tools can report; and the movement is perfectly periodic. In 2024 Wells Fargo dismissed more than a dozen employees for simulated activity. A keep-awake app is a normal power assertion, the same one Xcode and Final Cut use."}}, {"@type": "Question", "name": "Does Midnight Oil need Accessibility permission?", "acceptedAnswer": {"@type": "Answer", "text": "No. It needs no special permissions for ordinary sessions. Closed-lid mode uses a helper you approve once in System Settings."}}]}</script>
