@@ -1,4 +1,5 @@
 import AppKit
+import MidnightOilCore
 import MidnightOilTeams
 import SwiftUI
 
@@ -43,6 +44,13 @@ struct TeamsSection: View {
                 InfoLabel("Key valid until", info: TeamsHelp.expiry)
             }
             LabeledContent("Includes", value: key.payload.features.map(TeamsHelp.featureName).joined(separator: ", "))
+            if license.unlocks(.policies) {
+                LabeledContent {
+                    Text(TeamsHelp.policySummary(TeamsPolicy.read(from: .standard, licensed: true)))
+                } label: {
+                    InfoLabel("Policies", info: TeamsHelp.policies)
+                }
+            }
             if !license.isManaged {
                 HStack {
                     Button("Manage Subscription…") { NSWorkspace.shared.open(TeamsHelp.dashboardURL) }
@@ -128,6 +136,18 @@ enum TeamsHelp {
         case .webhook: "Session webhook"
         case .fleet: "Fleet dashboard"
         }
+    }
+
+    static let policies = """
+        Rules your organization sets for every session on this Mac, in its configuration profile.
+        """
+
+    static func policySummary(_ policy: SessionPolicy) -> String {
+        var parts: [String] = []
+        if policy.disallowsClosedLid { parts.append("Closed-lid mode off") }
+        if let limit = policy.maxManualSession { parts.append("Sessions up to \(RemainingTime.short(limit))") }
+        if let floor = policy.minimumBatteryFloor { parts.append("Battery floor \(floor)%") }
+        return parts.isEmpty ? "None set" : parts.joined(separator: " · ")
     }
 
     static func statusText(_ key: LicenseKey) -> String {

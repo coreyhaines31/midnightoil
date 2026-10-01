@@ -4,7 +4,7 @@ import MidnightOilCore
 enum SessionEndReason {
     case user
     case timeUp
-    case lowBattery
+    case lowBattery(floor: Int)
     case appQuit(String)
     case downloadFinished(String)
     case unplugged
@@ -12,6 +12,8 @@ enum SessionEndReason {
     case scheduleEnded(String)
     /// A schedule's window is still open but one of its conditions stopped holding.
     case schedulePaused(String, condition: String)
+    /// A manual session reached the organization's time limit.
+    case policyLimit(TimeInterval)
     case replaced
     case quit
 
@@ -26,6 +28,7 @@ enum SessionEndReason {
         case .triggerEnded: .triggerEnded
         case .scheduleEnded: .scheduleEnded
         case .schedulePaused: .schedulePaused
+        case .policyLimit: .policyLimit
         case .replaced: .replaced
         case .quit: .midnightOilQuit
         }
@@ -39,6 +42,9 @@ final class SessionController {
     private(set) var session: Session?
     /// Called whenever the session starts, ends, changes, or ticks.
     var onChange: (() -> Void)?
+    /// The organization's rules for sessions, from Midnight Oil for Teams. Read on every check,
+    /// so a newly deployed profile applies right away.
+    var policy: () -> SessionPolicy = { .none }
     /// Called when the user ends a session a trigger or schedule started, with its id.
     var onUserEndedAutomaticSession: ((UUID) -> Void)?
 
@@ -82,7 +88,7 @@ final class SessionController {
             start: .now,
             end: end,
             allowsDisplaySleep: Preferences.allowsDisplaySleep,
-            staysAwakeWithLidClosed: Preferences.staysAwakeWithLidClosed && helper.status == .installed
+            staysAwakeWithLidClosed: Preferences.staysAwakeWithLidClosed && canUseLidMode
         ))
     }
 
@@ -91,7 +97,7 @@ final class SessionController {
             start: .now,
             end: .indefinite,
             allowsDisplaySleep: trigger.allowsDisplaySleep,
-            staysAwakeWithLidClosed: trigger.staysAwakeWithLidClosed && helper.status == .installed,
+            staysAwakeWithLidClosed: trigger.staysAwakeWithLidClosed && canUseLidMode,
             source: .trigger(id: trigger.id, name: trigger.name)
         ))
     }
@@ -101,7 +107,7 @@ final class SessionController {
             start: .now,
             end: .indefinite,
             allowsDisplaySleep: schedule.allowsDisplaySleep,
-            staysAwakeWithLidClosed: schedule.staysAwakeWithLidClosed && helper.status == .installed,
+            staysAwakeWithLidClosed: schedule.staysAwakeWithLidClosed && canUseLidMode,
             source: .schedule(id: schedule.id, name: schedule.name)
         ))
     }
@@ -209,8 +215,11 @@ final class SessionController {
         onChange?()
     }
 
+    /// Closed-lid mode needs the helper, and an organization can switch it off.
+    var canUseLidMode: Bool { helper.status == .installed && !policy().disallowsClosedLid }
+
     func setStaysAwakeWithLidClosed(_ staysAwake: Bool) {
-        session?.staysAwakeWithLidClosed = staysAwake
+        session?.staysAwakeWithLidClosed = staysAwake && !policy().disallowsClosedLid
         syncLidClosedMode()
         onChange?()
     }
@@ -247,6 +256,10 @@ final class SessionController {
     private func tick() {
         guard let session else { return }
         sampleTally()
+        // A profile deployed mid-session can switch closed-lid mode off.
+        if session.staysAwakeWithLidClosed, policy().disallowsClosedLid {
+            setStaysAwakeWithLidClosed(false)
+        }
         if let reason = endReason(for: session) {
             end(reason: reason)
         } else {
@@ -271,6 +284,10 @@ final class SessionController {
         if session.isFinished(at: .now) {
             return .timeUp
         }
+        let policy = policy()
+        if policy.isOverLimit(session, at: .now), let limit = policy.maxManualSession {
+            return .policyLimit(limit)
+        }
         if case .whileAppRunning(let app) = session.end,
            NSRunningApplication.runningApplications(withBundleIdentifier: app.bundleIdentifier).isEmpty {
             return .appQuit(app.name)
@@ -283,8 +300,9 @@ final class SessionController {
         if Preferences.endsWhenUnplugged, BatteryGuard.wasUnplugged(from: lastPower, to: power) {
             return .unplugged
         }
-        if BatteryGuard.shouldEndSession(power: power, floorPercent: Preferences.batteryFloorPercent) {
-            return .lowBattery
+        let floor = policy.batteryFloor(user: Preferences.batteryFloorPercent)
+        if let floor, BatteryGuard.shouldEndSession(power: power, floorPercent: floor) {
+            return .lowBattery(floor: floor)
         }
         return nil
     }

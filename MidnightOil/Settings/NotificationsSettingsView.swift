@@ -12,14 +12,22 @@ struct NotificationsSettingsView: View {
     var body: some View {
         Form {
             PaneIntro(intro: Help.Pane.notifications)
+            ManagedNotice(keys: [
+                Preferences.Key.notifiesOnSessionEnd,
+                Preferences.Key.notifiesOnTriggerStart,
+                Preferences.Key.notificationSound,
+                Preferences.Key.lidAlarmSound
+            ])
 
             Section("Notify me when") {
                 Toggle(isOn: $notifiesOnSessionEnd) { InfoLabel("A session ends on its own", info: Help.notifyEnd) }
                     .help(Help.notifyEnd)
+                    .managed(Preferences.Key.notifiesOnSessionEnd)
                 Toggle(isOn: $notifiesOnTriggerStart) {
                     InfoLabel("A schedule or trigger starts a session", info: Help.notifyTriggerStart)
                 }
                 .help(Help.notifyTriggerStart)
+                .managed(Preferences.Key.notifiesOnTriggerStart)
             }
             Section("Sounds") {
                 LabeledContent {
@@ -31,6 +39,7 @@ struct NotificationsSettingsView: View {
                             ForEach(sounds, id: \.self) { Text($0).tag($0) }
                         }
                         .labelsHidden()
+                        .managed(Preferences.Key.notificationSound)
                         Button("Play", systemImage: "play.fill") { SystemSounds.play(notificationSound) }
                             .labelStyle(.iconOnly)
                             .help(Help.playSound)
@@ -45,6 +54,7 @@ struct NotificationsSettingsView: View {
                             ForEach(sounds, id: \.self) { Text($0).tag($0) }
                         }
                         .labelsHidden()
+                        .managed(Preferences.Key.lidAlarmSound)
                         Button("Play", systemImage: "play.fill") { SystemSounds.play(lidAlarmSound) }
                             .labelStyle(.iconOnly)
                             .help(Help.playSound)
