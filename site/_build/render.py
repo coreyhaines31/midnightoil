@@ -91,7 +91,7 @@ def footer_alternatives():
 def footer():
     return f'''  <footer>
     <div class="wrap">
-{footer_alternatives()}      <span>© 2026 Corey Haines. MIT License.</span>
+{footer_alternatives()}      <span>© 2026 Corey Haines. <a href="{REPO}/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
       <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="{REPO}/issues">Issues</a></span>
     </div>
   </footer>
@@ -152,7 +152,7 @@ def cta(text):
       <div class="wrap">
         <h2>{text}</h2>
         <a class="pill big" href="{DOWNLOAD}">Download for macOS</a>
-        <p class="fineprint">Free · Open source · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+        <p class="fineprint">Free · Source on GitHub · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
       </div>
     </section>
 '''

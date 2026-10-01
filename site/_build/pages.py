@@ -7,17 +7,17 @@ PAGES = [
         "slug": "amphetamine",
         "competitor": "Amphetamine",
         "title": "Amphetamine for Mac: what happened, and the alternative",
-        "description": "Amphetamine, the Mac keep-awake app, hasn't shipped an update since November 2023. Midnight Oil is the free, open-source replacement: same sessions and triggers, one-toggle closed-lid mode, and built for overnight AI-agent runs.",
+        "description": "Amphetamine, the Mac keep-awake app, hasn't shipped an update since November 2023. Midnight Oil is the free, source-available replacement: same sessions and triggers, one-toggle closed-lid mode, and built for overnight AI-agent runs.",
         "eyebrow": "Amphetamine alternative",
         "h1": "Amphetamine's last update was 2023.<br>Your agents run in 2026.",
-        "lede": "Amphetamine was the best keep-awake app on the Mac, and it's still free. It's also been frozen at version 5.3.2 since November 10, 2023, with issues piling up unanswered. Midnight Oil is the maintained, open-source replacement built for the way people keep Macs awake now: overnight agent runs, long builds, the laptop closed in a bag.",
+        "lede": "Amphetamine was the best keep-awake app on the Mac, and it's still free. It's also been frozen at version 5.3.2 since November 10, 2023, with issues piling up unanswered. Midnight Oil is the maintained, source-available replacement built for the way people keep Macs awake now: overnight agent runs, long builds, the laptop closed in a bag.",
         "tldr": "Amphetamine still works and has more trigger types than anything else, but it's unmaintained, closed source, and its closed-lid mode is a three-part install. Midnight Oil does the same core job with a one-checkbox closed-lid mode, installs from Homebrew, and ships updates.",
         "card_title": "Amphetamine",
         "card_blurb": "Last update 2023. Closed-lid mode takes a script, a sudoers file, and a Terminal command.",
         "cta": "Switch in about a minute.",
         "faqs": [
             ("Is Amphetamine still being updated?", "No. The current Mac App Store version is 5.3.2, released November 10, 2023. Its GitHub issue tracker shows no maintainer replies since December 2023, with reports of it not working on newer Macs and macOS releases."),
-            ("Is Midnight Oil free like Amphetamine?", "Yes. Midnight Oil is free and MIT-licensed, with the full source on GitHub. There's no Pro tier, no account, and no telemetry."),
+            ("Is Midnight Oil free like Amphetamine?", "Yes. Midnight Oil is free to use, at home or at work, with the full source on GitHub. No account and no telemetry."),
             ("Does Midnight Oil have Amphetamine's closed-display mode?", "Yes. It's a checkbox called Stay Awake with Lid Closed. A small helper you approve once in System Settings handles it, and it restores normal sleep when the session ends, when the app quits, or if the app crashes. No script download, no sudoers file."),
             ("Can I install Midnight Oil with Homebrew?", "Yes: brew install --cask coreyhaines31/tap/midnightoil. Or download the notarized DMG from GitHub Releases."),
         ],
@@ -41,10 +41,10 @@ PAGES = [
         <h3>What Amphetamine still does better</h3>
         <p>Breadth. Amphetamine has around fifteen trigger types, including Cisco AnyConnect VPN, DNS server, audio output in use, mounted drives, and CPU load, plus AppleScript support and a periodic cursor-mover. If your workflow depends on one of those, Amphetamine is still the only app that has it, and it's still free.</p>
         <h3>What Midnight Oil does better</h3>
-        <p>It's maintained, it's open source, and the closed-lid feature is a checkbox rather than an installation guide. It installs from Homebrew or a notarized DMG. And it was built around the job most people have now: an AI agent, a build, or a render that needs the Mac to stay up while you're somewhere else.</p>
+        <p>It's maintained, its source is on GitHub, and the closed-lid feature is a checkbox rather than an installation guide. It installs from Homebrew or a notarized DMG. And it was built around the job most people have now: an AI agent, a build, or a render that needs the Mac to stay up while you're somewhere else.</p>
             """, "table": [
                 ("Price", "Free", "Free"),
-                ("Open source", "Yes, MIT", "No"),
+                ("Source code public", "Yes (FSL, MIT after 2 years)", "No"),
                 ("Last release", "October 2026", "November 10, 2023"),
                 ("Install", "Homebrew cask or DMG", "Mac App Store only"),
                 ("Sessions: minutes, hours, until a time, while an app runs, while a download finishes", "Yes", "Yes"),
@@ -78,11 +78,11 @@ PAGES = [
         "slug": "caffeine",
         "competitor": "Caffeine",
         "title": "Caffeine for Mac: the original keep-awake app, and a modern alternative",
-        "description": "Caffeine is the one-click coffee cup that's kept Macs awake since 2006. It still works, but it has no timers you can see, no triggers, and no closed-lid mode. Midnight Oil is the free, open-source alternative for longer jobs.",
+        "description": "Caffeine is the one-click coffee cup that's kept Macs awake since 2006. It still works, but it has no timers you can see, no triggers, and no closed-lid mode. Midnight Oil is the free, source-available alternative for longer jobs.",
         "eyebrow": "Caffeine alternative",
         "h1": "Caffeine is a cup you click.<br>Midnight Oil is the rest of the night.",
         "lede": "Caffeine is the app that started this category: click the cup, your Mac stays awake. Two decades on it's still free and still tiny, and for a lot of people that's exactly enough. If you need it to run for a set time, react to what's happening, or keep a closed laptop working, you've outgrown it.",
-        "tldr": "Keep Caffeine if all you ever do is click the cup. Get Midnight Oil for sessions that end on their own, triggers, closed-lid mode, and battery safety. Both are free and open source.",
+        "tldr": "Keep Caffeine if all you ever do is click the cup. Get Midnight Oil for sessions that end on their own, triggers, closed-lid mode, and battery safety. Both are free, and both publish their source.",
         "card_title": "Caffeine",
         "card_blurb": "The 2006 original. One click, and that's the whole app: no timers, triggers, or lid mode.",
         "cta": "More than a cup.",
@@ -90,7 +90,7 @@ PAGES = [
             ("Is Caffeine for Mac still maintained?", "Yes. IntelliScape Solutions continues the original Lighthead app; version 1.1.4 shipped in September 2025 with native Apple Silicon support and macOS Tahoe compatibility. Note there are at least three projects named Caffeine with the same coffee-cup icon, which causes confusion about which one you have."),
             ("Does Caffeine work with the lid closed?", "No. Caffeine has no closed-lid support. Closing the lid puts the MacBook to sleep. Midnight Oil's Stay Awake with Lid Closed option handles that through a helper you approve once."),
             ("Can Caffeine turn itself on when I open an app or plug in a display?", "No. Caffeine has no triggers. Midnight Oil can start a session when a display is connected, on power, on a Wi-Fi network, while a specific app is running, on a schedule, and more."),
-            ("Is Midnight Oil free?", "Yes. Free, MIT-licensed, source on GitHub, no telemetry."),
+            ("Is Midnight Oil free?", "Yes. Free to use, source on GitHub, no telemetry."),
         ],
         "sections": [
             {"id": "why", "html": """
@@ -117,7 +117,7 @@ PAGES = [
         <p>Everything that happens after the click. Sessions that end at a time or when an app quits, a countdown in the menu bar, triggers that start sessions on their own, closed-lid mode, and battery rules so a laptop never cooks in a bag.</p>
             """, "table": [
                 ("Price", "Free", "Free (donations)"),
-                ("Open source", "Yes, MIT", "Yes, MIT"),
+                ("Source code public", "Yes (FSL, MIT after 2 years)", "Yes, MIT"),
                 ("One-click on and off", "Yes", "Yes"),
                 ("Timed sessions with a visible countdown", "Yes", "Default duration only, no countdown"),
                 ("Keep awake until a time", "Yes", "No"),
@@ -230,18 +230,18 @@ caffeinate -dimsu     # everything</code></pre>
         "slug": "keepingyouawake",
         "competitor": "KeepingYouAwake",
         "title": "KeepingYouAwake alternative with closed-lid mode: Midnight Oil",
-        "description": "KeepingYouAwake is a well-maintained, open-source keep-awake app for Mac. It deliberately doesn't support a closed lid or app-based triggers. Midnight Oil is the open-source alternative that does.",
+        "description": "KeepingYouAwake is a well-maintained, open-source keep-awake app for Mac. It deliberately doesn't support a closed lid or app-based triggers. Midnight Oil is the free, source-available alternative that does.",
         "eyebrow": "KeepingYouAwake alternative",
         "h1": "KeepingYouAwake stops at the lid.<br>Midnight Oil doesn't.",
-        "lede": "KeepingYouAwake is the app most people recommend after Amphetamine: free, MIT-licensed, actively maintained, a Homebrew cask, one click. It also draws a line at closed-lid mode, on purpose, and its most-requested feature in 2026 is exactly that. Midnight Oil is the open-source alternative that crosses the line carefully.",
-        "tldr": "Lid open and just need on/off with a timer? KeepingYouAwake is excellent; keep it. Running agents overnight with the lid closed, or want sessions tied to an app? Midnight Oil adds those on the same free, open-source terms.",
+        "lede": "KeepingYouAwake is the app most people recommend after Amphetamine: free, MIT-licensed, actively maintained, a Homebrew cask, one click. It also draws a line at closed-lid mode, on purpose, and its most-requested feature in 2026 is exactly that. Midnight Oil is the free, source-available alternative that crosses the line carefully.",
+        "tldr": "Lid open and just need on/off with a timer? KeepingYouAwake is excellent; keep it. Running agents overnight with the lid closed, or want sessions tied to an app? Midnight Oil adds those, and it's free too.",
         "card_title": "KeepingYouAwake",
         "card_blurb": "Maintained, minimal, open source. Refuses closed-lid mode on principle.",
         "cta": "Same values. More coverage.",
         "faqs": [
             ("Does KeepingYouAwake work with the lid closed?", "No. Its README says it only prevents sleep on desktop Macs and portables with an open lid, out of thermal considerations. A 2026 issue requesting the feature notes it would help users who run autonomous agents or long build tasks."),
             ("Why does Midnight Oil allow closed-lid mode if KeepingYouAwake won't?", "Because the risk can be managed rather than avoided. Midnight Oil's helper restores normal sleep the moment a session ends, when the app quits, or if the app crashes; sessions can end below a battery level or when unplugged; and an alarm sounds if the lid closes on battery. The feature is off unless you check it."),
-            ("Is Midnight Oil open source like KeepingYouAwake?", "Yes. MIT license, full source on GitHub, Homebrew cask, notarized DMG."),
+            ("Is Midnight Oil open source like KeepingYouAwake?", "Its full source is on GitHub under FSL-1.1-MIT: free to use and modify, but not to resell, and each release becomes MIT two years after it ships. KeepingYouAwake is MIT today. Both install with a Homebrew cask."),
             ("Can I run both?", "Yes, but there's no reason to. Two keep-awake apps hold two assertions and do the same thing."),
         ],
         "sections": [
@@ -265,7 +265,7 @@ caffeinate -dimsu     # everything</code></pre>
         <p>Closed-lid mode with real safeguards, sessions tied to an app or a clock time, a live countdown, ten trigger types, battery rules, hot keys, and statistics. Same license, same price.</p>
             """, "table": [
                 ("Price", "Free", "Free"),
-                ("Open source", "Yes, MIT", "Yes, MIT"),
+                ("Source code public", "Yes (FSL, MIT after 2 years)", "Yes, MIT"),
                 ("Actively maintained", "Yes", "Yes"),
                 ("Install", "Homebrew cask or DMG", "Homebrew cask or zip"),
                 ("One-click on and off", "Yes", "Yes"),
@@ -348,7 +348,7 @@ caffeinate -dimsu     # everything</code></pre>
                 ("Ends when an app quits", "Yes", "No"),
                 ("Weekly schedules, like work hours", "Yes", "Rarely"),
                 ("Battery safety", "Yes", "No"),
-                ("Price", "Free, open source", "Free to $25"),
+                ("Price", "Free, source on GitHub", "Free to $25"),
             ]},
             {"id": "switch", "html": """
         <h2>If sleep was your real problem</h2>
@@ -365,7 +365,7 @@ caffeinate -dimsu     # everything</code></pre>
 
 HUB = {
     "title": "Alternatives to Amphetamine, Caffeine, caffeinate, and mouse jigglers for Mac",
-    "description": "Honest comparisons of the ways people keep a Mac awake, and where Midnight Oil fits: the free, open-source keep-awake app built for overnight AI-agent runs and closed-lid work.",
+    "description": "Honest comparisons of the ways people keep a Mac awake, and where Midnight Oil fits: the free, source-available keep-awake app built for overnight AI-agent runs and closed-lid work.",
     "h1": "Every way to keep a Mac awake,<br>compared honestly.",
     "lede": "Five ways people do this, what each does well, and where it stops. Sometimes the other tool is the right one; we say so.",
     "glance": [
@@ -381,6 +381,6 @@ HUB = {
     "html": """
         <h2>How we compare</h2>
         <p>Every page here was researched from the competitor's own App Store listing, GitHub repository, release history, and user reviews as of September 2026, and each states plainly what the other tool does better. If you spot something out of date, <a href="https://github.com/coreyhaines31/midnightoil/issues">open an issue</a> and we'll fix it.</p>
-        <p>The short version of the category: <strong>Amphetamine</strong> has the most features and hasn't shipped since 2023. <strong>KeepingYouAwake</strong> is maintained and minimal, and won't keep a closed lid awake on principle. <strong>Caffeine</strong> is the 2006 original, a cup you click. <strong>caffeinate</strong> is built in and lives in the terminal. <strong>Mouse jigglers</strong> solve a different problem than most people think. Midnight Oil is free and open source like the best of them, and built for the way Macs get kept awake now: overnight, unattended, sometimes closed.</p>
+        <p>The short version of the category: <strong>Amphetamine</strong> has the most features and hasn't shipped since 2023. <strong>KeepingYouAwake</strong> is maintained and minimal, and won't keep a closed lid awake on principle. <strong>Caffeine</strong> is the 2006 original, a cup you click. <strong>caffeinate</strong> is built in and lives in the terminal. <strong>Mouse jigglers</strong> solve a different problem than most people think. Midnight Oil is free, with its source on GitHub like the best of them, and built for the way Macs get kept awake now: overnight, unattended, sometimes closed.</p>
     """,
 }
