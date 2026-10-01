@@ -1,25 +1,28 @@
 import Foundation
 import MidnightOilCore
 
-/// Evaluates triggers on a timer and starts or ends trigger sessions.
-/// Manual sessions always win; a trigger session the user ends by hand stays
-/// off until that trigger's criteria stop matching.
+/// Evaluates schedules and triggers on a timer and starts or ends their sessions.
+/// Manual sessions always win, then schedules, then triggers. A session the user
+/// ends by hand stays off until its schedule or trigger stops matching.
 @MainActor
 final class TriggerController {
     private static let interval: Duration = .seconds(5)
 
     private let store: TriggerStore
+    private let schedules: ScheduleStore
     private let sessions: SessionController
     private var suppressed: UUID?
     private var ticker: Task<Void, Never>?
 
-    init(store: TriggerStore, sessions: SessionController) {
+    init(store: TriggerStore, schedules: ScheduleStore, sessions: SessionController) {
         self.store = store
+        self.schedules = schedules
         self.sessions = sessions
-        sessions.onUserEndedTriggerSession = { [weak self] id in
+        sessions.onUserEndedAutomaticSession = { [weak self] id in
             self?.suppressed = id
         }
         store.onChange = { [weak self] in self?.evaluate() }
+        schedules.onChange = { [weak self] in self?.evaluate() }
         ticker = Task { [weak self] in
             while !Task.isCancelled {
                 self?.evaluate()
@@ -29,25 +32,36 @@ final class TriggerController {
     }
 
     func evaluate() {
+        let enabledSchedules = schedules.schedules.filter(\.isEnabled)
         let triggers = Preferences.triggersEnabled ? store.triggers.filter(\.isEnabled) : []
+        // Schedules come first, so one wins over a trigger that matches at the same time.
+        let candidates = enabledSchedules.map(\.asTrigger) + triggers
         let needs = Self.needs(for: triggers)
         if needs.wifi { WifiAccess.requestIfNeeded() }
         let state = SystemStateReader.current(needs: needs)
 
-        if TriggerEngine.canRearm(suppressed, triggers: triggers, state: state) {
+        if TriggerEngine.canRearm(suppressed, triggers: candidates, state: state) {
             suppressed = nil
         }
-        let active = TriggerEngine.activeTrigger(in: triggers, state: state, suppressed: suppressed)
+        let source = sessions.session?.source
+        let running = source?.automaticID
+        let active = TriggerEngine.activeTrigger(in: candidates, state: state, suppressed: suppressed, running: running)
 
-        switch (sessions.session?.source, active) {
+        switch (source, active) {
         case (.manual?, _), (nil, nil):
             return
-        case (.trigger(let id, _)?, let active?) where active.id == id:
+        case (_, let active?) where active.id == running:
             return
-        case (.trigger?, let active?), (nil, let active?):
-            sessions.start(trigger: active)
+        case (_, let active?):
+            if let schedule = enabledSchedules.first(where: { $0.id == active.id }) {
+                sessions.start(schedule: schedule)
+            } else {
+                sessions.start(trigger: active)
+            }
         case (.trigger(_, let name)?, nil):
             sessions.end(reason: .triggerEnded(name))
+        case (.schedule(_, let name)?, nil):
+            sessions.end(reason: .scheduleEnded(name))
         }
     }
 

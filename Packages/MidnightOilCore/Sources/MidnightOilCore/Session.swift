@@ -31,6 +31,15 @@ public enum SessionEnd: Equatable, Sendable {
 public enum SessionSource: Equatable, Sendable {
     case manual
     case trigger(id: UUID, name: String)
+    case schedule(id: UUID, name: String)
+
+    /// The trigger or schedule running this session, nil for one you started.
+    public var automaticID: UUID? {
+        switch self {
+        case .manual: nil
+        case .trigger(let id, _), .schedule(let id, _): id
+        }
+    }
 }
 
 public struct Session: Equatable, Sendable {

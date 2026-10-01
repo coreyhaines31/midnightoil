@@ -9,6 +9,7 @@ enum SessionEndReason {
     case downloadFinished(String)
     case unplugged
     case triggerEnded(String)
+    case scheduleEnded(String)
     case replaced
     case quit
 
@@ -21,6 +22,7 @@ enum SessionEndReason {
         case .downloadFinished: .downloadFinished
         case .unplugged: .unplugged
         case .triggerEnded: .triggerEnded
+        case .scheduleEnded: .scheduleEnded
         case .replaced: .replaced
         case .quit: .midnightOilQuit
         }
@@ -34,8 +36,8 @@ final class SessionController {
     private(set) var session: Session?
     /// Called whenever the session starts, ends, changes, or ticks.
     var onChange: (() -> Void)?
-    /// Called when the user ends a session a trigger started, with that trigger's id.
-    var onUserEndedTriggerSession: ((UUID) -> Void)?
+    /// Called when the user ends a session a trigger or schedule started, with its id.
+    var onUserEndedAutomaticSession: ((UUID) -> Void)?
 
     let helper: HelperClient
     let history = SessionHistory()
@@ -91,6 +93,16 @@ final class SessionController {
         ))
     }
 
+    func start(schedule: AwakeSchedule) {
+        begin(Session(
+            start: .now,
+            end: .indefinite,
+            allowsDisplaySleep: schedule.allowsDisplaySleep,
+            staysAwakeWithLidClosed: schedule.staysAwakeWithLidClosed && helper.status == .installed,
+            source: .schedule(id: schedule.id, name: schedule.name)
+        ))
+    }
+
     private func begin(_ newSession: Session) {
         if let previous = session {
             recordFinished(previous, reason: .replaced)
@@ -98,8 +110,10 @@ final class SessionController {
         session = newSession
         tally = SessionTally(start: newSession.start)
         batteryAtStart = PowerSourceReader.current().batteryPercent
-        if case .trigger(_, let name) = newSession.source {
-            SessionNotifier.sessionStarted(byTrigger: name)
+        switch newSession.source {
+        case .trigger(_, let name): SessionNotifier.sessionStarted(byTrigger: name)
+        case .schedule(_, let name): SessionNotifier.sessionStarted(bySchedule: name)
+        case .manual: break
         }
         if case .whileDownloading(let file) = newSession.end {
             download = DownloadProgress(file: file, startedAt: .now)
@@ -114,8 +128,8 @@ final class SessionController {
 
     func end(reason: SessionEndReason = .user) {
         guard let session else { return }
-        if case .user = reason, case .trigger(let id, _) = session.source {
-            onUserEndedTriggerSession?(id)
+        if case .user = reason, let id = session.source.automaticID {
+            onUserEndedAutomaticSession?(id)
         }
         self.session = nil
         let record = recordFinished(session, reason: reason)
@@ -151,7 +165,12 @@ final class SessionController {
             lidMode: session.staysAwakeWithLidClosed
         )
         var triggerName: String?
-        if case .trigger(_, let name) = session.source { triggerName = name }
+        var scheduleName: String?
+        switch session.source {
+        case .trigger(_, let name): triggerName = name
+        case .schedule(_, let name): scheduleName = name
+        case .manual: break
+        }
         var subject: String?
         switch session.end {
         case .whileAppRunning(let app): subject = app.name
@@ -162,6 +181,7 @@ final class SessionController {
             start: session.start,
             end: .now,
             triggerName: triggerName,
+            scheduleName: scheduleName,
             endCause: reason.cause,
             subject: subject,
             awakeTime: tally?.awake,

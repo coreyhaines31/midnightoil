@@ -20,6 +20,11 @@ enum SessionNotifier {
         post(title: "Keeping your Mac awake", body: "The “\(name)” trigger started a session.")
     }
 
+    static func sessionStarted(bySchedule name: String) {
+        guard Preferences.notifiesOnTriggerStart else { return }
+        post(title: "Keeping your Mac awake", body: "Your “\(name)” schedule started a session.")
+    }
+
     private static func post(title: String, body: String) {
         Task {
             let center = UNUserNotificationCenter.current()
@@ -49,6 +54,7 @@ enum SessionNotifier {
         case .downloadFinished(let name): "“\(name)” finished downloading, so your Mac can sleep again."
         case .unplugged: "Your Mac was unplugged, so it can sleep again."
         case .triggerEnded(let name): "The “\(name)” trigger no longer applies, so your Mac can sleep again."
+        case .scheduleEnded(let name): "Your “\(name)” schedule is over, so your Mac can sleep again."
         case .lowBattery:
             "Your battery dropped below \(Preferences.batteryFloorPercent ?? 0)%, so your Mac can sleep again."
         }
