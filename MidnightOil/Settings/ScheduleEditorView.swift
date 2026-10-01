@@ -72,7 +72,7 @@ struct ScheduleEditorView: View {
             }
             .padding(16)
         }
-        .frame(width: 600, height: 560)
+        .frame(width: 640, height: 496)
     }
 
     /// Why the schedule can't be saved yet, if anything.

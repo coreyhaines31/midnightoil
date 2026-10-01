@@ -7,26 +7,35 @@ struct ScheduleEditor: View {
     private let daySymbols = Calendar.current.veryShortWeekdaySymbols
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 4) {
-                ForEach(1...7, id: \.self) { day in
-                    Toggle(daySymbols[day - 1], isOn: Binding(
-                        get: { schedule.days.contains(day) },
-                        set: { included in
-                            if included { schedule.days.insert(day) } else { schedule.days.remove(day) }
-                        }
-                    ))
-                    .toggleStyle(.button)
-                }
+        // One row when there's room, as in the schedule editor; stacked inside a trigger's condition row.
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: 16) { dayButtons; timeRange }
+            VStack(alignment: .leading, spacing: 8) { dayButtons; timeRange }
+        }
+    }
+
+    private var dayButtons: some View {
+        HStack(spacing: 4) {
+            ForEach(1...7, id: \.self) { day in
+                Toggle(daySymbols[day - 1], isOn: Binding(
+                    get: { schedule.days.contains(day) },
+                    set: { included in
+                        if included { schedule.days.insert(day) } else { schedule.days.remove(day) }
+                    }
+                ))
+                .toggleStyle(.button)
             }
-            HStack(spacing: 6) {
-                Text("From")
-                DatePicker("From", selection: minuteBinding(\.startMinute), displayedComponents: .hourAndMinute)
-                    .labelsHidden()
-                Text("to")
-                DatePicker("To", selection: minuteBinding(\.endMinute), displayedComponents: .hourAndMinute)
-                    .labelsHidden()
-            }
+        }
+    }
+
+    private var timeRange: some View {
+        HStack(spacing: 6) {
+            Text("From")
+            DatePicker("From", selection: minuteBinding(\.startMinute), displayedComponents: .hourAndMinute)
+                .labelsHidden()
+            Text("to")
+            DatePicker("To", selection: minuteBinding(\.endMinute), displayedComponents: .hourAndMinute)
+                .labelsHidden()
         }
     }
 

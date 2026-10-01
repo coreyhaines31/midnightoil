@@ -60,7 +60,7 @@ struct SchedulesSettingsView: View {
             }
         }
         .formStyle(.grouped)
-        .frame(height: 440)
+        .frame(height: 500)
         .confirmationDialog(
             "Remove “\(removing?.name ?? "")”?",
             isPresented: Binding(get: { removing != nil }, set: { if !$0 { removing = nil } }),
