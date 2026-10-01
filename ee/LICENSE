@@ -1,0 +1,47 @@
+Midnight Oil Commercial License
+
+Copyright (c) 2026 Corey Haines
+
+DRAFT: to be reviewed by a lawyer before Midnight Oil for Teams is sold.
+
+The software in this "ee/" directory (the "Commercial Software") is not
+covered by the license in the repository's root LICENSE file. It is licensed
+under these terms.
+
+1. Subscription required. You may use the Commercial Software in production
+   only if you (or the organization you work for) hold a valid, paid
+   Midnight Oil for Teams subscription, and only on as many Macs as that
+   subscription has seats.
+
+2. Development and testing. Without a subscription, you may copy and modify
+   the Commercial Software only to develop and test it, not to use its
+   features in production.
+
+3. Modifications. You may modify the Commercial Software for your own use
+   under a valid subscription. Corey Haines owns all rights in the Commercial
+   Software, and you grant Corey Haines a license to any modifications you
+   contribute back, under the terms in CONTRIBUTING.md.
+
+4. No redistribution or resale. You may not sell, sublicense, rent, or
+   otherwise distribute the Commercial Software or any modified version of
+   it, and you may not provide it to others as part of a product or service.
+
+5. No circumvention. You may not remove, disable, or work around the license
+   key checks in the Commercial Software, or use it with a key you did not
+   get from Midnight Oil for Teams.
+
+6. Third-party components. Third-party components keep their own licenses.
+
+7. No warranty. THE COMMERCIAL SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY
+   OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+   WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+   LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+   CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH
+   THE COMMERCIAL SOFTWARE OR THE USE OR OTHER DEALINGS IN IT.
+
+8. Termination. These rights end automatically if you break these terms or
+   your subscription ends, except that you may keep using the free features
+   of Midnight Oil under the root LICENSE.
+
+For a subscription, see https://midnightoil.app/teams.
