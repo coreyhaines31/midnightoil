@@ -182,6 +182,16 @@ struct TriggerEngineTests {
         #expect(active?.id == home.id)
     }
 
+    @Test func theRunningTriggerKeepsGoingWhileItStillMatches() {
+        let anywhere = Trigger(name: "Anywhere", criteria: [.powerSource(.battery)])
+        let triggers = [anywhere, home]
+        let kept = TriggerEngine.activeTrigger(in: triggers, state: homeState, suppressed: nil, running: home.id)
+        #expect(kept?.id == home.id)
+        let away = SystemState(wifiNetwork: "Cafe", power: PowerState(batteryPercent: 90, isOnBattery: true))
+        let next = TriggerEngine.activeTrigger(in: triggers, state: away, suppressed: nil, running: home.id)
+        #expect(next?.id == anywhere.id)
+    }
+
     @Test func suppressedTriggerStaysQuietUntilItStopsMatching() {
         #expect(TriggerEngine.activeTrigger(in: [home], state: homeState, suppressed: home.id) == nil)
         #expect(!TriggerEngine.canRearm(home.id, triggers: [home], state: homeState))
