@@ -23,7 +23,7 @@ public struct Schedule: Codable, Equatable, Sendable {
         self.endMinute = endMinute
     }
 
-    func contains(_ date: Date, calendar: Calendar) -> Bool {
+    public func contains(_ date: Date, calendar: Calendar) -> Bool {
         let parts = calendar.dateComponents([.weekday, .hour, .minute], from: date)
         guard let weekday = parts.weekday, let hour = parts.hour, let minute = parts.minute else { return false }
         let now = hour * 60 + minute

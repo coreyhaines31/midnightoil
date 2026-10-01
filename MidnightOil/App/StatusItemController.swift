@@ -163,10 +163,22 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         return "Skip Until \(SessionCardModel.clockTime(next))"
     }
 
-    /// "Work hours starts Mon 9:00 AM": the soonest enabled schedule.
+    /// "Work hours is waiting: On power adapter" when a window is open but a condition
+    /// isn't met, otherwise "Work hours starts Mon 9:00 AM" for the soonest schedule.
     private func nextScheduleItem() -> NSMenuItem? {
-        let upcoming = schedules.schedules
-            .filter(\.isEnabled)
+        let enabled = schedules.schedules.filter(\.isEnabled)
+        let open = enabled.filter { !$0.conditions.isEmpty && $0.schedule.contains(.now, calendar: .current) }
+        if !open.isEmpty {
+            let state = SystemStateReader.current(needs: TriggerController.needs(for: open.map(\.asTrigger)))
+            for schedule in open {
+                guard let failed = schedule.conditions.first(where: { !$0.matches(state) }) else { continue }
+                let title = "\(schedule.name) is waiting: \(failed.summary)"
+                let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+                item.isEnabled = false
+                return item.withToolTip(Help.Menu.scheduleWaiting)
+            }
+        }
+        let upcoming = enabled
             .compactMap { schedule in
                 schedule.schedule.nextStart(after: .now, calendar: .current).map { (schedule.name, $0) }
             }

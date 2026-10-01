@@ -288,6 +288,7 @@ enum Help {
         static let extend = "Add time without restarting the session."
         static let end = "Let your Mac sleep normally again."
         static let skipSchedule = "End this session and skip the rest of this window. The schedule starts again next time."
+        static let scheduleWaiting = "This schedule's hours have started, but it's waiting for this condition. It starts on its own once it holds."
         static let nextSchedule = "The next time one of your schedules keeps your Mac awake."
         static let settings = "Triggers, closed-lid mode, Drive Alive, statistics, and more."
         static let checkForUpdates = "New versions download in the background and install when Midnight Oil quits."
