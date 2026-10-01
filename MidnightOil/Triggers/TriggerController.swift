@@ -1,25 +1,29 @@
 import Foundation
 import MidnightOilCore
 
-/// Evaluates triggers on a timer and starts or ends trigger sessions.
-/// Manual sessions always win; a trigger session the user ends by hand stays
-/// off until that trigger's criteria stop matching.
+/// Evaluates schedules and triggers on a timer and starts or ends their sessions.
+/// Manual sessions always win, then schedules, then triggers. A session the user
+/// ends by hand stays off until its schedule or trigger stops matching.
 @MainActor
 final class TriggerController {
     private static let interval: Duration = .seconds(5)
 
     private let store: TriggerStore
+    private let schedules: ScheduleStore
     private let sessions: SessionController
-    private var suppressed: UUID?
+    /// Schedules and triggers the user ended by hand, quiet until they stop matching.
+    private var suppressed: Set<UUID> = []
     private var ticker: Task<Void, Never>?
 
-    init(store: TriggerStore, sessions: SessionController) {
+    init(store: TriggerStore, schedules: ScheduleStore, sessions: SessionController) {
         self.store = store
+        self.schedules = schedules
         self.sessions = sessions
-        sessions.onUserEndedTriggerSession = { [weak self] id in
-            self?.suppressed = id
+        sessions.onUserEndedAutomaticSession = { [weak self] id in
+            self?.suppressed.insert(id)
         }
         store.onChange = { [weak self] in self?.evaluate() }
+        schedules.onChange = { [weak self] in self?.evaluate() }
         ticker = Task { [weak self] in
             while !Task.isCancelled {
                 self?.evaluate()
@@ -29,29 +33,55 @@ final class TriggerController {
     }
 
     func evaluate() {
+        let enabledSchedules = schedules.schedules.filter(\.isEnabled)
+        let scheduleTriggers = enabledSchedules.map(\.asTrigger)
         let triggers = Preferences.triggersEnabled ? store.triggers.filter(\.isEnabled) : []
-        let needs = Self.needs(for: triggers)
+        let needs = Self.needs(for: scheduleTriggers + triggers)
         if needs.wifi { WifiAccess.requestIfNeeded() }
         let state = SystemStateReader.current(needs: needs)
 
-        if TriggerEngine.canRearm(suppressed, triggers: triggers, state: state) {
-            suppressed = nil
+        suppressed = TriggerEngine.stillSuppressed(suppressed, triggers: scheduleTriggers + triggers, state: state)
+        let source = sessions.session?.source
+        let running = source?.automaticID
+        // A matching schedule always beats a trigger; within each, the running one stays.
+        func active(in list: [Trigger]) -> Trigger? {
+            TriggerEngine.activeTrigger(in: list, state: state, suppressed: suppressed, running: running)
         }
-        let active = TriggerEngine.activeTrigger(in: triggers, state: state, suppressed: suppressed)
+        let active = active(in: scheduleTriggers) ?? active(in: triggers)
 
-        switch (sessions.session?.source, active) {
+        switch (source, active) {
         case (.manual?, _), (nil, nil):
             return
-        case (.trigger(let id, _)?, let active?) where active.id == id:
+        case (_, let active?) where active.id == running:
             return
-        case (.trigger?, let active?), (nil, let active?):
-            sessions.start(trigger: active)
+        case (_, let active?):
+            if let schedule = enabledSchedules.first(where: { $0.id == active.id }) {
+                sessions.start(schedule: schedule)
+            } else {
+                sessions.start(trigger: active)
+            }
         case (.trigger(_, let name)?, nil):
             sessions.end(reason: .triggerEnded(name))
+        case (.schedule(let id, let name)?, nil):
+            sessions.end(reason: Self.reason(endingSchedule: id, named: name, in: enabledSchedules, state: state))
         }
     }
 
-    private static func needs(for triggers: [Trigger]) -> SystemStateReader.Needs {
+    /// Paused if the window is still open and a condition failed; otherwise over.
+    private static func reason(
+        endingSchedule id: UUID,
+        named name: String,
+        in schedules: [AwakeSchedule],
+        state: SystemState
+    ) -> SessionEndReason {
+        guard let schedule = schedules.first(where: { $0.id == id }),
+              Criterion.schedule(schedule.schedule).matches(state),
+              let failed = schedule.conditions.first(where: { !$0.matches(state) })
+        else { return .scheduleEnded(name) }
+        return .schedulePaused(name, condition: failed.summary)
+    }
+
+    static func needs(for triggers: [Trigger]) -> SystemStateReader.Needs {
         var needs = SystemStateReader.Needs()
         for criterion in triggers.flatMap(\.criteria) {
             switch criterion {

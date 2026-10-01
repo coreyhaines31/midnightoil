@@ -109,6 +109,57 @@ struct ScheduleTests {
         #expect(!schedule.contains(wednesday(2), calendar: calendar))
         #expect(!schedule.contains(wednesday(23), calendar: calendar))
     }
+
+    @Test func windowEndIsTodaysCloseForADaytimeWindow() {
+        let schedule = Schedule(days: [2, 3, 4, 5, 6], startMinute: 9 * 60, endMinute: 17 * 60)
+        #expect(schedule.windowEnd(containing: tuesday(10, 15), calendar: calendar) == tuesday(17))
+        #expect(schedule.windowEnd(containing: tuesday(18), calendar: calendar) == nil)
+    }
+
+    @Test func windowEndOfAnOvernightWindowIsTheNextMorning() {
+        let schedule = Schedule(days: [3], startMinute: 22 * 60, endMinute: 2 * 60)
+        #expect(schedule.windowEnd(containing: tuesday(23), calendar: calendar) == wednesday(2))
+        #expect(schedule.windowEnd(containing: wednesday(1), calendar: calendar) == wednesday(2))
+    }
+
+    @Test func windowEndHandlesTheRepeatedHourWhenDaylightSavingEnds() throws {
+        // Nov 1 2026 in Los Angeles: 1:00–2:00 AM happens twice. This is the second 1:15 (PST).
+        let secondOneFifteen = Date(timeIntervalSince1970: 1_793_524_500)
+        let schedule = Schedule(days: [1], startMinute: 0, endMinute: 90)
+        let end = try #require(schedule.windowEnd(containing: secondOneFifteen, calendar: calendar))
+        #expect(end.timeIntervalSince(secondOneFifteen) == 15 * 60)
+    }
+
+    @Test func nextStartSkipsDaysOffAndTheCurrentWindow() {
+        let workHours = Schedule(days: [2, 3, 4, 5, 6], startMinute: 9 * 60, endMinute: 17 * 60)
+        #expect(workHours.nextStart(after: tuesday(8), calendar: calendar) == tuesday(9))
+        #expect(workHours.nextStart(after: tuesday(9), calendar: calendar) == wednesday(9))
+        let friday = calendar.date(from: DateComponents(year: 2026, month: 10, day: 2, hour: 17)) ?? .distantPast
+        let monday = calendar.date(from: DateComponents(year: 2026, month: 10, day: 5, hour: 9)) ?? .distantPast
+        #expect(workHours.nextStart(after: friday, calendar: calendar) == monday)
+        // Sunday-only wraps around the week from a Tuesday.
+        let sundays = Schedule(days: [1], startMinute: 0, endMinute: 60)
+        let sunday = calendar.date(from: DateComponents(year: 2026, month: 10, day: 4)) ?? .distantPast
+        #expect(sundays.nextStart(after: tuesday(12), calendar: calendar) == sunday)
+        let noDays = Schedule(days: [], startMinute: 0, endMinute: 60)
+        #expect(noDays.nextStart(after: tuesday(12), calendar: calendar) == nil)
+    }
+
+    @Test func daysSummaryReadsLikeAPerson() {
+        var calendar = calendar
+        calendar.locale = Locale(identifier: "en_US")
+        func summary(_ days: Set<Int>) -> String {
+            Schedule(days: days, startMinute: 0, endMinute: 60).daysSummary(calendar: calendar)
+        }
+        #expect(summary([1, 2, 3, 4, 5, 6, 7]) == "Every day")
+        #expect(summary([2, 3, 4, 5, 6]) == "Weekdays")
+        #expect(summary([1, 7]) == "Weekends")
+        #expect(summary([2, 3, 4, 5]) == "Mon–Thu")
+        #expect(summary([5, 6, 7, 1]) == "Thu–Sun")
+        #expect(summary([2, 4, 6]) == "Mon, Wed, Fri")
+        #expect(summary([2, 3]) == "Mon, Tue")
+        #expect(summary([]) == "No days")
+    }
 }
 
 struct TriggerEngineTests {
@@ -135,14 +186,32 @@ struct TriggerEngineTests {
     }
 
     @Test func firstMatchingTriggerWins() {
-        let active = TriggerEngine.activeTrigger(in: [docked, home], state: homeState, suppressed: nil)
+        let active = TriggerEngine.activeTrigger(in: [docked, home], state: homeState, suppressed: [])
         #expect(active?.id == home.id)
     }
 
+    @Test func theRunningTriggerKeepsGoingWhileItStillMatches() {
+        let anywhere = Trigger(name: "Anywhere", criteria: [.powerSource(.battery)])
+        let triggers = [anywhere, home]
+        let kept = TriggerEngine.activeTrigger(in: triggers, state: homeState, suppressed: [], running: home.id)
+        #expect(kept?.id == home.id)
+        let away = SystemState(wifiNetwork: "Cafe", power: PowerState(batteryPercent: 90, isOnBattery: true))
+        let next = TriggerEngine.activeTrigger(in: triggers, state: away, suppressed: [], running: home.id)
+        #expect(next?.id == anywhere.id)
+    }
+
     @Test func suppressedTriggerStaysQuietUntilItStopsMatching() {
-        #expect(TriggerEngine.activeTrigger(in: [home], state: homeState, suppressed: home.id) == nil)
-        #expect(!TriggerEngine.canRearm(home.id, triggers: [home], state: homeState))
-        #expect(TriggerEngine.canRearm(home.id, triggers: [home], state: SystemState(wifiNetwork: "Cafe")))
-        #expect(TriggerEngine.canRearm(nil, triggers: [home], state: homeState))
+        #expect(TriggerEngine.activeTrigger(in: [home], state: homeState, suppressed: [home.id]) == nil)
+        #expect(TriggerEngine.stillSuppressed([home.id], triggers: [home], state: homeState) == [home.id])
+        let cafe = SystemState(wifiNetwork: "Cafe")
+        #expect(TriggerEngine.stillSuppressed([home.id], triggers: [home], state: cafe).isEmpty)
+        #expect(TriggerEngine.stillSuppressed([home.id], triggers: [], state: homeState).isEmpty)
+    }
+
+    @Test func skippingASecondTriggerKeepsTheFirstSkipped() {
+        let alsoHome = Trigger(name: "Also home", criteria: [.wifiNetwork(["Home"])])
+        let skipped: Set<UUID> = [home.id, alsoHome.id]
+        let kept = TriggerEngine.stillSuppressed(skipped, triggers: [home, alsoHome], state: homeState)
+        #expect(TriggerEngine.activeTrigger(in: [home, alsoHome], state: homeState, suppressed: kept) == nil)
     }
 }

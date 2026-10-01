@@ -18,7 +18,13 @@ struct SessionCSVTests {
         let lines = SessionCSV.make([record]).split(separator: "\n")
         #expect(lines.count == 2)
         #expect(lines[0].hasPrefix("start,end,awake_minutes"))
-        #expect(lines[1].hasSuffix(",60,30,,timeUp,Terminal,,90,80"))
+        #expect(lines[1].hasSuffix(",60,30,,timeUp,Terminal,,90,80,"))
+    }
+
+    @Test func namesTheScheduleThatRanTheSession() {
+        let start = Date(timeIntervalSince1970: 1_790_000_000)
+        let record = SessionRecord(start: start, end: start, scheduleName: "Work hours", endCause: .scheduleEnded)
+        #expect(SessionCSV.make([record]).split(separator: "\n")[1].hasSuffix(",scheduleEnded,,,,,Work hours"))
     }
 
     @Test func quotesFieldsWithCommas() {

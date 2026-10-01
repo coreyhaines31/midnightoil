@@ -204,7 +204,9 @@ private struct SessionRow: View {
     private var title: String {
         let range = "\(record.start.formatted(date: .omitted, time: .shortened)) – "
             + record.end.formatted(date: .omitted, time: .shortened)
-        let what = record.subject ?? record.triggerName.map { "Trigger “\($0)”" }
+        let what = record.subject
+            ?? record.scheduleName.map { "Schedule “\($0)”" }
+            ?? record.triggerName.map { "Trigger “\($0)”" }
         return [range, what].compactMap(\.self).joined(separator: " · ")
     }
 
@@ -219,6 +221,8 @@ private struct SessionRow: View {
         return parts.joined(separator: " · ")
     }
 
+    // One symbol per cause; a lookup table would only hide the mapping.
+    // swiftlint:disable:next cyclomatic_complexity
     static func symbol(for cause: SessionEndCause?) -> String {
         switch cause {
         case .you: "hand.tap"
@@ -228,6 +232,8 @@ private struct SessionRow: View {
         case .lowBattery: "battery.25percent"
         case .unplugged: "powerplug"
         case .triggerEnded: "bolt.slash"
+        case .scheduleEnded: "calendar"
+        case .schedulePaused: "pause.circle"
         case .replaced: "arrow.triangle.2.circlepath"
         case .midnightOilQuit: "power"
         case .unknown, nil: "circle"

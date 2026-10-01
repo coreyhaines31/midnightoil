@@ -62,7 +62,7 @@ struct TriggersSettingsView: View {
             .disabled(!triggersEnabled)
         }
         .formStyle(.grouped)
-        .frame(height: 420)
+        .frame(height: 480)
         .confirmationDialog(
             "Remove “\(removing?.name ?? "")”?",
             isPresented: Binding(get: { removing != nil }, set: { if !$0 { removing = nil } }),
