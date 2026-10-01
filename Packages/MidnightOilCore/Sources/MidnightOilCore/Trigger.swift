@@ -33,21 +33,21 @@ public struct Trigger: Codable, Identifiable, Equatable, Sendable {
 
 public enum TriggerEngine {
     /// The trigger that should be keeping the Mac awake right now: the one already
-    /// `running` while it still matches, otherwise the first match. `suppressed` is a
-    /// trigger the user ended by hand; it stays quiet until it stops matching.
+    /// `running` while it still matches, otherwise the first match. `suppressed` holds
+    /// triggers the user ended by hand; each stays quiet until it stops matching.
     public static func activeTrigger(
         in triggers: [Trigger],
         state: SystemState,
-        suppressed: UUID?,
+        suppressed: Set<UUID>,
         running: UUID? = nil
     ) -> Trigger? {
-        let candidates = triggers.filter { $0.id != suppressed && $0.matches(state) }
+        let candidates = triggers.filter { !suppressed.contains($0.id) && $0.matches(state) }
         return candidates.first { $0.id == running } ?? candidates.first
     }
 
-    /// Whether a suppressed trigger can be re-armed: once its criteria no longer hold.
-    public static func canRearm(_ suppressed: UUID?, triggers: [Trigger], state: SystemState) -> Bool {
-        guard let suppressed, let trigger = triggers.first(where: { $0.id == suppressed }) else { return true }
-        return !trigger.matches(state)
+    /// The suppressed triggers that should stay quiet: those that still match.
+    /// One that stopped matching, or was deleted, re-arms.
+    public static func stillSuppressed(_ suppressed: Set<UUID>, triggers: [Trigger], state: SystemState) -> Set<UUID> {
+        suppressed.filter { id in triggers.first { $0.id == id }?.matches(state) == true }
     }
 }

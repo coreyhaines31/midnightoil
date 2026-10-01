@@ -11,7 +11,8 @@ final class TriggerController {
     private let store: TriggerStore
     private let schedules: ScheduleStore
     private let sessions: SessionController
-    private var suppressed: UUID?
+    /// Schedules and triggers the user ended by hand, quiet until they stop matching.
+    private var suppressed: Set<UUID> = []
     private var ticker: Task<Void, Never>?
 
     init(store: TriggerStore, schedules: ScheduleStore, sessions: SessionController) {
@@ -19,7 +20,7 @@ final class TriggerController {
         self.schedules = schedules
         self.sessions = sessions
         sessions.onUserEndedAutomaticSession = { [weak self] id in
-            self?.suppressed = id
+            self?.suppressed.insert(id)
         }
         store.onChange = { [weak self] in self?.evaluate() }
         schedules.onChange = { [weak self] in self?.evaluate() }
@@ -40,9 +41,7 @@ final class TriggerController {
         if needs.wifi { WifiAccess.requestIfNeeded() }
         let state = SystemStateReader.current(needs: needs)
 
-        if TriggerEngine.canRearm(suppressed, triggers: candidates, state: state) {
-            suppressed = nil
-        }
+        suppressed = TriggerEngine.stillSuppressed(suppressed, triggers: candidates, state: state)
         let source = sessions.session?.source
         let running = source?.automaticID
         let active = TriggerEngine.activeTrigger(in: candidates, state: state, suppressed: suppressed, running: running)

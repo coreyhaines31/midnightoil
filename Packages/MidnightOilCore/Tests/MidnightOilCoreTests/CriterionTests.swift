@@ -186,24 +186,32 @@ struct TriggerEngineTests {
     }
 
     @Test func firstMatchingTriggerWins() {
-        let active = TriggerEngine.activeTrigger(in: [docked, home], state: homeState, suppressed: nil)
+        let active = TriggerEngine.activeTrigger(in: [docked, home], state: homeState, suppressed: [])
         #expect(active?.id == home.id)
     }
 
     @Test func theRunningTriggerKeepsGoingWhileItStillMatches() {
         let anywhere = Trigger(name: "Anywhere", criteria: [.powerSource(.battery)])
         let triggers = [anywhere, home]
-        let kept = TriggerEngine.activeTrigger(in: triggers, state: homeState, suppressed: nil, running: home.id)
+        let kept = TriggerEngine.activeTrigger(in: triggers, state: homeState, suppressed: [], running: home.id)
         #expect(kept?.id == home.id)
         let away = SystemState(wifiNetwork: "Cafe", power: PowerState(batteryPercent: 90, isOnBattery: true))
-        let next = TriggerEngine.activeTrigger(in: triggers, state: away, suppressed: nil, running: home.id)
+        let next = TriggerEngine.activeTrigger(in: triggers, state: away, suppressed: [], running: home.id)
         #expect(next?.id == anywhere.id)
     }
 
     @Test func suppressedTriggerStaysQuietUntilItStopsMatching() {
-        #expect(TriggerEngine.activeTrigger(in: [home], state: homeState, suppressed: home.id) == nil)
-        #expect(!TriggerEngine.canRearm(home.id, triggers: [home], state: homeState))
-        #expect(TriggerEngine.canRearm(home.id, triggers: [home], state: SystemState(wifiNetwork: "Cafe")))
-        #expect(TriggerEngine.canRearm(nil, triggers: [home], state: homeState))
+        #expect(TriggerEngine.activeTrigger(in: [home], state: homeState, suppressed: [home.id]) == nil)
+        #expect(TriggerEngine.stillSuppressed([home.id], triggers: [home], state: homeState) == [home.id])
+        let cafe = SystemState(wifiNetwork: "Cafe")
+        #expect(TriggerEngine.stillSuppressed([home.id], triggers: [home], state: cafe).isEmpty)
+        #expect(TriggerEngine.stillSuppressed([home.id], triggers: [], state: homeState).isEmpty)
+    }
+
+    @Test func skippingASecondTriggerKeepsTheFirstSkipped() {
+        let alsoHome = Trigger(name: "Also home", criteria: [.wifiNetwork(["Home"])])
+        let skipped: Set<UUID> = [home.id, alsoHome.id]
+        let kept = TriggerEngine.stillSuppressed(skipped, triggers: [home, alsoHome], state: homeState)
+        #expect(TriggerEngine.activeTrigger(in: [home, alsoHome], state: homeState, suppressed: kept) == nil)
     }
 }
