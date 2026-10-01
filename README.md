@@ -4,7 +4,7 @@
 
 <h1 align="center">Midnight Oil</h1>
 
-<p align="center">Keep your Mac awake. An open-source, actively maintained replacement for Amphetamine.</p>
+<p align="center">Keep your Mac awake. A free, source-available, actively maintained replacement for Amphetamine.</p>
 
 <p align="center">
   <a href="https://midnightoil.app">midnightoil.app</a> ·
@@ -68,4 +68,6 @@ Push a tag like `v1.2.0` and the [release workflow](.github/workflows/release.ym
 
 ## License
 
-[MIT](LICENSE) © Corey Haines
+[FSL-1.1-MIT](LICENSE) © Corey Haines. Free to use and modify, including at work; you can't resell it or build a competing product from it. Each release becomes MIT two years after it ships, and versions 1.0.0 through 1.3.0 are MIT already.
+
+The Midnight Oil name and icon are covered by the [trademark policy](TRADEMARK.md). Contributions are welcome under the [contributor terms](CONTRIBUTING.md).
