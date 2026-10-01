@@ -11,6 +11,7 @@ public enum SessionEndCause: String, Codable, Sendable, CaseIterable {
     case triggerEnded
     case scheduleEnded
     case schedulePaused
+    case policyLimit
     case replaced
     case midnightOilQuit
     /// A value written by a newer version of the app.
@@ -32,6 +33,7 @@ public enum SessionEndCause: String, Codable, Sendable, CaseIterable {
         case .triggerEnded: "Trigger stopped matching"
         case .scheduleEnded: "Schedule ended"
         case .schedulePaused: "Schedule paused"
+        case .policyLimit: "Organization time limit"
         case .replaced: "Replaced by a new session"
         case .midnightOilQuit: "Midnight Oil quit"
         case .unknown: "Ended"
