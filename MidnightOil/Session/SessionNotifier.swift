@@ -55,6 +55,8 @@ enum SessionNotifier {
         case .unplugged: "Your Mac was unplugged, so it can sleep again."
         case .triggerEnded(let name): "The “\(name)” trigger no longer applies, so your Mac can sleep again."
         case .scheduleEnded(let name): "Your “\(name)” schedule is over, so your Mac can sleep again."
+        case .schedulePaused(let name, let condition):
+            "Your “\(name)” schedule paused because “\(condition)” stopped holding. It picks up again when it does."
         case .lowBattery:
             "Your battery dropped below \(Preferences.batteryFloorPercent ?? 0)%, so your Mac can sleep again."
         }

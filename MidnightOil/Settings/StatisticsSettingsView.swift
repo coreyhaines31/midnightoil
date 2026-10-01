@@ -233,6 +233,7 @@ private struct SessionRow: View {
         case .unplugged: "powerplug"
         case .triggerEnded: "bolt.slash"
         case .scheduleEnded: "calendar"
+        case .schedulePaused: "pause.circle"
         case .replaced: "arrow.triangle.2.circlepath"
         case .midnightOilQuit: "power"
         case .unknown, nil: "circle"

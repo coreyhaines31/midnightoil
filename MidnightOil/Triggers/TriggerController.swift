@@ -36,7 +36,7 @@ final class TriggerController {
         let enabledSchedules = schedules.schedules.filter(\.isEnabled)
         let scheduleTriggers = enabledSchedules.map(\.asTrigger)
         let triggers = Preferences.triggersEnabled ? store.triggers.filter(\.isEnabled) : []
-        let needs = Self.needs(for: triggers)
+        let needs = Self.needs(for: scheduleTriggers + triggers)
         if needs.wifi { WifiAccess.requestIfNeeded() }
         let state = SystemStateReader.current(needs: needs)
 
@@ -62,12 +62,26 @@ final class TriggerController {
             }
         case (.trigger(_, let name)?, nil):
             sessions.end(reason: .triggerEnded(name))
-        case (.schedule(_, let name)?, nil):
-            sessions.end(reason: .scheduleEnded(name))
+        case (.schedule(let id, let name)?, nil):
+            sessions.end(reason: Self.reason(endingSchedule: id, named: name, in: enabledSchedules, state: state))
         }
     }
 
-    private static func needs(for triggers: [Trigger]) -> SystemStateReader.Needs {
+    /// Paused if the window is still open and a condition failed; otherwise over.
+    private static func reason(
+        endingSchedule id: UUID,
+        named name: String,
+        in schedules: [AwakeSchedule],
+        state: SystemState
+    ) -> SessionEndReason {
+        guard let schedule = schedules.first(where: { $0.id == id }),
+              Criterion.schedule(schedule.schedule).matches(state),
+              let failed = schedule.conditions.first(where: { !$0.matches(state) })
+        else { return .scheduleEnded(name) }
+        return .schedulePaused(name, condition: failed.summary)
+    }
+
+    static func needs(for triggers: [Trigger]) -> SystemStateReader.Needs {
         var needs = SystemStateReader.Needs()
         for criterion in triggers.flatMap(\.criteria) {
             switch criterion {

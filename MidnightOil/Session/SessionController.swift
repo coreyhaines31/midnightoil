@@ -10,6 +10,8 @@ enum SessionEndReason {
     case unplugged
     case triggerEnded(String)
     case scheduleEnded(String)
+    /// A schedule's window is still open but one of its conditions stopped holding.
+    case schedulePaused(String, condition: String)
     case replaced
     case quit
 
@@ -23,6 +25,7 @@ enum SessionEndReason {
         case .unplugged: .unplugged
         case .triggerEnded: .triggerEnded
         case .scheduleEnded: .scheduleEnded
+        case .schedulePaused: .schedulePaused
         case .replaced: .replaced
         case .quit: .midnightOilQuit
         }
