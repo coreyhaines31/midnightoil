@@ -147,6 +147,9 @@
     footer { background: var(--gray); color: var(--faint); font-size: 12px; padding: 22px 0 40px; }
     footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
     footer a { color: var(--muted); text-decoration: none; }
+    .footer-alts { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 6px 18px; padding-bottom: 14px; margin-bottom: 4px; border-bottom: 1px solid var(--line); }
+    .footer-alts .label { color: var(--text); font-weight: 600; }
+    footer a:hover { color: var(--text); }
 
     /* Use cases */
     .cases { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
