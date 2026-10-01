@@ -122,6 +122,14 @@ struct ScheduleTests {
         #expect(schedule.windowEnd(containing: wednesday(1), calendar: calendar) == wednesday(2))
     }
 
+    @Test func windowEndHandlesTheRepeatedHourWhenDaylightSavingEnds() throws {
+        // Nov 1 2026 in Los Angeles: 1:00–2:00 AM happens twice. This is the second 1:15 (PST).
+        let secondOneFifteen = Date(timeIntervalSince1970: 1_793_524_500)
+        let schedule = Schedule(days: [1], startMinute: 0, endMinute: 90)
+        let end = try #require(schedule.windowEnd(containing: secondOneFifteen, calendar: calendar))
+        #expect(end.timeIntervalSince(secondOneFifteen) == 15 * 60)
+    }
+
     @Test func nextStartSkipsDaysOffAndTheCurrentWindow() {
         let workHours = Schedule(days: [2, 3, 4, 5, 6], startMinute: 9 * 60, endMinute: 17 * 60)
         #expect(workHours.nextStart(after: tuesday(8), calendar: calendar) == tuesday(9))
