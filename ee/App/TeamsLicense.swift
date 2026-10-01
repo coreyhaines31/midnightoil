@@ -39,7 +39,8 @@ final class TeamsLicense {
         poller = Task { [weak self] in
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(10))
-                self?.reload()
+                guard let self else { return }
+                self.reload()
             }
         }
     }
