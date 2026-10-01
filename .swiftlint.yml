@@ -4,8 +4,10 @@ included:
   - Shared
   - Packages/MidnightOilCore/Sources
   - Packages/MidnightOilCore/Tests
+  - ee
 excluded:
   - Packages/MidnightOilCore/.build
+  - ee/MidnightOilTeams/.build
 opt_in_rules:
   - empty_count
   - first_where
