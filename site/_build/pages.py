@@ -45,12 +45,13 @@ PAGES = [
             """, "table": [
                 ("Price", "Free", "Free"),
                 ("Open source", "Yes, MIT", "No"),
-                ("Last release", "September 2026", "November 10, 2023"),
+                ("Last release", "October 2026", "November 10, 2023"),
                 ("Install", "Homebrew cask or DMG", "Mac App Store only"),
                 ("Sessions: minutes, hours, until a time, while an app runs, while a download finishes", "Yes", "Yes"),
                 ("Closed-lid mode", "One checkbox; helper approved once", "Separate script + sudoers file + Terminal command"),
                 ("Sleep restored if the app crashes", "Yes, within a second", "Not with Power Protect (manual reset)"),
                 ("Triggers", "Wi-Fi, USB, Bluetooth, display, power, battery, app, IP, schedule, idle", "Those plus VPN, DNS, audio, drives, CPU"),
+                ("Weekly schedules, like work hours", "Own tab, optional conditions, skip a day from the menu", "Via a schedule trigger"),
                 ("AppleScript", "No", "Yes"),
                 ("Battery floor and unplug rules", "Yes", "Yes"),
                 ("Lid-close alarm on battery", "Yes", "No"),
@@ -62,7 +63,7 @@ PAGES = [
         <h2>Switching takes about a minute</h2>
         <ol class="steps">
           <li><b>Install Midnight Oil.</b> <code>brew install --cask coreyhaines31/tap/midnightoil</code>, or download the DMG and drag it to Applications.</li>
-          <li><b>Recreate your triggers.</b> Amphetamine's settings don't export. Most people have one or two: “docked to a display and on power” and “while Terminal is running” take about thirty seconds each in Settings › Triggers.</li>
+          <li><b>Recreate your triggers.</b> Amphetamine's settings don't export. Most people have one or two: “docked to a display and on power” and “while Terminal is running” take about thirty seconds each in Settings › Triggers. A schedule-only trigger, like work hours, belongs in Settings › Schedules now.</li>
           <li><b>Set up closed-lid mode, if you use it.</b> Check “Stay awake with lid closed” in a session; the first time, Midnight Oil asks to install its helper and macOS asks you to approve it in Login Items. That's it.</li>
           <li><b>Undo Power Protect.</b> If you installed Amphetamine's Power Protect, remove its sudoers entry so nothing else can toggle sleep without a password. The Power Protect README has the uninstall steps.</li>
           <li><b>Quit Amphetamine.</b> Keep it installed if you rely on a trigger Midnight Oil doesn't have. Otherwise, drag it to the Trash.</li>
@@ -121,7 +122,8 @@ PAGES = [
                 ("Timed sessions with a visible countdown", "Yes", "Default duration only, no countdown"),
                 ("Keep awake until a time", "Yes", "No"),
                 ("While an app is running / while a file downloads", "Yes", "No"),
-                ("Triggers (display, power, Wi-Fi, app, schedule, …)", "Yes", "No"),
+                ("Triggers (display, power, Wi-Fi, app, …)", "Yes", "No"),
+                ("Weekly schedules, like work hours", "Yes", "No"),
                 ("Closed-lid mode", "Yes", "No"),
                 ("End on low battery or unplug", "Yes", "No"),
                 ("Hot keys", "Yes", "No"),
@@ -185,7 +187,7 @@ caffeinate -dimsu     # everything</code></pre>
         <h3>Some flags silently do nothing</h3>
         <p><code>-s</code> is a no-op on battery. <code>-t</code> is ignored when you wrap a command. <code>-u</code> expires after five seconds unless you say otherwise. Each of these has a Stack Exchange thread from someone who thought it worked.</p>
         <h3>No triggers, no schedule</h3>
-        <p>It can't start when you dock, stop when the battery gets low, or say “until 7 AM and then let it sleep.” You'd script all of that yourself.</p>
+        <p>It can't start when you dock, stop when the battery gets low, say “until 7 AM and then let it sleep,” or hold your Mac awake every weekday from 9 to 5. You'd script all of that yourself, cron included.</p>
         <h2>The overnight agent problem, specifically</h2>
         <p>People running Claude Code, Codex, and Cursor agents overnight have converged on the same recipe: <code>tmux new-session -d -s agent 'caffeinate -i claude'</code>, sometimes wired into Claude Code's hooks so it starts automatically. It works, as long as the lid stays open and you never need to see whether it's still running. There are half a dozen wrapper projects on GitHub whose only job is to make caffeinate less annoying.</p>
         <p>Midnight Oil is what that recipe wants to be. Start a session <strong>while Terminal is running</strong> and it ends when the agent's app quits. Or <strong>until 7 AM</strong>. Check <strong>Stay awake with lid closed</strong> and you can shut the laptop. The flame in the menu bar shows time remaining, and normal sleep comes back on its own when the session ends, when the app quits, or if anything crashes.</p>
@@ -205,7 +207,8 @@ caffeinate -dimsu     # everything</code></pre>
                 ("Keep awake until a clock time", "Yes", "No (seconds only, via -t)"),
                 ("While an app is running", "Yes, pick from a list", "Yes, one process, via -w or wrapping"),
                 ("Closed-lid mode", "Yes; sleep restored automatically", "No; sudo pmset workaround, manual reset"),
-                ("Triggers and schedules", "Yes", "No"),
+                ("Triggers", "Yes", "No"),
+                ("Weekly schedules, like work hours", "Yes", "No (cron plus a script)"),
                 ("End on low battery or unplug", "Yes", "No"),
                 ("Works from a script", "Hot keys; CLI planned", "Yes"),
                 ("Install", "Homebrew cask or DMG", "None needed"),
@@ -271,6 +274,7 @@ caffeinate -dimsu     # everything</code></pre>
                 ("While an app is running", "Yes", "No"),
                 ("Closed-lid mode", "Yes, opt-in, with safeguards", "No, by design"),
                 ("Triggers", "10 kinds", "External display only"),
+                ("Weekly schedules, like work hours", "Yes", "No"),
                 ("End on low battery / Low Power Mode", "Yes", "Yes"),
                 ("Lid-close alarm on battery", "Yes", "No"),
                 ("Sandboxed", "No (helper needs root for lid mode)", "Yes"),
@@ -282,7 +286,7 @@ caffeinate -dimsu     # everything</code></pre>
         <ol class="steps">
           <li><b>Install Midnight Oil.</b> <code>brew install --cask coreyhaines31/tap/midnightoil</code></li>
           <li><b>Set your defaults.</b> Settings › Sessions has the same allow-display-sleep and low-battery options you're used to. Settings › General has launch at login.</li>
-          <li><b>Add the trigger you wanted.</b> Settings › Triggers › Add Trigger › App Running › Terminal, or a schedule.</li>
+          <li><b>Add the trigger you wanted.</b> Settings › Triggers › Add Trigger › App Running › Terminal. For work hours, Settings › Schedules › Add “Work hours”.</li>
           <li><b>Turn on closed-lid mode when you need it.</b> It's a checkbox in a running session. Approve the helper once.</li>
           <li><b>Quit KeepingYouAwake.</b> <code>brew uninstall --cask keepingyouawake</code> if you're done with it.</li>
         </ol>
@@ -342,6 +346,7 @@ caffeinate -dimsu     # everything</code></pre>
                 ("Visible to device management", "A normal power assertion", "Extra mouse device or Accessibility grant"),
                 ("Timed and until-a-time sessions", "Yes", "Rarely"),
                 ("Ends when an app quits", "Yes", "No"),
+                ("Weekly schedules, like work hours", "Yes", "Rarely"),
                 ("Battery safety", "Yes", "No"),
                 ("Price", "Free, open source", "Free to $25"),
             ]},
@@ -369,6 +374,7 @@ HUB = {
         ("A command in a script or CI job", "caffeinate"),
         ("Slack or Teams to show you as active", "A mouse jiggler (and maybe a rethink)"),
         ("Fifteen kinds of triggers and AppleScript, on an old macOS", "Amphetamine, as long as it still runs"),
+        ("Awake 9 to 5 on weekdays, only while plugged in", "Midnight Oil"),
         ("An overnight agent run, the lid closed, sleep restored when it's done", "Midnight Oil"),
     ],
     "cta": "Give your agents the night shift.",

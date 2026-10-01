@@ -113,6 +113,7 @@
             <tr><td>While an app is running</td><td class="us y">Yes</td><td>No</td></tr>
             <tr><td>Closed-lid mode</td><td class="us y">Yes, opt-in, with safeguards</td><td>No, by design</td></tr>
             <tr><td>Triggers</td><td class="us y">10 kinds</td><td>External display only</td></tr>
+            <tr><td>Weekly schedules, like work hours</td><td class="us y">Yes</td><td>No</td></tr>
             <tr><td>End on low battery / Low Power Mode</td><td class="us y">Yes</td><td>Yes</td></tr>
             <tr><td>Lid-close alarm on battery</td><td class="us y">Yes</td><td>No</td></tr>
             <tr><td>Sandboxed</td><td class="us y">No (helper needs root for lid mode)</td><td>Yes</td></tr>
@@ -133,7 +134,7 @@
         <ol class="steps">
           <li><b>Install Midnight Oil.</b> <code>brew install --cask coreyhaines31/tap/midnightoil</code></li>
           <li><b>Set your defaults.</b> Settings › Sessions has the same allow-display-sleep and low-battery options you're used to. Settings › General has launch at login.</li>
-          <li><b>Add the trigger you wanted.</b> Settings › Triggers › Add Trigger › App Running › Terminal, or a schedule.</li>
+          <li><b>Add the trigger you wanted.</b> Settings › Triggers › Add Trigger › App Running › Terminal. For work hours, Settings › Schedules › Add “Work hours”.</li>
           <li><b>Turn on closed-lid mode when you need it.</b> It's a checkbox in a running session. Approve the helper once.</li>
           <li><b>Quit KeepingYouAwake.</b> <code>brew uninstall --cask keepingyouawake</code> if you're done with it.</li>
         </ol>
