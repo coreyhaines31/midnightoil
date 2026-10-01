@@ -279,6 +279,7 @@
             <tr><td>Timed and “until” sessions</td><td class="us y">Yes</td><td class="n">No</td><td class="y">Yes<span class="note">-t seconds, do the math</span></td><td class="y">Yes</td></tr>
             <tr><td>Ends when the agent's app quits</td><td class="us y">Yes</td><td class="n">No</td><td class="n">Only for one process</td><td class="y">Yes</td></tr>
             <tr><td>Keeps working with the lid closed</td><td class="us y">Yes<span class="note">restores sleep automatically</span></td><td class="n">Only on a display and power</td><td class="n">No</td><td class="y">Yes<span class="note">needs a separate script download</span></td></tr>
+            <tr><td>Schedules (work hours, overnight)</td><td class="us y">Yes<span class="note">with conditions like “only while plugged in”</span></td><td class="n">No</td><td class="n">No</td><td class="y">Via a trigger</td></tr>
             <tr><td>Triggers (Wi-Fi, display, app, schedule…)</td><td class="us y">Yes</td><td class="n">No</td><td class="n">No</td><td class="y">Yes</td></tr>
             <tr><td>Battery safety and lid alarm</td><td class="us y">Yes</td><td class="n">No</td><td class="n">No</td><td class="y">Yes</td></tr>
             <tr><td>Still maintained</td><td class="us y">Yes</td><td class="y">Yes</td><td class="y">Yes</td><td class="n">Last update 2023</td></tr>
@@ -338,6 +339,7 @@
         <div class="faq">
           <details><summary>Which AI agents does it work with?</summary><p>All of them. Midnight Oil keeps the Mac itself awake, so it doesn't matter what's running: Claude Code, Codex, Cursor, a cron job, a render, or a download. Tie a session to the app that runs your agent and it ends when that app quits.</p></details>
           <details><summary>Is it really free?</summary><p>Yes. It's MIT-licensed and the whole thing is on GitHub. No account, no subscription, no telemetry.</p></details>
+          <details><summary>Can it stay awake only during work hours?</summary><p>Yes. Add a schedule like Monday to Friday, 9 to 5, and your Mac stays awake during those hours every week. Add “only while plugged in” and it pauses when you unplug and picks back up when you plug in. Taking a day off? Skip it from the menu.</p></details>
           <details><summary>Won't it drain my battery?</summary><p>Only if you let it. Set sessions to end when you unplug or when the battery drops below, say, 20%, and they will. Plugged in, there's nothing to worry about.</p></details>
           <details><summary>Which Macs does it run on?</summary><p>Apple Silicon and Intel Macs running macOS 14 Sonoma or later.</p></details>
           <details><summary>How is this different from Amphetamine?</summary><p>Same idea, and everything Amphetamine could do is here. Amphetamine stopped being updated in 2023; Midnight Oil is maintained, open source, and you can drag its icon around the menu bar.</p></details>
