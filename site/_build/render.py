@@ -82,14 +82,31 @@ def nav():
 '''
 
 
+def footer_alternatives():
+    """Every alternative page, linked from every footer for internal linking."""
+    links = "".join(f'<a href="/alternatives/{p["slug"]}">{esc(p["competitor"])} alternative</a>' for p in PAGES)
+    return f'      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives/">Alternatives</a>{links}</nav>\n'
+
+
 def footer():
     return f'''  <footer>
     <div class="wrap">
-      <span>© 2026 Corey Haines. MIT License.</span>
-      <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="/alternatives/">Alternatives</a></span>
+{footer_alternatives()}      <span>© 2026 Corey Haines. MIT License.</span>
+      <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="{REPO}/issues">Issues</a></span>
     </div>
   </footer>
 '''
+
+
+def render_homepage_footer():
+    """The homepage is hand-written; keep its footer list in sync between the markers."""
+    path = os.path.join(ROOT, "index.html")
+    with open(path) as f:
+        page = f.read()
+    start, end = "<!-- alternatives -->\n", "<!-- /alternatives -->"
+    i, j = page.index(start) + len(start), page.index(end)
+    with open(path, "w") as f:
+        f.write(page[:i] + footer_alternatives() + "      " + page[j:])
 
 
 def head(title, description, path):
@@ -218,4 +235,5 @@ if __name__ == "__main__":
     for p in PAGES:
         render_page(p)
     render_hub()
-    print(f"rendered {len(PAGES)} pages + hub")
+    render_homepage_footer()
+    print(f"rendered {len(PAGES)} pages + hub + homepage footer")
