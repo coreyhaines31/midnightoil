@@ -13,6 +13,11 @@ struct AppearanceSettingsView: View {
     var body: some View {
         Form {
             PaneIntro(intro: Help.Pane.appearance)
+            ManagedNotice(keys: [
+                Preferences.Key.statusIconStyle,
+                Preferences.Key.showsRemainingInMenuBar,
+                Preferences.Key.customIconsAreTemplates
+            ])
 
             Section {
                 Picker(selection: $style) {
@@ -22,10 +27,12 @@ struct AppearanceSettingsView: View {
                     InfoLabel("Menu bar icon", info: Help.menuBarIcon)
                 }
                 .help(Help.menuBarIcon)
+                .managed(Preferences.Key.statusIconStyle)
                 Toggle(isOn: $showsRemainingInMenuBar) {
                     InfoLabel("Show time remaining next to the icon", info: Help.showRemaining)
                 }
                 .help(Help.showRemaining)
+                .managed(Preferences.Key.showsRemainingInMenuBar)
             }
 
             if style == StatusIcon.Style.custom.rawValue {
@@ -34,6 +41,7 @@ struct AppearanceSettingsView: View {
                     iconRow("During a session", state: .active)
                     Toggle(isOn: $templates) { InfoLabel("Treat images as templates", info: Help.templates) }
                         .help(Help.templates)
+                        .managed(Preferences.Key.customIconsAreTemplates)
                 } header: {
                     InfoLabel("Custom images", info: Help.customImages)
                 }

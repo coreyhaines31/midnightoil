@@ -22,6 +22,7 @@ struct GeneralSettingsView: View {
     var body: some View {
         Form {
             PaneIntro(intro: Help.Pane.general)
+            ManagedNotice(keys: [Preferences.Key.startsSessionAtLaunch])
 
             Section {
                 Toggle(isOn: $launchesAtLogin) { InfoLabel("Launch at login", info: Help.launchAtLogin) }
@@ -33,6 +34,7 @@ struct GeneralSettingsView: View {
                     InfoLabel("Keep the Mac awake as soon as \(Brand.name) opens", info: Help.startAtLaunch)
                 }
                 .help(Help.startAtLaunch)
+                .managed(Preferences.Key.startsSessionAtLaunch)
             }
 
             Section {

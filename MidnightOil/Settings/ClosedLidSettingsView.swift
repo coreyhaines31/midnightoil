@@ -11,6 +11,7 @@ struct ClosedLidSettingsView: View {
     var body: some View {
         Form {
             PaneIntro(intro: Help.Pane.closedLid)
+            ManagedNotice(keys: [Preferences.Key.staysAwakeWithLidClosed, Preferences.Key.soundsLidAlarm])
 
             Section {
                 LabeledContent {
@@ -31,11 +32,13 @@ struct ClosedLidSettingsView: View {
                 ) {
                     Toggle("Stay awake with the lid closed by default", isOn: $staysAwakeWithLidClosed)
                         .toggleStyle(.switch)
+                        .managed(Preferences.Key.staysAwakeWithLidClosed)
                 }
                 Toggle(isOn: $soundsLidAlarm) {
                     InfoLabel("Sound an alarm if the lid closes on battery", info: Help.lidAlarm)
                 }
                 .help(Help.lidAlarm)
+                .managed(Preferences.Key.soundsLidAlarm)
             }
         }
         .formStyle(.grouped)

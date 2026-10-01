@@ -11,10 +11,12 @@ struct TriggersSettingsView: View {
     var body: some View {
         Form {
             PaneIntro(intro: Help.Pane.triggers)
+            ManagedNotice(keys: [Preferences.Key.triggersEnabled, "triggers"])
 
             Section {
                 Toggle(isOn: $triggersEnabled) { InfoLabel("Enable triggers", info: Help.enableTriggers) }
                     .help(Help.enableTriggers)
+                    .managed(Preferences.Key.triggersEnabled)
             }
 
             Section {
@@ -59,7 +61,7 @@ struct TriggersSettingsView: View {
             } header: {
                 Text("Triggers")
             }
-            .disabled(!triggersEnabled)
+            .disabled(!triggersEnabled || ManagedSettings.isForced(["triggers"]))
         }
         .formStyle(.grouped)
         .frame(height: 480)

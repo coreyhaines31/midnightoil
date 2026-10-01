@@ -9,12 +9,19 @@ struct DriveAliveSettingsView: View {
     var body: some View {
         Form {
             PaneIntro(intro: Help.Pane.driveAlive)
+            ManagedNotice(keys: [
+                Preferences.Key.driveAliveEnabled,
+                Preferences.Key.driveAliveInterval,
+                Preferences.Key.driveAliveVolumes
+            ])
 
             Section {
                 Toggle("Enable Drive Alive", isOn: $enabled)
                     .help(Help.enableDriveAlive)
+                    .managed(Preferences.Key.driveAliveEnabled)
                 InfoRow(title: intervalTitle, info: Help.driveInterval, isDisabled: !enabled) {
                     Stepper(intervalTitle, value: $interval, in: 1...300)
+                        .managed(Preferences.Key.driveAliveInterval)
                 }
             }
 
