@@ -8,6 +8,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let triggerStore = TriggerStore()
     private let scheduleStore = ScheduleStore()
     private let teamsLicense = TeamsLicense()
+    private lazy var webhook = SessionWebhookSender(license: teamsLicense)
     private var triggerController: TriggerController?
     private var driveAlive: DriveAliveController?
     private var statusItemController: StatusItemController?
@@ -18,6 +19,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         sessions.policy = { [teamsLicense] in
             TeamsPolicy.read(from: .standard, licensed: teamsLicense.unlocks(.policies))
         }
+        sessions.onSessionEvent = { [weak self] event in self?.webhook.send(event) }
         statusItemController = StatusItemController(
             sessions: sessions,
             triggers: triggerStore,

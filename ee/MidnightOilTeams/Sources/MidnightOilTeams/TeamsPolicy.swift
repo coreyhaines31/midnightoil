@@ -10,6 +10,16 @@ public enum TeamsPolicyKey {
     public static let all = [disallowClosedLid, maxSessionHours, minimumBatteryFloor]
 }
 
+/// The other UserDefaults keys an organization sets: where to send events, and how to name this Mac.
+public enum TeamsSettingKey {
+    public static let webhookURL = "webhookURL"
+    public static let webhookSecret = "webhookSecret"
+    public static let deviceLabel = "deviceLabel"
+    public static let fleetReporting = "fleetReporting"
+    /// Made once per Mac by the app, never set by a profile.
+    public static let deviceID = "teamsDeviceID"
+}
+
 public enum TeamsPolicy {
     /// The policy in `defaults`, or none without a license that includes policies.
     /// Out-of-range values are ignored rather than trusted.
