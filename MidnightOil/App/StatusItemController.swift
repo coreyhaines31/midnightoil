@@ -66,7 +66,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             statusItem.button?.title = title
         }
         if let session = sessions.session {
-            card.update(from: session)
+            card.update(from: session, schedules: schedules.schedules)
         }
     }
 
@@ -87,6 +87,10 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             menu.addItem(.separator())
         }
 
+        if sessions.session == nil, let next = nextScheduleItem() {
+            menu.addItem(next)
+            menu.addItem(.separator())
+        }
         menu.addItem(startItem("Keep Awake Indefinitely", end: .indefinite, keyEquivalent: "i")
             .withToolTip(Help.Menu.indefinitely))
         menu.addItem(submenuItem("Keep Awake For", items: durationItems()).withToolTip(Help.Menu.forDuration))
@@ -115,7 +119,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     private func addCurrentSessionItems(for session: Session, to menu: NSMenu) {
-        card.update(from: session)
+        card.update(from: session, schedules: schedules.schedules)
         let cardView = SessionCardView(
             model: card,
             showsLidOption: LidState.hasLid,
@@ -139,9 +143,39 @@ final class StatusItemController: NSObject, NSMenuDelegate {
                 }
             }).withToolTip(Help.Menu.extend))
         }
-        menu.addItem(ClosureMenuItem("End Session", keyEquivalent: "x") { [weak self] in
-            self?.sessions.end()
-        }.withToolTip(Help.Menu.end))
+        if case .schedule(let id, _) = session.source {
+            menu.addItem(ClosureMenuItem(skipTitle(for: id), keyEquivalent: "x") { [weak self] in
+                self?.sessions.end()
+            }.withToolTip(Help.Menu.skipSchedule))
+        } else {
+            menu.addItem(ClosureMenuItem("End Session", keyEquivalent: "x") { [weak self] in
+                self?.sessions.end()
+            }.withToolTip(Help.Menu.end))
+        }
+    }
+
+    /// "Skip Until Wed 9:00 AM": when the schedule next opens after this window.
+    private func skipTitle(for id: UUID) -> String {
+        guard let schedule = schedules.schedules.first(where: { $0.id == id }),
+              let end = SessionCardModel.windowEnd(of: id, in: schedules.schedules),
+              let next = schedule.schedule.nextStart(after: end, calendar: .current)
+        else { return "Skip This Window" }
+        return "Skip Until \(SessionCardModel.clockTime(next))"
+    }
+
+    /// "Work hours starts Mon 9:00 AM": the soonest enabled schedule.
+    private func nextScheduleItem() -> NSMenuItem? {
+        let upcoming = schedules.schedules
+            .filter(\.isEnabled)
+            .compactMap { schedule in
+                schedule.schedule.nextStart(after: .now, calendar: .current).map { (schedule.name, $0) }
+            }
+            .min { $0.1 < $1.1 }
+        guard let (name, start) = upcoming else { return nil }
+        let title = "\(name) starts \(SessionCardModel.clockTime(start))"
+        let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        item.isEnabled = false
+        return item.withToolTip(Help.Menu.nextSchedule)
     }
 
     private func durationItems() -> [NSMenuItem] {

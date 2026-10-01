@@ -10,15 +10,27 @@ final class SessionCardModel {
     var allowsDisplaySleep = false
     var staysAwakeWithLidClosed = false
 
-    func update(from session: Session) {
+    func update(from session: Session, schedules: [AwakeSchedule]) {
         detail = Self.describe(session)
         allowsDisplaySleep = session.allowsDisplaySleep
         staysAwakeWithLidClosed = session.staysAwakeWithLidClosed
-        if case .trigger(_, let name) = session.source {
+        switch session.source {
+        case .trigger(_, let name):
             triggerLine = "Started by the “\(name)” trigger"
-        } else {
+        case .schedule(let id, let name):
+            triggerLine = "On your “\(name)” schedule"
+            if let end = Self.windowEnd(of: id, in: schedules) {
+                let remaining = RemainingTime.detailed(max(0, end.timeIntervalSinceNow))
+                detail = "\(remaining) left · until \(Self.clockTime(end))"
+            }
+        case .manual:
             triggerLine = nil
         }
+    }
+
+    /// When the running schedule's current window closes.
+    static func windowEnd(of id: UUID, in schedules: [AwakeSchedule]) -> Date? {
+        schedules.first { $0.id == id }?.schedule.windowEnd(containing: .now, calendar: .current)
     }
 
     private static func describe(_ session: Session) -> String {
