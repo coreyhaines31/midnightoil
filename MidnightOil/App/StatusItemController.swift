@@ -160,7 +160,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
               let end = SessionCardModel.windowEnd(of: id, in: schedules.schedules),
               let next = schedule.schedule.nextStart(after: end, calendar: .current)
         else { return "Skip This Window" }
-        return "Skip Until \(SessionCardModel.clockTime(next))"
+        return "Skip Until \(SessionCardModel.upcomingTime(next))"
     }
 
     /// "Work hours is waiting: On power adapter" when a window is open but a condition
@@ -184,7 +184,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             }
             .min { $0.1 < $1.1 }
         guard let (name, start) = upcoming else { return nil }
-        let title = "\(name) starts \(SessionCardModel.clockTime(start))"
+        let title = "\(name) starts \(SessionCardModel.upcomingTime(start))"
         let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
         item.isEnabled = false
         return item.withToolTip(Help.Menu.nextSchedule)

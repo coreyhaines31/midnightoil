@@ -47,6 +47,18 @@ final class SessionCardModel {
         }
     }
 
+    /// "9:00 AM" today, "Tomorrow 9:00 AM", "Mon 9:00 AM" this week, "Oct 8, 9:00 AM" beyond.
+    /// For schedule times, which can be a week away on the same weekday.
+    static func upcomingTime(_ date: Date) -> String {
+        let calendar = Calendar.current
+        let time = date.formatted(.dateTime.hour().minute())
+        if calendar.isDateInToday(date) { return time }
+        if calendar.isDateInTomorrow(date) { return "Tomorrow \(time)" }
+        let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: .now), to: date).day ?? 0
+        if days < 7 { return date.formatted(.dateTime.weekday(.abbreviated).hour().minute()) }
+        return date.formatted(.dateTime.month(.abbreviated).day().hour().minute())
+    }
+
     /// "5:00 PM" today, "Wed 1:00 AM" on another day.
     static func clockTime(_ date: Date) -> String {
         date.formatted(Calendar.current.isDateInToday(date)
