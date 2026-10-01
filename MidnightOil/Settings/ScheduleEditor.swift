@@ -43,3 +43,15 @@ struct ScheduleEditor: View {
         )
     }
 }
+
+extension Schedule {
+    /// "Weekdays · 9:00 AM – 5:00 PM"
+    var summary: String {
+        "\(daysSummary(calendar: .current)) · \(Self.clock(startMinute)) – \(Self.clock(endMinute))"
+    }
+
+    static func clock(_ minutes: Int) -> String {
+        let date = Calendar.current.date(from: DateComponents(hour: minutes / 60, minute: minutes % 60)) ?? .now
+        return date.formatted(.dateTime.hour().minute())
+    }
+}

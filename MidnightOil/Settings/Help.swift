@@ -24,6 +24,14 @@ enum Help {
                 single session from the menu while it runs.
                 """
         )
+        static let schedules = Intro(
+            symbol: "calendar.badge.clock",
+            text: """
+                Keep your Mac awake at the same times every week, like work hours or overnight. A \
+                schedule starts a session when its window opens and ends it when the window closes. A \
+                session you start yourself always takes priority.
+                """
+        )
         static let triggers = Intro(
             symbol: "bolt",
             text: """
@@ -98,6 +106,29 @@ enum Help {
         plugged in is never cut off.
         """
     static let batteryLevel = "The battery level that ends a session."
+
+    // MARK: - Schedules
+
+    static let scheduleSwitch = "Turn this schedule on or off."
+    static let editSchedule = "Change this schedule's name, days, hours, or session options."
+    static let removeSchedule = "Delete this schedule."
+    static let addSchedule = "Create a schedule with its own days and hours."
+    static let addWorkHours = """
+        Keeps your Mac awake Monday to Friday, 9 AM to 5 PM. Change the days and hours anytime.
+        """
+    static let addOvernight = """
+        Keeps your Mac awake every night from 11 PM to 7 AM, with the screen allowed to sleep. Good for \
+        agents that run while you sleep.
+        """
+    static let scheduleWhen = """
+        The days and hours this schedule keeps your Mac awake. If the end time is earlier than the start, \
+        the window runs past midnight and ends the next morning.
+        """
+    static let scheduleSessionOptions = "How the session behaves while this schedule is running it."
+    static let scheduleSkip = """
+        Ending a schedule's session skips the rest of that window. The schedule starts again at its next \
+        window, or when Midnight Oil next opens during one.
+        """
 
     // MARK: - Triggers
 
@@ -251,6 +282,8 @@ enum Help {
         static let whileDownloading = "Stay awake until a download finishes. You'll pick the file that's downloading."
         static let extend = "Add time without restarting the session."
         static let end = "Let your Mac sleep normally again."
+        static let skipSchedule = "End this session and skip the rest of this window. The schedule starts again next time."
+        static let nextSchedule = "The next time one of your schedules keeps your Mac awake."
         static let settings = "Triggers, closed-lid mode, Drive Alive, statistics, and more."
         static let checkForUpdates = "New versions download in the background and install when Midnight Oil quits."
         static let allowDisplaySleep = allowDisplaySleepShort

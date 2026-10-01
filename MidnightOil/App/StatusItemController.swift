@@ -15,14 +15,17 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private let updater: Updater
     private let customEndWindow = CustomEndWindow()
     private let settingsWindow: SettingsWindow
+    private let schedules: ScheduleStore
     private let card = SessionCardModel()
 
-    init(sessions: SessionController, triggers: TriggerStore, updater: Updater) {
+    init(sessions: SessionController, triggers: TriggerStore, schedules: ScheduleStore, updater: Updater) {
         self.sessions = sessions
         self.updater = updater
+        self.schedules = schedules
         settingsWindow = SettingsWindow(
             helper: sessions.helper,
             triggers: triggers,
+            schedules: schedules,
             history: sessions.history,
             updater: updater
         )
