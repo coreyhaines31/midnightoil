@@ -29,8 +29,9 @@ enum Help {
             symbol: "calendar.badge.clock",
             text: """
                 Keep your Mac awake at the same times every week, like work hours or overnight. A \
-                schedule starts a session when its window opens and ends it when the window closes. A \
-                session you start yourself always takes priority.
+                schedule starts a session when its window opens and ends it when the window closes. Add \
+                conditions to narrow one, like only while plugged in. A session you start yourself always \
+                takes priority.
                 """
         )
         static let triggers = Intro(
