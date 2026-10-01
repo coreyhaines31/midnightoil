@@ -34,17 +34,20 @@ final class TriggerController {
 
     func evaluate() {
         let enabledSchedules = schedules.schedules.filter(\.isEnabled)
+        let scheduleTriggers = enabledSchedules.map(\.asTrigger)
         let triggers = Preferences.triggersEnabled ? store.triggers.filter(\.isEnabled) : []
-        // Schedules come first, so one wins over a trigger that matches at the same time.
-        let candidates = enabledSchedules.map(\.asTrigger) + triggers
         let needs = Self.needs(for: triggers)
         if needs.wifi { WifiAccess.requestIfNeeded() }
         let state = SystemStateReader.current(needs: needs)
 
-        suppressed = TriggerEngine.stillSuppressed(suppressed, triggers: candidates, state: state)
+        suppressed = TriggerEngine.stillSuppressed(suppressed, triggers: scheduleTriggers + triggers, state: state)
         let source = sessions.session?.source
         let running = source?.automaticID
-        let active = TriggerEngine.activeTrigger(in: candidates, state: state, suppressed: suppressed, running: running)
+        // A matching schedule always beats a trigger; within each, the running one stays.
+        func active(in list: [Trigger]) -> Trigger? {
+            TriggerEngine.activeTrigger(in: list, state: state, suppressed: suppressed, running: running)
+        }
+        let active = active(in: scheduleTriggers) ?? active(in: triggers)
 
         switch (source, active) {
         case (.manual?, _), (nil, nil):
