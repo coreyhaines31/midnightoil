@@ -20,6 +20,7 @@ Midnight Oil lives in your menu bar. Click the lamp, pick how long, and your Mac
 
 - **Sessions** — keep awake indefinitely, for 5 minutes to 12 hours, until a time, while an app is running, or while a file finishes downloading. Extend a running session without restarting it.
 - **Closed-lid mode** — keep a MacBook running with the lid shut. A small helper (approved once in System Settings) handles it, and always restores normal sleep when the session ends, the app quits, or anything crashes.
+- **Schedules** — stay awake at set times every week, like work hours (Mon–Fri 9–5) or overnight. Skip a window from the menu when you take a day off.
 - **Triggers** — start sessions automatically while conditions hold: Wi-Fi network, USB or Bluetooth device, external display, power source, battery level, an app running or in front, IP address, a schedule, or user activity.
 - **Drive Alive** — keep external drives from spinning down.
 - **Safety rails** — end sessions when unplugged or when the battery drops below a level you choose; an alarm if the lid closes while on battery.

@@ -9,13 +9,21 @@ final class SettingsWindow {
 
     private let helper: HelperClient
     private let triggers: TriggerStore
+    private let schedules: ScheduleStore
     private let history: SessionHistory
     private let updater: Updater
     private var window: NSWindow?
 
-    init(helper: HelperClient, triggers: TriggerStore, history: SessionHistory, updater: Updater) {
+    init(
+        helper: HelperClient,
+        triggers: TriggerStore,
+        schedules: ScheduleStore,
+        history: SessionHistory,
+        updater: Updater
+    ) {
         self.helper = helper
         self.triggers = triggers
+        self.schedules = schedules
         self.history = history
         self.updater = updater
     }
@@ -33,6 +41,7 @@ final class SettingsWindow {
         tabs.tabStyle = .toolbar
         tabs.add("General", symbol: "gearshape", view: GeneralSettingsView(updater: updater))
         tabs.add("Sessions", symbol: "timer", view: SessionSettingsView())
+        tabs.add("Schedules", symbol: "calendar.badge.clock", view: SchedulesSettingsView(store: schedules))
         tabs.add("Triggers", symbol: "bolt", view: TriggersSettingsView(store: triggers))
         if LidState.hasLid {
             tabs.add("Closed Lid", symbol: "laptopcomputer", view: ClosedLidSettingsView(helper: helper))

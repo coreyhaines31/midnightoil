@@ -4,7 +4,8 @@ import Foundation
 public enum SessionCSV {
     public static let header = [
         "start", "end", "awake_minutes", "away_minutes", "lid_closed_minutes",
-        "ended_because", "subject", "trigger", "battery_start", "battery_end"
+        "ended_because", "subject", "trigger", "battery_start", "battery_end",
+        "schedule"
     ]
 
     public static func make(_ records: [SessionRecord]) -> String {
@@ -20,7 +21,8 @@ public enum SessionCSV {
                 record.subject ?? "",
                 record.triggerName ?? "",
                 record.batteryStart.map(String.init) ?? "",
-                record.batteryEnd.map(String.init) ?? ""
+                record.batteryEnd.map(String.init) ?? "",
+                record.scheduleName ?? ""
             ].map(escape).joined(separator: ",")
         }
         return ([header.joined(separator: ",")] + rows).joined(separator: "\n") + "\n"

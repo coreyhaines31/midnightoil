@@ -10,15 +10,27 @@ final class SessionCardModel {
     var allowsDisplaySleep = false
     var staysAwakeWithLidClosed = false
 
-    func update(from session: Session) {
+    func update(from session: Session, schedules: [AwakeSchedule]) {
         detail = Self.describe(session)
         allowsDisplaySleep = session.allowsDisplaySleep
         staysAwakeWithLidClosed = session.staysAwakeWithLidClosed
-        if case .trigger(_, let name) = session.source {
+        switch session.source {
+        case .trigger(_, let name):
             triggerLine = "Started by the “\(name)” trigger"
-        } else {
+        case .schedule(let id, let name):
+            triggerLine = "On your “\(name)” schedule"
+            if let end = Self.windowEnd(of: id, in: schedules) {
+                let remaining = RemainingTime.detailed(max(0, end.timeIntervalSinceNow))
+                detail = "\(remaining) left · until \(Self.clockTime(end))"
+            }
+        case .manual:
             triggerLine = nil
         }
+    }
+
+    /// When the running schedule's current window closes.
+    static func windowEnd(of id: UUID, in schedules: [AwakeSchedule]) -> Date? {
+        schedules.first { $0.id == id }?.schedule.windowEnd(containing: .now, calendar: .current)
     }
 
     private static func describe(_ session: Session) -> String {
@@ -33,6 +45,18 @@ final class SessionCardModel {
             guard let endDate = session.endDate, let remaining = session.remaining(at: .now) else { return "" }
             return "\(RemainingTime.detailed(remaining)) left · until \(clockTime(endDate))"
         }
+    }
+
+    /// "9:00 AM" today, "Tomorrow 9:00 AM", "Mon 9:00 AM" this week, "Oct 8, 9:00 AM" beyond.
+    /// For schedule times, which can be a week away on the same weekday.
+    static func upcomingTime(_ date: Date) -> String {
+        let calendar = Calendar.current
+        let time = date.formatted(.dateTime.hour().minute())
+        if calendar.isDateInToday(date) { return time }
+        if calendar.isDateInTomorrow(date) { return "Tomorrow \(time)" }
+        let days = calendar.dateComponents([.day], from: calendar.startOfDay(for: .now), to: date).day ?? 0
+        if days < 7 { return date.formatted(.dateTime.weekday(.abbreviated).hour().minute()) }
+        return date.formatted(.dateTime.month(.abbreviated).day().hour().minute())
     }
 
     /// "5:00 PM" today, "Wed 1:00 AM" on another day.

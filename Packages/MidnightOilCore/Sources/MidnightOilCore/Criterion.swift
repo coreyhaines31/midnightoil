@@ -23,7 +23,7 @@ public struct Schedule: Codable, Equatable, Sendable {
         self.endMinute = endMinute
     }
 
-    func contains(_ date: Date, calendar: Calendar) -> Bool {
+    public func contains(_ date: Date, calendar: Calendar) -> Bool {
         let parts = calendar.dateComponents([.weekday, .hour, .minute], from: date)
         guard let weekday = parts.weekday, let hour = parts.hour, let minute = parts.minute else { return false }
         let now = hour * 60 + minute
@@ -34,6 +34,49 @@ public struct Schedule: Codable, Equatable, Sendable {
         if now >= startMinute { return days.contains(weekday) }
         let yesterday = weekday == 1 ? 7 : weekday - 1
         return now < endMinute && days.contains(yesterday)
+    }
+
+    /// When the window `date` falls in closes, or nil if `date` is outside every window.
+    /// Windows are under a day long, so that's the next time the clock reads the end time,
+    /// which also gets repeated hours right when daylight saving ends.
+    public func windowEnd(containing date: Date, calendar: Calendar) -> Date? {
+        guard contains(date, calendar: calendar) else { return nil }
+        return calendar.nextDate(after: date, matching: Self.clock(endMinute), matchingPolicy: .nextTime)
+    }
+
+    /// The next time a window opens strictly after `date`, or nil with no days picked.
+    public func nextStart(after date: Date, calendar: Calendar) -> Date? {
+        guard !days.isEmpty else { return nil }
+        var cursor = date
+        for _ in 0..<8 {
+            let next = calendar.nextDate(after: cursor, matching: Self.clock(startMinute), matchingPolicy: .nextTime)
+            guard let start = next else { return nil }
+            if days.contains(calendar.component(.weekday, from: start)) { return start }
+            cursor = start
+        }
+        return nil
+    }
+
+    /// "Every day", "Weekdays", "Weekends", "Mon–Thu", or "Mon, Wed, Fri".
+    public func daysSummary(calendar: Calendar) -> String {
+        // Calendar weekdays start on Sunday; people read a work week from Monday.
+        let order = [2, 3, 4, 5, 6, 7, 1]
+        let picked = order.filter(days.contains)
+        switch Set(picked) {
+        case Set(order): return "Every day"
+        case [2, 3, 4, 5, 6]: return "Weekdays"
+        case [7, 1]: return "Weekends"
+        case []: return "No days"
+        default: break
+        }
+        let names = picked.map { calendar.shortWeekdaySymbols[$0 - 1] }
+        let positions = picked.compactMap { order.firstIndex(of: $0) }
+        let isRun = positions.count >= 3 && positions.last! - positions.first! == positions.count - 1
+        return isRun ? "\(names.first!)–\(names.last!)" : names.joined(separator: ", ")
+    }
+
+    private static func clock(_ minute: Int) -> DateComponents {
+        DateComponents(hour: minute / 60, minute: minute % 60, second: 0)
     }
 }
 
