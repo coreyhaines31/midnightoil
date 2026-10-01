@@ -1,12 +1,14 @@
 import Foundation
 
 /// Keeps the Mac awake during set hours, like "Work hours, Mon–Fri 9–5".
-/// Evaluated by the trigger engine as a trigger with a single schedule condition.
+/// Evaluated by the trigger engine as a trigger: the schedule plus any extra conditions.
 public struct AwakeSchedule: Codable, Identifiable, Equatable, Sendable {
     public var id: UUID
     public var name: String
     public var isEnabled: Bool
     public var schedule: Schedule
+    /// Extra conditions that must also hold, like being plugged in. Empty = the whole window.
+    public var conditions: [Criterion]
     public var allowsDisplaySleep: Bool
     public var staysAwakeWithLidClosed: Bool
 
@@ -15,6 +17,7 @@ public struct AwakeSchedule: Codable, Identifiable, Equatable, Sendable {
         name: String,
         isEnabled: Bool = true,
         schedule: Schedule,
+        conditions: [Criterion] = [],
         allowsDisplaySleep: Bool = false,
         staysAwakeWithLidClosed: Bool = false
     ) {
@@ -22,6 +25,7 @@ public struct AwakeSchedule: Codable, Identifiable, Equatable, Sendable {
         self.name = name
         self.isEnabled = isEnabled
         self.schedule = schedule
+        self.conditions = conditions
         self.allowsDisplaySleep = allowsDisplaySleep
         self.staysAwakeWithLidClosed = staysAwakeWithLidClosed
     }
@@ -31,7 +35,7 @@ public struct AwakeSchedule: Codable, Identifiable, Equatable, Sendable {
             id: id,
             name: name,
             isEnabled: isEnabled,
-            criteria: [.schedule(schedule)],
+            criteria: [.schedule(schedule)] + conditions,
             allowsDisplaySleep: allowsDisplaySleep,
             staysAwakeWithLidClosed: staysAwakeWithLidClosed
         )
