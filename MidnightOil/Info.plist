@@ -27,7 +27,7 @@
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Midnight Oil checks which Bluetooth devices are connected for Bluetooth triggers.</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2026 Corey Haines. MIT License.</string>
+	<string>Copyright © 2026 Corey Haines. FSL-1.1-MIT.</string>
 	<key>NSLocationUsageDescription</key>
 	<string>Midnight Oil needs your location to read the current Wi-Fi network name for Wi-Fi triggers.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
