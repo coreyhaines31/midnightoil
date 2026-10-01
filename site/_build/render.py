@@ -73,7 +73,6 @@ def nav():
       <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
-        <a href="/alternatives/">Alternatives</a>
         <a href="/#faq">FAQ</a>
         <a href="{REPO}">GitHub</a>
         <a class="pill" href="{DOWNLOAD}">Download</a>
