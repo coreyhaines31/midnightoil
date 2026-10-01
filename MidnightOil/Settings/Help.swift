@@ -237,11 +237,11 @@ enum Help {
     // MARK: - Notifications
 
     static let notifyEnd = """
-        When time runs out, the app a session was following quits, a download finishes, or a battery \
-        rule ends it. Not when you end it yourself. If you were away, the notification includes a \
+        When time runs out, a schedule's hours end, the app a session was following quits, a download \
+        finishes, or a battery rule ends it. Not when you end it yourself. If you were away, the notification includes a \
         short recap.
         """
-    static let notifyTriggerStart = "A notice each time a trigger starts a session, so a Mac staying awake is never a surprise."
+    static let notifyTriggerStart = "A notice each time a schedule or trigger starts a session, so a Mac staying awake is never a surprise."
     static let notificationSound = "The sound that plays with Midnight Oil's notifications."
     static let lidAlarmSound = "The sound that plays when you close the lid on battery during a closed-lid session."
     static let playSound = "Play this sound."

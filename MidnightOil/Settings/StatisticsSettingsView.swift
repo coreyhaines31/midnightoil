@@ -204,7 +204,9 @@ private struct SessionRow: View {
     private var title: String {
         let range = "\(record.start.formatted(date: .omitted, time: .shortened)) – "
             + record.end.formatted(date: .omitted, time: .shortened)
-        let what = record.subject ?? record.triggerName.map { "Trigger “\($0)”" }
+        let what = record.subject
+            ?? record.scheduleName.map { "Schedule “\($0)”" }
+            ?? record.triggerName.map { "Trigger “\($0)”" }
         return [range, what].compactMap(\.self).joined(separator: " · ")
     }
 

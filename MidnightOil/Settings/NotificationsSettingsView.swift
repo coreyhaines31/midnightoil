@@ -17,7 +17,7 @@ struct NotificationsSettingsView: View {
                 Toggle(isOn: $notifiesOnSessionEnd) { InfoLabel("A session ends on its own", info: Help.notifyEnd) }
                     .help(Help.notifyEnd)
                 Toggle(isOn: $notifiesOnTriggerStart) {
-                    InfoLabel("A trigger starts a session", info: Help.notifyTriggerStart)
+                    InfoLabel("A schedule or trigger starts a session", info: Help.notifyTriggerStart)
                 }
                 .help(Help.notifyTriggerStart)
             }
