@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Alternatives to Amphetamine, Caffeine, caffeinate, and mouse jigglers for Mac</title>
-  <meta name="description" content="Honest comparisons of the ways people keep a Mac awake, and where Midnight Oil fits: the free, source-available keep-awake app built for overnight AI-agent runs and closed-lid work.">
-  <link rel="canonical" href="https://midnightoil.app/alternatives/">
-  <meta property="og:title" content="Alternatives to Amphetamine, Caffeine, caffeinate, and mouse jigglers for Mac">
-  <meta property="og:description" content="Honest comparisons of the ways people keep a Mac awake, and where Midnight Oil fits: the free, source-available keep-awake app built for overnight AI-agent runs and closed-lid work.">
+  <title>What Midnight Oil for Teams sends, and when</title>
+  <meta name="description" content="The free app sends nothing. With Teams, Macs report session status and battery only when your profile turns it on. The full list.">
+  <link rel="canonical" href="https://midnightoil.app/docs/teams/privacy">
+  <meta property="og:title" content="What Midnight Oil for Teams sends, and when">
+  <meta property="og:description" content="The free app sends nothing. With Teams, Macs report session status and battery only when your profile turns it on. The full list.">
   <meta property="og:image" content="https://midnightoil.app/images/icon.png">
-  <meta property="og:url" content="https://midnightoil.app/alternatives/">
+  <meta property="og:url" content="https://midnightoil.app/docs/teams/privacy">
   <link rel="icon" href="/images/icon.png">
   <link rel="apple-touch-icon" href="/images/icon.png">
   <link rel="stylesheet" href="/site.css">
@@ -73,40 +73,33 @@
   </div>
   <main>
     <div class="wrap sub-hero">
-      <div class="eyebrow">Alternatives</div>
-      <h1>Every way to keep a Mac awake,<br>compared honestly.</h1>
-      <p class="lede">Five ways people do this, what each does well, and where it stops. Sometimes the other tool is the right one; we say so.</p>
+      <div class="eyebrow">Teams docs</div>
+      <h1>What a Mac sends, and when</h1>
+      <p class="lede">The free app sends nothing beyond an update check you can turn off. With Teams, a Mac reports only what&#x27;s listed here, and only when your organization&#x27;s profile turns it on.</p>
     </div>
     <section class="tight">
-      <div class="wrap">
-        <div class="glance"><table class="compare">
-          <thead><tr><th>You want…</th><th class="us">Use</th></tr></thead>
-          <tbody><tr><td>One click, lid open, nothing else</td><td class="">Caffeine or KeepingYouAwake</td></tr><tr><td>A command in a script or CI job</td><td class="">caffeinate</td></tr><tr><td>Slack or Teams to show you as active</td><td class="">A mouse jiggler (and maybe a rethink)</td></tr><tr><td>Fifteen kinds of triggers and AppleScript, on an old macOS</td><td class="">Amphetamine, as long as it still runs</td></tr><tr><td>Awake 9 to 5 on weekdays, only while plugged in</td><td class="us y">Midnight Oil</td></tr><tr><td>An overnight agent run, the lid closed, sleep restored when it&#x27;s done</td><td class="us y">Midnight Oil</td></tr></tbody>
-        </table></div>
-        <div class="related">
-          <a href="/alternatives/amphetamine"><b>Amphetamine</b><span>Last update 2023. Closed-lid mode takes a script, a sudoers file, and a Terminal command.</span></a>
-          <a href="/alternatives/caffeine"><b>Caffeine</b><span>The 2006 original. One click, and that&#x27;s the whole app: no timers, triggers, or lid mode.</span></a>
-          <a href="/alternatives/caffeinate"><b>caffeinate command</b><span>Built in and free. Stops at a closed lid, and dies with the terminal.</span></a>
-          <a href="/alternatives/keepingyouawake"><b>KeepingYouAwake</b><span>Maintained, minimal, open source. Refuses closed-lid mode on principle.</span></a>
-          <a href="/alternatives/mouse-jiggler"><b>Mouse jigglers</b><span>Fake input to look busy. Detectable, and no help once the lid closes.</span></a>
-        </div>
-      </div>
-    </section>
-    <section class="tight gray">
       <div class="wrap"><div class="prose">
 
-        <h2>How we compare</h2>
-        <p>Every page here was researched from the competitor's own App Store listing, GitHub repository, release history, and user reviews as of September 2026, and each states plainly what the other tool does better. If you spot something out of date, <a href="https://github.com/coreyhaines31/midnightoil/issues">open an issue</a> and we'll fix it.</p>
-        <p>The short version of the category: <strong>Amphetamine</strong> has the most features and hasn't shipped since 2023. <strong>KeepingYouAwake</strong> is maintained and minimal, and won't keep a closed lid awake on principle. <strong>Caffeine</strong> is the 2006 original, a cup you click. <strong>caffeinate</strong> is built in and lives in the terminal. <strong>Mouse jigglers</strong> solve a different problem than most people think. Midnight Oil is free, with its source on GitHub like the best of them, and built for the way Macs get kept awake now: overnight, unattended, sometimes closed.</p>
-    
+        <h2>Fleet reporting</h2>
+        <p>Off unless the profile sets <code>fleetReporting</code>. Then, every five minutes and when a session starts or ends, a Mac sends to <code>app.midnightoil.app</code>:</p>
+        <ul>
+          <li>A random device id the app made for itself, and the name your profile gives the Mac, if any.</li>
+          <li>The Midnight Oil version.</li>
+          <li>Whether it's being kept awake; if so, whether by hand, a schedule, or a trigger, that schedule or trigger's name, when it started and ends, and whether closed-lid mode is on.</li>
+          <li>Battery level and whether it's plugged in.</li>
+          <li>The session start or end event, with the fields in the <a href="/docs/teams/webhook">webhook payload</a>.</li>
+          <li>Your license key, to say which organization the Mac belongs to.</li>
+        </ul>
+        <h2>The session webhook</h2>
+        <p>Off unless the profile sets <code>webhookURL</code>. Then each session start and end goes to that URL, which you control, with the <a href="/docs/teams/webhook">payload described here</a>.</p>
+        <h2>Never sent</h2>
+        <p>The computer's own name, user names, IP or Wi-Fi details, which apps are running, files, keystrokes, or screen contents. Triggers that use those things are evaluated on the Mac; only their names are reported.</p>
+        <h2>Kept for</h2>
+        <p>Each Mac's latest status stays until you remove it or end your subscription. Session events are deleted after 30 days. The dashboard runs on Vercel with a Neon Postgres database in the US.</p>
+        <h2>Turning it off</h2>
+        <p>Deploy a profile without fleet reporting or the webhook, and Macs stop sending within a few seconds.</p>
+
       </div></div>
-    </section>
-    <section class="cta">
-      <div class="wrap">
-        <h2>Give your agents the night shift.</h2>
-        <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download for macOS</a>
-        <p class="fineprint">Free · Source on GitHub · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
-      </div>
     </section>
   </main>
   <footer>

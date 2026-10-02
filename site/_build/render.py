@@ -10,6 +10,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from pages import PAGES, HUB  # noqa: E402
+from teams import CHECKOUT, DOCS, LEGAL, TEAMS  # noqa: E402
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 DOWNLOAD = "https://github.com/coreyhaines31/midnightoil/releases/latest"
@@ -73,6 +74,7 @@ def nav():
       <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
+        <a href="/teams">Teams</a>
         <a href="/#faq">FAQ</a>
         <a href="{REPO}">GitHub</a>
         <a class="pill" href="{DOWNLOAD}">Download</a>
@@ -92,7 +94,7 @@ def footer():
     return f'''  <footer>
     <div class="wrap">
 {footer_alternatives()}      <span>© 2026 Corey Haines. <a href="{REPO}/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
-      <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="{REPO}/issues">Issues</a></span>
+      <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="{REPO}/issues">Issues</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
     </div>
   </footer>
 '''
@@ -231,9 +233,103 @@ def render_hub():
         f.write(body)
 
 
+def write(path, body):
+    out = os.path.join(ROOT, path.strip("/") + ".html")
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with open(out, "w") as f:
+        f.write(body)
+
+
+def render_teams():
+    t = TEAMS
+    features = "".join(f'''        <div class="teams-feature">
+          <div><h2>{esc(title)}</h2><p>{esc(text)}</p></div>
+          <div class="art">{art}</div>
+        </div>
+''' for title, text, art in t["features"])
+    included = "".join(f"<li>{esc(item)}</li>" for item in t["included"])
+    faqs = "".join(f'          <details><summary>{esc(q)}</summary><p>{a}</p></details>\n' for q, a in t["faqs"])
+    body = f'''{head(t["title"], t["description"], "/teams")}{nav()}  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">{esc(t["eyebrow"])}</div>
+      <h1>{esc(t["h1"])}</h1>
+      <p class="lede">{esc(t["lede"])}</p>
+      <div class="actions">
+        <a class="pill big" href="#pricing">See pricing</a>
+        <a href="/docs/teams/deploy">How deployment works →</a>
+      </div>
+    </div>
+    <section class="tight">
+      <div class="wrap">
+{features}      </div>
+    </section>
+    <section class="tight gray" id="pricing">
+      <div class="wrap">
+        <div class="section-head center"><h2>One price per Mac.</h2></div>
+        <div class="price-card">
+          <div class="amount">$5 <small>per Mac per month, billed yearly</small></div>
+          <p style="color:var(--muted);margin:6px 0 0">$60 per Mac per year. Five Macs minimum. Midnight Oil itself stays free for everyone.</p>
+          <ul>{included}</ul>
+          <form class="seat-row" action="{CHECKOUT}" method="get">
+            <label>Macs <input id="seats" name="seats" type="number" min="5" max="1000" value="10"></label>
+            <span class="total" id="total">$600/yr</span>
+            <button class="pill" type="submit">Buy for your team</button>
+          </form>
+        </div>
+      </div>
+    </section>
+    <section class="tight" id="faq">
+      <div class="wrap">
+        <div class="section-head center"><h2>Questions</h2></div>
+        <div class="faq">
+{faqs}        </div>
+      </div>
+    </section>
+  </main>
+{footer()}  <script>
+    (() => {{
+      const seats = document.getElementById("seats"), total = document.getElementById("total");
+      const update = () => {{
+        const n = Math.max(5, Math.min(1000, Math.floor(Number(seats.value) || 5)));
+        total.textContent = "$" + (n * 60).toLocaleString("en-US") + "/yr";
+      }};
+      seats.addEventListener("input", update);
+      update();
+    }})();
+  </script>
+</body>
+</html>
+'''
+    write("/teams", body)
+
+
+def render_doc(d, eyebrow=None):
+    body = f'''{head(d["title"], d["description"], d["path"])}{nav()}  <main>
+    <div class="wrap sub-hero">
+      {f'<div class="eyebrow">{esc(eyebrow)}</div>' if eyebrow else ""}
+      <h1>{esc(d["h1"])}</h1>
+      {f'<p class="lede">{esc(d["lede"])}</p>' if d.get("lede") else ""}
+    </div>
+    <section class="tight">
+      <div class="wrap"><div class="prose">
+{d["html"]}
+      </div></div>
+    </section>
+  </main>
+{footer()}</body>
+</html>
+'''
+    write(d["path"], body)
+
+
 if __name__ == "__main__":
     for p in PAGES:
         render_page(p)
     render_hub()
     render_homepage_footer()
-    print(f"rendered {len(PAGES)} pages + hub + homepage footer")
+    render_teams()
+    for d in DOCS:
+        render_doc(d, d["eyebrow"])
+    for d in LEGAL:
+        render_doc(d)
+    print(f"rendered {len(PAGES)} pages + hub + homepage footer + teams + {len(DOCS)} docs + {len(LEGAL)} legal")

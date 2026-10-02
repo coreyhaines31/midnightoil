@@ -64,6 +64,7 @@
       <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
+        <a href="/teams">Teams</a>
         <a href="/#faq">FAQ</a>
         <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
         <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
@@ -177,7 +178,7 @@ caffeinate -dimsu     # everything</code></pre>
     <div class="wrap">
       <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives/">Alternatives</a><a href="/alternatives/amphetamine">Amphetamine alternative</a><a href="/alternatives/caffeine">Caffeine alternative</a><a href="/alternatives/caffeinate">caffeinate alternative</a><a href="/alternatives/keepingyouawake">KeepingYouAwake alternative</a><a href="/alternatives/mouse-jiggler">Mouse jiggler alternative</a></nav>
       <span>© 2026 Corey Haines. <a href="https://github.com/coreyhaines31/midnightoil/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
-      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a></span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
     </div>
   </footer>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What does caffeinate do on a Mac?", "acceptedAnswer": {"@type": "Answer", "text": "caffeinate creates a power-management assertion that stops macOS from sleeping. With no flags it prevents idle sleep until you stop it. You can scope it to a command (caffeinate -i make), a duration (caffeinate -t 3600), or a process (caffeinate -w PID)."}}, {"@type": "Question", "name": "Does caffeinate keep a MacBook awake with the lid closed?", "acceptedAnswer": {"@type": "Answer", "text": "No. Closing the lid is an explicit sleep request that a power assertion can't override. The workaround, sudo pmset -a disablesleep 1, needs an admin password and must be reverted by hand. Midnight Oil's closed-lid mode does this through a helper that restores sleep automatically."}}, {"@type": "Question", "name": "How do I keep my Mac awake while Claude Code runs overnight?", "acceptedAnswer": {"@type": "Answer", "text": "The command-line way is tmux new-session -d 'caffeinate -i claude', which keeps the assertion alive even if the terminal closes. The simpler way is Midnight Oil: start a session while Terminal is running, or until 7 AM, and check Stay Awake with Lid Closed if you're closing the laptop."}}, {"@type": "Question", "name": "How do I stop caffeinate?", "acceptedAnswer": {"@type": "Answer", "text": "Press Ctrl-C in the terminal that started it, or run killall caffeinate. Check what's holding your Mac awake with pmset -g assertions."}}]}</script>
