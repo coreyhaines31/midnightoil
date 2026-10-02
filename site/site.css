@@ -447,7 +447,6 @@
     .seat-row input { width: 92px; font: inherit; font-size: 17px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 10px; }
     .seat-row .pill.soon { background: var(--muted); cursor: default; }
     .seat-row .total { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
-    .draft-note { background: #fff6e8; color: #7a4a00; border-radius: 12px; padding: 12px 16px; font-size: 15px; margin: 0 0 24px; }
     .teams-feature { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; padding: 56px 0; border-top: 1px solid var(--line); }
     .teams-feature:first-of-type { border-top: 0; }
     .teams-feature h2 { font-size: clamp(28px, 3.4vw, 38px); margin-bottom: 12px; }
