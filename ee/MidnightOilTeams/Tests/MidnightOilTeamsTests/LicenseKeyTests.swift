@@ -94,6 +94,19 @@ struct LicenseKeyTests {
         #expect(LicenseKey.current(installed: nil, renewal: later) == nil)
     }
 
+    @Test func aSeatChangeWithTheSameExpiryReplacesTheKeyByIssueDate() throws {
+        func key(seats: Int, issued: TimeInterval) throws -> LicenseKey {
+            var payload = payload(exp: Date(timeIntervalSince1970: 2_000_000_000))
+            payload.seats = seats
+            payload.iat = Date(timeIntervalSince1970: issued)
+            return try LicenseKey(try sign(payload), publicKey: signer.publicKey)
+        }
+        let five = try key(seats: 5, issued: 1_900_000_000)
+        let twenty = try key(seats: 20, issued: 1_900_100_000)
+        #expect(LicenseKey.current(installed: five, renewal: twenty) == twenty)
+        #expect(LicenseKey.current(installed: twenty, renewal: five) == twenty)
+    }
+
     /// Signed by Node's crypto with a throwaway key, exactly as the cloud app signs.
     /// Guards the format both sides must agree on (no fractional seconds in `exp`).
     @Test func aKeySignedByTheCloudAppVerifies() throws {
