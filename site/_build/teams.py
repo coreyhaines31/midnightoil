@@ -262,7 +262,6 @@ LEGAL = [
         "description": "The terms for buying and using Midnight Oil for Teams.",
         "h1": "Terms of service",
         "html": """
-        <p class="draft-note">Draft, under legal review. Midnight Oil for Teams isn't on sale until these are final.</p>
         <p><strong>Last updated October 2026.</strong> These terms cover Midnight Oil for Teams: the subscription, license keys, the Teams dashboard at app.midnightoil.app, and the commercial code in the app's <code>ee/</code> directory. The free Midnight Oil app is licensed separately under FSL-1.1-MIT.</p>
         <h2>The subscription</h2>
         <p>You pay per Mac (seat) per year, billed yearly in advance through Stripe, with a five-seat minimum. You can add or remove seats or cancel at any time from Billing; changes are prorated by Stripe. Cancelling stops the next renewal; your keys work until the end of the paid period plus 30 days.</p>
@@ -284,7 +283,6 @@ LEGAL = [
         "description": "Midnight Oil collects nothing. Midnight Oil for Teams stores only what organizations choose to report.",
         "h1": "Privacy policy",
         "html": """
-        <p class="draft-note">Draft, under legal review.</p>
         <p><strong>Last updated October 2026.</strong></p>
         <h2>The Midnight Oil app</h2>
         <p>The app collects nothing about you. Its only network request, unless your organization uses Teams, is a daily update check to GitHub, which you can turn off in Settings › General.</p>
