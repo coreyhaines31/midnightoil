@@ -98,7 +98,7 @@ final class SessionController {
         begin(Session(
             start: .now,
             end: .indefinite,
-            allowsDisplaySleep: trigger.allowsDisplaySleep,
+            allowsDisplaySleep: displaySleep(trigger.allowsDisplaySleep),
             staysAwakeWithLidClosed: trigger.staysAwakeWithLidClosed && canUseLidMode,
             source: .trigger(id: trigger.id, name: trigger.name)
         ))
@@ -108,7 +108,7 @@ final class SessionController {
         begin(Session(
             start: .now,
             end: .indefinite,
-            allowsDisplaySleep: schedule.allowsDisplaySleep,
+            allowsDisplaySleep: displaySleep(schedule.allowsDisplaySleep),
             staysAwakeWithLidClosed: schedule.staysAwakeWithLidClosed && canUseLidMode,
             source: .schedule(id: schedule.id, name: schedule.name)
         ))
@@ -213,8 +213,15 @@ final class SessionController {
         onChange?()
     }
 
+    /// A display-sleep setting the organization locks wins over a trigger's, a schedule's, or the menu's.
+    var isDisplaySleepLocked: Bool { ManagedSettings.isForced([Preferences.Key.allowsDisplaySleep]) }
+
+    private func displaySleep(_ requested: Bool) -> Bool {
+        isDisplaySleepLocked ? Preferences.allowsDisplaySleep : requested
+    }
+
     func setAllowsDisplaySleep(_ allowed: Bool) {
-        session?.allowsDisplaySleep = allowed
+        session?.allowsDisplaySleep = displaySleep(allowed)
         applyAssertions()
         onChange?()
     }
