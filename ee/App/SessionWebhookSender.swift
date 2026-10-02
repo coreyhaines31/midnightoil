@@ -13,27 +13,41 @@ final class SessionWebhookSender {
 
     private let license: TeamsLicense
     private let defaults: UserDefaults
+    /// When a session is expected to end, from its schedule or the organization's time limit.
+    private let endsAt: @MainActor (Session) -> Date?
     private var inFlight: [UUID: Task<Void, Never>] = [:]
     /// Never follows redirects: a redirect could send the signed body somewhere the profile didn't name.
     private nonisolated static let session = URLSession(
         configuration: .ephemeral, delegate: RefuseRedirects(), delegateQueue: nil
     )
 
-    init(license: TeamsLicense, defaults: UserDefaults = .standard) {
+    init(license: TeamsLicense, endsAt: @escaping @MainActor (Session) -> Date?, defaults: UserDefaults = .standard) {
         self.license = license
+        self.endsAt = endsAt
         self.defaults = defaults
     }
 
-    func send(_ event: SessionEvent) {
-        guard license.unlocks(.webhook),
-              let text = defaults.string(forKey: TeamsSettingKey.webhookURL),
+    /// The configured URL, if sending is allowed right now.
+    private var destination: URL? {
+        guard license.unlocks(.webhook), let text = defaults.string(forKey: TeamsSettingKey.webhookURL),
               let url = URL(string: text), Self.isAllowed(url)
-        else { return }
-        let payload = WebhookPayload(event, device: TeamsDeviceInfo.current(defaults: defaults))
+        else { return nil }
+        return url
+    }
+
+    func send(_ event: SessionEvent) {
+        guard let url = destination else { return }
+        let session: Session = switch event {
+        case .started(let session), .ended(let session, _): session
+        }
+        let device = TeamsDeviceInfo.current(defaults: defaults)
+        let payload = WebhookPayload(event, device: device, endsAt: endsAt(session))
         let secret = defaults.string(forKey: TeamsSettingKey.webhookSecret)
         let id = UUID()
+        // Each retry first checks the license and URL haven't been removed or changed since.
+        let stillWanted: @Sendable () async -> Bool = { [weak self] in await self?.destination == url }
         inFlight[id] = Task.detached(priority: .utility) { [weak self] in
-            await Self.deliver(payload, to: url, secret: secret)
+            await Self.deliver(payload, to: url, secret: secret, stillWanted: stillWanted)
             await self?.finished(id)
         }
     }
@@ -59,7 +73,12 @@ final class SessionWebhookSender {
         }
     }
 
-    private nonisolated static func deliver(_ payload: WebhookPayload, to url: URL, secret: String?) async {
+    private nonisolated static func deliver(
+        _ payload: WebhookPayload,
+        to url: URL,
+        secret: String?,
+        stillWanted: @Sendable () async -> Bool
+    ) async {
         var request = URLRequest(url: url, timeoutInterval: 10)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -80,7 +99,10 @@ final class SessionWebhookSender {
             return
         }
         for (attempt, delay) in ([0] + retryDelays).enumerated() {
-            if delay > 0 { try? await Task.sleep(for: .seconds(delay)) }
+            if delay > 0 {
+                try? await Task.sleep(for: .seconds(delay))
+                guard await stillWanted() else { return }
+            }
             do {
                 let (_, response) = try await session.data(for: request)
                 let status = (response as? HTTPURLResponse)?.statusCode ?? 0

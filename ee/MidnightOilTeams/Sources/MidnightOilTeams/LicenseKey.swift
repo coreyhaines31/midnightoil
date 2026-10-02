@@ -20,19 +20,31 @@ public struct LicensePayload: Codable, Equatable, Sendable {
     /// The key stops working after this. Already includes the grace period after renewal is due.
     public var exp: Date
     public var features: [TeamsFeature]
+    /// When the key was issued. Tells a seat change apart from the key it replaces when both
+    /// expire on the same day. Absent from the earliest keys.
+    public var iat: Date?
 
     // Short keys keep license keys short.
     private enum CodingKeys: String, CodingKey {
-        case version = "v", org, name, seats, exp, features
+        case version = "v", org, name, seats, exp, features, iat
     }
 
-    public init(version: Int = 1, org: String, name: String, seats: Int, exp: Date, features: [TeamsFeature]) {
+    public init(
+        version: Int = 1,
+        org: String,
+        name: String,
+        seats: Int,
+        exp: Date,
+        features: [TeamsFeature],
+        iat: Date? = nil
+    ) {
         self.version = version
         self.org = org
         self.name = name
         self.seats = seats
         self.exp = exp
         self.features = features
+        self.iat = iat
     }
 
     public init(from decoder: Decoder) throws {
@@ -44,6 +56,7 @@ public struct LicensePayload: Codable, Equatable, Sendable {
         exp = try container.decode(Date.self, forKey: .exp)
         // Skip features added after this version of the app, so newer keys still work here.
         features = try container.decode([String].self, forKey: .features).compactMap(TeamsFeature.init(rawValue:))
+        iat = try container.decodeIfPresent(Date.self, forKey: .iat)
     }
 }
 
@@ -93,6 +106,20 @@ public struct LicenseKey: Equatable, Sendable {
         if now >= payload.exp { return .expired }
         if payload.exp.timeIntervalSince(now) <= Self.renewalNotice { return .expiringSoon }
         return .valid
+    }
+
+    /// The key to use: a key fetched from the dashboard replaces the installed one only when it's for
+    /// the same organization and newer: issued later, or, for keys without an issue date, expiring later.
+    /// Without an installed key there's nothing to replace.
+    public static func current(installed: LicenseKey?, renewal: LicenseKey?) -> LicenseKey? {
+        guard let installed else { return nil }
+        guard let renewal, renewal.payload.org == installed.payload.org else { return installed }
+        let isNewer = if let issued = renewal.payload.iat, let installedIssued = installed.payload.iat {
+            issued > installedIssued
+        } else {
+            renewal.payload.exp > installed.payload.exp
+        }
+        return isNewer ? renewal : installed
     }
 
     /// True while the key hasn't expired and includes `feature`.

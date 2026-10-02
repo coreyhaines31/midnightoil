@@ -41,21 +41,29 @@ public struct WebhookPayload: Codable, Equatable, Sendable {
     public var device: TeamsDevice
     public var session: SessionInfo
 
-    public init(_ event: SessionEvent, device: TeamsDevice, id: UUID = UUID(), at now: Date = .now) {
+    /// `endsAt` is when the session is expected to end, if the caller knows better than the session
+    /// itself (a schedule's window, or an organization's time limit).
+    public init(
+        _ event: SessionEvent,
+        device: TeamsDevice,
+        endsAt: Date? = nil,
+        id: UUID = UUID(),
+        at now: Date = .now
+    ) {
         self.id = id.uuidString.lowercased()
         self.occurredAt = now
         self.device = device
         switch event {
         case .started(let session):
             self.event = "session.started"
-            self.session = Self.info(session, record: nil)
+            self.session = Self.info(session, record: nil, endsAt: endsAt)
         case .ended(let session, let record):
             self.event = "session.ended"
-            self.session = Self.info(session, record: record)
+            self.session = Self.info(session, record: record, endsAt: endsAt)
         }
     }
 
-    private static func info(_ session: Session, record: SessionRecord?) -> SessionInfo {
+    private static func info(_ session: Session, record: SessionRecord?, endsAt: Date?) -> SessionInfo {
         let (source, name): (String, String?) = switch session.source {
         case .manual: ("manual", nil)
         case .schedule(_, let name): ("schedule", name)
@@ -63,7 +71,7 @@ public struct WebhookPayload: Codable, Equatable, Sendable {
         }
         return SessionInfo(
             startedAt: session.start,
-            endsAt: session.endDate,
+            endsAt: endsAt ?? session.endDate,
             endedAt: record?.end,
             source: source,
             sourceName: name,

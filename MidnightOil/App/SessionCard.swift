@@ -79,6 +79,7 @@ final class SessionCardModel {
 struct SessionCardView: View {
     let model: SessionCardModel
     let showsLidOption: Bool
+    var displaySleepLocked = false
     let onAllowDisplaySleep: @MainActor (Bool) -> Void
     let onStayAwakeWithLidClosed: @MainActor (Bool) -> Void
 
@@ -109,6 +110,7 @@ struct SessionCardView: View {
                         set: { onAllowDisplaySleep($0) }
                     ))
                     .help(Help.Menu.allowDisplaySleepShort)
+                    .disabled(displaySleepLocked)
                     if showsLidOption {
                         Toggle("Stay awake with lid closed", isOn: Binding(
                             get: { model.staysAwakeWithLidClosed },

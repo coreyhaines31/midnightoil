@@ -80,6 +80,33 @@ struct LicenseKeyTests {
         #expect(key.payload.features == [.fleet])
     }
 
+    @Test func aRenewalReplacesTheInstalledKeyOnlyForTheSameOrgAndALaterDate() throws {
+        func key(org: String, exp: TimeInterval) throws -> LicenseKey {
+            var payload = payload(exp: Date(timeIntervalSince1970: exp))
+            payload.org = org
+            return try LicenseKey(try sign(payload), publicKey: signer.publicKey)
+        }
+        let installed = try key(org: "a", exp: 2_000_000_000)
+        let later = try key(org: "a", exp: 2_100_000_000)
+        #expect(LicenseKey.current(installed: installed, renewal: later) == later)
+        #expect(LicenseKey.current(installed: later, renewal: installed) == later)
+        #expect(LicenseKey.current(installed: installed, renewal: try key(org: "b", exp: 2_100_000_000)) == installed)
+        #expect(LicenseKey.current(installed: nil, renewal: later) == nil)
+    }
+
+    @Test func aSeatChangeWithTheSameExpiryReplacesTheKeyByIssueDate() throws {
+        func key(seats: Int, issued: TimeInterval) throws -> LicenseKey {
+            var payload = payload(exp: Date(timeIntervalSince1970: 2_000_000_000))
+            payload.seats = seats
+            payload.iat = Date(timeIntervalSince1970: issued)
+            return try LicenseKey(try sign(payload), publicKey: signer.publicKey)
+        }
+        let five = try key(seats: 5, issued: 1_900_000_000)
+        let twenty = try key(seats: 20, issued: 1_900_100_000)
+        #expect(LicenseKey.current(installed: five, renewal: twenty) == twenty)
+        #expect(LicenseKey.current(installed: twenty, renewal: five) == twenty)
+    }
+
     /// Signed by Node's crypto with a throwaway key, exactly as the cloud app signs.
     /// Guards the format both sides must agree on (no fractional seconds in `exp`).
     @Test func aKeySignedByTheCloudAppVerifies() throws {
@@ -94,5 +121,20 @@ struct LicenseKeyTests {
         #expect(key.payload.name == "Acme, Inc.")
         #expect(key.payload.seats == 12)
         #expect(key.payload.features == [.policies, .webhook, .fleet])
+    }
+
+    /// The cloud app's current format, with the issue date, signed by Node with a throwaway key.
+    @Test func aCloudKeyWithAnIssueDateVerifies() throws {
+        let publicKey = try Curve25519.Signing.PublicKey(
+            rawRepresentation: Data(base64Encoded: "+DHNy1JXdbQ4Q9m6T/FxE8+73BNtSwVqPHdNfia69Mk=") ?? Data()
+        )
+        let text = "MO1-"
+            + "eyJ2IjoxLCJvcmciOiJvcmdfdGVzdCIsIm5hbWUiOiJBY21lIiwic2VhdHMiOjIwLCJleHAiOiIyMDMwLTAx"
+            + "LTAxVDAwOjAwOjAwWiIsImZlYXR1cmVzIjpbInBvbGljaWVzIiwid2ViaG9vayIsImZsZWV0Il0sImlhdCI6"
+            + "IjIwMjktMDYtMDFUMTI6MDA6MDBaIn0"
+            + ".zpwPb-jfe6y6Z1csGw899HzxDEpVJxcWvfZ4oMZLnFjHaLLkN_sfxIsOf7jAMaEbGjyPAgng6mMy4FMOweYuAw"
+        let key = try LicenseKey(text, publicKey: publicKey)
+        #expect(key.payload.seats == 20)
+        #expect(key.payload.iat == Date(timeIntervalSince1970: 1_875_009_600))
     }
 }

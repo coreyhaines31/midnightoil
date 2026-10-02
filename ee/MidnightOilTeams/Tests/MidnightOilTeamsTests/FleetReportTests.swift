@@ -32,6 +32,19 @@ struct FleetReportTests {
         #expect(report.event?.event == "session.started")
     }
 
+    @Test func aKnownEndTimeOverridesTheSessions() {
+        let start = Date(timeIntervalSince1970: 1_790_000_000)
+        let session = Session(
+            start: start, end: .indefinite, allowsDisplaySleep: false, source: .schedule(id: UUID(), name: "Work")
+        )
+        let windowEnd = start.addingTimeInterval(8 * 3_600)
+        let report = FleetReport(
+            device: device, session: session, endsAt: windowEnd, power: power, event: .started(session)
+        )
+        #expect(report.session?.endsAt == windowEnd)
+        #expect(report.event?.session.endsAt == windowEnd)
+    }
+
     @Test func theReplyMayCarryANewKey() throws {
         let reply = try JSONDecoder().decode(FleetReply.self, from: Data(#"{"licenseKey":"MO1-abc.def"}"#.utf8))
         #expect(reply.licenseKey == "MO1-abc.def")

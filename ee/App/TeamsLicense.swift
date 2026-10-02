@@ -9,6 +9,9 @@ import Observation
 @Observable
 final class TeamsLicense {
     static let defaultsKey = "teamsLicenseKey"
+    /// Renewals fetched from the dashboard. Kept apart from the installed key because a key
+    /// deployed by a profile can't be overwritten by the app.
+    static let renewalKey = "teamsRenewedLicenseKey"
 
     // Midnight Oil's license-signing public key. The private half signs keys in the Teams service.
     private static let publicKey: Curve25519.Signing.PublicKey = {
@@ -18,9 +21,12 @@ final class TeamsLicense {
         return try! Curve25519.Signing.PublicKey(rawRepresentation: raw)
     }()
 
+    /// The key in use: the installed one, or a later renewal of it for the same organization.
     private(set) var key: LicenseKey?
-    /// Why the stored key was rejected, if it was.
+    /// Why the installed key was rejected, if it was.
     private(set) var problem: LicenseKey.Problem?
+    @ObservationIgnored private var installedText: String?
+    @ObservationIgnored private var renewalText: String?
 
     @ObservationIgnored private let defaults: UserDefaults
     @ObservationIgnored private var observer: NSObjectProtocol?
@@ -65,21 +71,40 @@ final class TeamsLicense {
 
     func remove() {
         defaults.removeObject(forKey: Self.defaultsKey)
+        defaults.removeObject(forKey: Self.renewalKey)
+        reload()
+    }
+
+    /// Stores a renewal the dashboard sent in reply to a report made with `presented`. Ignored if
+    /// the key changed or was removed since that report, or if it isn't a later key for the same org.
+    func adoptRenewal(_ text: String, inReplyTo presented: String) {
+        guard key?.string == presented, let renewal = try? LicenseKey(text, publicKey: Self.publicKey),
+              LicenseKey.current(installed: key, renewal: renewal) == renewal
+        else { return }
+        defaults.set(renewal.string, forKey: Self.renewalKey)
         reload()
     }
 
     private func reload() {
-        guard let text = defaults.string(forKey: Self.defaultsKey), !text.isEmpty else {
-            if key != nil || problem != nil { (key, problem) = (nil, nil) }
-            return
+        let installed = defaults.string(forKey: Self.defaultsKey).flatMap { $0.isEmpty ? nil : $0 }
+        let renewal = defaults.string(forKey: Self.renewalKey)
+        guard installed != installedText || renewal != renewalText else { return }
+        (installedText, renewalText) = (installed, renewal)
+
+        var installedKey: LicenseKey?
+        var newProblem: LicenseKey.Problem?
+        if let installed {
+            do {
+                installedKey = try LicenseKey(installed, publicKey: Self.publicKey)
+            } catch {
+                newProblem = error as? LicenseKey.Problem ?? .malformed
+            }
         }
-        guard text != key?.string else { return }
-        do {
-            key = try LicenseKey(text, publicKey: Self.publicKey)
-            problem = nil
-        } catch {
-            key = nil
-            problem = error as? LicenseKey.Problem ?? .malformed
-        }
+        let renewalKey = renewal.flatMap { try? LicenseKey($0, publicKey: Self.publicKey) }
+        let current = LicenseKey.current(installed: installedKey, renewal: renewalKey)
+        // A renewal for a different or removed key is stale; drop it.
+        if renewal != nil, current != renewalKey { defaults.removeObject(forKey: Self.renewalKey) }
+        if current != key { key = current }
+        if newProblem != problem { problem = newProblem }
     }
 }

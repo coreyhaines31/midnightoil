@@ -106,7 +106,7 @@
           <li><code>endCause</code> is one of <code>you</code>, <code>timeUp</code>, <code>appQuit</code>, <code>downloadFinished</code>, <code>lowBattery</code>, <code>unplugged</code>, <code>triggerEnded</code>, <code>scheduleEnded</code>, <code>schedulePaused</code>, <code>policyLimit</code>, <code>replaced</code>, <code>midnightOilQuit</code>.</li>
         </ul>
         <h2>Verifying the signature</h2>
-        <p>With a signing secret in your profile, each request carries <code>X-MidnightOil-Signature: t=&lt;unix seconds&gt;,v1=&lt;hex&gt;</code>. <code>v1</code> is the HMAC-SHA256 of <code>&lt;t&gt;.&lt;raw body&gt;</code> using your secret, the same scheme as Stripe's. Compare in constant time, and reject timestamps more than five minutes old.</p>
+        <p>The profile builder requires a signing secret (except for Slack), and each request carries <code>X-MidnightOil-Signature: t=&lt;unix seconds&gt;,v1=&lt;hex&gt;</code>. <code>v1</code> is the HMAC-SHA256 of <code>&lt;t&gt;.&lt;raw body&gt;</code> using your secret, the same scheme as Stripe's. Compare in constant time, and reject timestamps more than five minutes old.</p>
 <pre><code>// Node.js
 import { createHmac, timingSafeEqual } from "node:crypto";
 
@@ -127,7 +127,8 @@ def verify(raw_body: bytes, header: str, secret: str) -&gt; bool:
     return hmac.compare_digest(expected, parts["v1"])</code></pre>
         <h2>Delivery</h2>
         <ul>
-          <li>Your URL must use <code>https</code>. Redirects aren't followed.</li>
+          <li>Your URL must use <code>https</code>; plain <code>http</code> is allowed only to the Mac itself, for a local relay. Redirects aren't followed.</li>
+          <li>Each retry first checks the license and URL are still in place, so removing either stops further attempts.</li>
           <li>Answer with any 2xx. Network errors, 429, and 5xx are retried after 2 seconds, 10 seconds, and a minute; other responses aren't.</li>
           <li>When Midnight Oil quits mid-session, it waits up to three seconds to send <code>session.ended</code>.</li>
         </ul>

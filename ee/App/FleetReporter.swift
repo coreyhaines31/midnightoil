@@ -14,37 +14,68 @@ final class FleetReporter {
     private let license: TeamsLicense
     private let sessions: SessionController
     private let defaults: UserDefaults
+    /// When a session is expected to end, from its schedule or the organization's time limit.
+    private let endsAt: @MainActor (Session) -> Date?
     private var ticker: Task<Void, Never>?
+    private var lastReport: ContinuousClock.Instant?
+    private var wasEnabled = false
     private var inFlight: [UUID: Task<Void, Never>] = [:]
     private nonisolated static let session = URLSession(
         configuration: .ephemeral, delegate: RefuseFleetRedirects(), delegateQueue: nil
     )
 
-    init(license: TeamsLicense, sessions: SessionController, defaults: UserDefaults = .standard) {
+    init(
+        license: TeamsLicense,
+        sessions: SessionController,
+        endsAt: @escaping @MainActor (Session) -> Date?,
+        defaults: UserDefaults = .standard
+    ) {
         self.license = license
         self.sessions = sessions
+        self.endsAt = endsAt
         self.defaults = defaults
     }
 
     func start() {
         ticker = Task { [weak self] in
-            // A first report soon after launch, then the regular heartbeat.
             try? await Task.sleep(for: .seconds(10))
             while !Task.isCancelled {
                 guard let self else { return }
-                self.report()
-                try? await Task.sleep(for: Self.heartbeat)
+                self.heartbeatIfDue()
+                // Checked often so a newly deployed profile shows up within a minute.
+                try? await Task.sleep(for: .seconds(30))
             }
         }
     }
 
+    private func heartbeatIfDue() {
+        let enabled = isEnabled
+        defer { wasEnabled = enabled }
+        guard enabled else { return }
+        let due = lastReport.map { ContinuousClock.now - $0 >= Self.heartbeat } ?? true
+        if due || !wasEnabled { report() }
+    }
+
+    /// Reporting needs the profile's switch and a key that includes the fleet dashboard. An expired
+    /// key still reports, so a Mac that was offline through a renewal can fetch the new key.
+    private var isEnabled: Bool {
+        defaults.bool(forKey: TeamsSettingKey.fleetReporting) && license.key?.payload.features.contains(.fleet) == true
+    }
+
     func report(_ event: SessionEvent? = nil) {
-        guard license.unlocks(.fleet), defaults.bool(forKey: TeamsSettingKey.fleetReporting),
-              let key = license.key?.string
-        else { return }
+        guard isEnabled, let key = license.key?.string else { return }
+        lastReport = .now
+        let session = sessions.session
+        // An ending event's session is already gone from the controller, so time it from the event.
+        let eventSession: Session? = event.map { event in
+            switch event {
+            case .started(let session), .ended(let session, _): session
+            }
+        }
         let report = FleetReport(
             device: TeamsDeviceInfo.current(defaults: defaults),
-            session: sessions.session,
+            session: session,
+            endsAt: (eventSession ?? session).flatMap(endsAt),
             power: PowerSourceReader.current(),
             event: event
         )
@@ -52,7 +83,7 @@ final class FleetReporter {
         let id = UUID()
         inFlight[id] = Task.detached(priority: .utility) { [weak self] in
             let newKey = await Self.send(report, licenseKey: key, to: endpoint)
-            await self?.finished(id, newKey: newKey)
+            await self?.finished(id, newKey: newKey, presented: key)
         }
     }
 
@@ -64,16 +95,10 @@ final class FleetReporter {
         }
     }
 
-    private func finished(_ id: UUID, newKey: String?) {
+    private func finished(_ id: UUID, newKey: String?, presented: String) {
         inFlight[id] = nil
-        // A renewed or resized key. A key the organization deployed can't be replaced here;
-        // its profile carries the new one.
-        if let newKey, newKey != license.key?.string, !license.isManaged {
-            if let problem = license.activate(newKey) {
-                let reason = String(describing: problem)
-                Self.logger.error("Dashboard sent a key that didn't verify: \(reason, privacy: .public)")
-            }
-        }
+        // A renewed or resized key, kept only if the key this report used is still the one in use.
+        if let newKey { license.adoptRenewal(newKey, inReplyTo: presented) }
     }
 
     private static func endpoint(defaults: UserDefaults) -> URL {
