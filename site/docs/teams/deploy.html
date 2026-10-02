@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deploy Midnight Oil for Teams with your MDM</title>
+  <meta name="description" content="Build a configuration profile with your license key, settings, and policies, and deploy it with Jamf, Kandji, Intune, Mosyle, or by hand.">
+  <link rel="canonical" href="https://midnightoil.app/docs/teams/deploy">
+  <meta property="og:title" content="Deploy Midnight Oil for Teams with your MDM">
+  <meta property="og:description" content="Build a configuration profile with your license key, settings, and policies, and deploy it with Jamf, Kandji, Intune, Mosyle, or by hand.">
+  <meta property="og:image" content="https://midnightoil.app/images/icon.png">
+  <meta property="og:url" content="https://midnightoil.app/docs/teams/deploy">
+  <link rel="icon" href="/images/icon.png">
+  <link rel="apple-touch-icon" href="/images/icon.png">
+  <link rel="stylesheet" href="/site.css">
+  <style>
+    .sub-hero { padding: 72px 0 40px; }
+    .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
+    .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
+    .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
+    .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
+    .sub-hero .actions { display: flex; align-items: center; gap: 22px; margin-top: 28px; flex-wrap: wrap; }
+    .tldr { background: var(--gray); border-radius: var(--radius); padding: 26px 28px; margin: 44px 0 0; max-width: 900px; }
+    .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
+    .prose { max-width: 760px; }
+    .prose h2 { font-size: clamp(28px, 3.6vw, 40px); margin: 0 0 16px; }
+    .prose h3 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 8px; }
+    .prose p, .prose li { color: var(--muted); font-size: 17px; line-height: 1.6; }
+    .prose p strong { color: var(--text); font-weight: 600; }
+    .prose ul { padding-left: 20px; margin: 0 0 8px; }
+    .prose li { margin-bottom: 6px; }
+    .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
+    .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    .prose blockquote { margin: 18px 0; padding: 14px 20px; border-left: 3px solid var(--gold); background: var(--gray); border-radius: 0 12px 12px 0; }
+    .prose blockquote p { margin: 0; font-size: 16px; }
+    .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
+    .prose blockquote cite a { color: var(--faint); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+    .two > div { background: var(--gray); border-radius: 16px; padding: 22px; }
+    .two h3 { margin: 0 0 10px; font-size: 18px; }
+    .two ul { margin: 0; padding-left: 18px; }
+    .two li { font-size: 15px; margin-bottom: 6px; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
+    .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
+    .glance { max-width: 760px; margin: 0 0 44px; }
+    .glance .compare td:first-child { font-weight: 500; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+    .related a { display: block; background: #fff; border-radius: 14px; padding: 18px 20px; text-decoration: none; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
+    .related a:hover { box-shadow: 0 0 0 0.5px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.06); }
+    .related b { display: block; margin-bottom: 4px; }
+    .related span { color: var(--muted); font-size: 14px; }
+    section.tight { padding: 64px 0; }
+    @media (max-width: 720px) { .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; } }
+  </style>
+  <script async src="https://tracerkit.com/t.js" data-key="tk__vMOLefQSrM_pLCt"></script>
+</head>
+<body>
+  <div class="nav">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
+      <nav>
+        <a href="/#features">Features</a>
+        <a href="/teams">Teams</a>
+        <a href="/#faq">FAQ</a>
+        <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
+        <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
+      </nav>
+    </div>
+  </div>
+  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">Teams docs</div>
+      <h1>Deploy with your MDM</h1>
+      <p class="lede">One configuration profile carries your license key, settings, and policies. Build it in the dashboard, upload it to your MDM, and scope it to the Macs running Midnight Oil.</p>
+    </div>
+    <section class="tight">
+      <div class="wrap"><div class="prose">
+
+        <h2>1. Install Midnight Oil on your Macs</h2>
+        <p>Deploy the app the way you deploy other apps: the DMG from <a href="https://github.com/coreyhaines31/midnightoil/releases/latest">GitHub Releases</a>, or <code>brew install --cask coreyhaines31/tap/midnightoil</code>. It's signed and notarized by Apple and updates itself. To push updates yourself instead, add <code>SUEnableAutomaticChecks</code> set to <code>false</code> to the profile (the standard key for apps that update with Sparkle).</p>
+        <h2>2. Build the profile</h2>
+        <p>Sign in to the <a href="https://app.midnightoil.app/dashboard/deploy">Teams dashboard</a> and open <strong>Deploy</strong>. Choose:</p>
+        <ul>
+          <li><strong>Fleet reporting</strong>, if you want Macs on the Fleet page, and a <strong>Mac name</strong> using your MDM's variable so each Mac reports its own name.</li>
+          <li><strong>Policies</strong>: turn off closed-lid mode, cap the length of sessions people start, set a battery floor.</li>
+          <li><strong>Settings</strong> to lock on or off, or leave to each person.</li>
+          <li>An optional <strong>session webhook</strong> URL and signing secret.</li>
+        </ul>
+        <p>Download the profile. It's a standard <code>.mobileconfig</code> with your license key inside, so treat it like a credential and keep it in your MDM.</p>
+        <h2>3. Upload it to your MDM</h2>
+        <h3>Jamf Pro</h3>
+        <p>Computers › Configuration Profiles › Upload. Scope it to the Macs (or a smart group of Macs with Midnight Oil installed). For the Mac name, use <code>$COMPUTERNAME</code>.</p>
+        <h3>Kandji</h3>
+        <p>Library › Add new › Custom Profile, upload the file, and assign it to a Blueprint. For the Mac name, use <code>$COMPUTER_NAME</code>.</p>
+        <h3>Microsoft Intune</h3>
+        <p>Devices › macOS › Configuration › Create › Templates › Custom, upload the file, and assign it. Use the Device channel. For the Mac name, use <code>{{devicename}}</code>.</p>
+        <h3>Mosyle, Addigy, JumpCloud, and others</h3>
+        <p>Add a custom configuration profile, upload the file, and assign it to the Macs. Use your MDM's device-name variable for the Mac name.</p>
+        <h3>A few Macs, no MDM</h3>
+        <p>Double-click the profile on each Mac, then approve it in System Settings › General › Device Management. Installing needs an administrator.</p>
+        <h2>4. Check a Mac</h2>
+        <p>In Midnight Oil, open Settings › General. The <strong>Midnight Oil for Teams</strong> section shows your organization, seats, and policies, and says the license was deployed by your organization. Locked settings are dimmed with a note at the top of their pane. If fleet reporting is on, the Mac appears on the Fleet page within a minute.</p>
+        <h2>Updating the profile</h2>
+        <p>Build a new profile and upload it in place of the old one. Profiles from your dashboard share an identifier, so the new one replaces the old on each Mac. Renewed keys reach reporting Macs automatically; redeploy the profile so the rest get them too.</p>
+        <h2>Every managed key</h2>
+        <p>For MDMs that prefer key-value settings over an uploaded profile, these are the preferences for the domain <code>app.midnightoil.MidnightOil</code>:</p>
+        <ul>
+          <li><code>teamsLicenseKey</code> (string): your license key.</li>
+          <li><code>fleetReporting</code> (boolean): report to the fleet dashboard.</li>
+          <li><code>deviceLabel</code> (string): the Mac's name on the Fleet page and in webhooks.</li>
+          <li><code>webhookURL</code>, <code>webhookSecret</code> (string): the session webhook.</li>
+          <li><code>policyDisallowClosedLid</code> (boolean), <code>policyMaxSessionHours</code> (integer, 1–168), <code>policyMinimumBatteryFloor</code> (integer, 1–99).</li>
+          <li>Any setting, such as <code>allowsDisplaySleep</code>, <code>startsSessionAtLaunch</code>, <code>endsWhenUnplugged</code>, <code>staysAwakeWithLidClosed</code>, <code>batteryFloorEnabled</code>, <code>batteryFloorPercent</code>, <code>triggersEnabled</code>, <code>driveAliveEnabled</code>.</li>
+        </ul>
+
+      </div></div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives/">Alternatives</a><a href="/alternatives/amphetamine">Amphetamine alternative</a><a href="/alternatives/caffeine">Caffeine alternative</a><a href="/alternatives/caffeinate">caffeinate alternative</a><a href="/alternatives/keepingyouawake">KeepingYouAwake alternative</a><a href="/alternatives/mouse-jiggler">Mouse jiggler alternative</a></nav>
+      <span>© 2026 Corey Haines. <a href="https://github.com/coreyhaines31/midnightoil/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
+    </div>
+  </footer>
+</body>
+</html>
