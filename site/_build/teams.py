@@ -252,4 +252,50 @@ def verify(raw_body: bytes, header: str, secret: str) -&gt; bool:
     },
 ]
 
-LEGAL = []
+LEGAL = [
+    {
+        "path": "/terms",
+        "title": "Midnight Oil for Teams terms",
+        "description": "The terms for buying and using Midnight Oil for Teams.",
+        "h1": "Terms of service",
+        "html": """
+        <p class="draft-note">Draft, under legal review. Midnight Oil for Teams isn't on sale until these are final.</p>
+        <p><strong>Last updated October 2026.</strong> These terms cover Midnight Oil for Teams: the subscription, license keys, the Teams dashboard at app.midnightoil.app, and the commercial code in the app's <code>ee/</code> directory. The free Midnight Oil app is licensed separately under FSL-1.1-MIT.</p>
+        <h2>The subscription</h2>
+        <p>You pay per Mac (seat) per year, billed yearly in advance through Stripe, with a five-seat minimum. You can add or remove seats or cancel at any time from Billing; changes are prorated by Stripe. Cancelling stops the next renewal; your keys work until the end of the paid period plus 30 days.</p>
+        <h2>License keys</h2>
+        <p>Each key is for your organization's Macs, up to your seat count. Don't share it outside your organization or resell it. Using more Macs than you pay for isn't blocked; we may ask you to add seats.</p>
+        <h2>Your data</h2>
+        <p>What Macs send, and when, is described on the <a href="/docs/teams/privacy">privacy page</a>. You're responsible for telling the people whose Macs report to the dashboard. We don't sell your data or use it for anything but running the service.</p>
+        <h2>Refunds</h2>
+        <p>If Teams isn't right for you, email within 30 days of your first purchase for a full refund.</p>
+        <h2>No warranty</h2>
+        <p>The service is provided as is. We aim for it to be reliable, but we're not liable for indirect or consequential damages, and our total liability is limited to what you paid in the last 12 months.</p>
+        <h2>Changes</h2>
+        <p>We'll email admins at least 30 days before any material change to these terms.</p>
+""",
+    },
+    {
+        "path": "/privacy",
+        "title": "Midnight Oil privacy policy",
+        "description": "Midnight Oil collects nothing. Midnight Oil for Teams stores only what organizations choose to report.",
+        "h1": "Privacy policy",
+        "html": """
+        <p class="draft-note">Draft, under legal review.</p>
+        <p><strong>Last updated October 2026.</strong></p>
+        <h2>The Midnight Oil app</h2>
+        <p>The app collects nothing about you. Its only network request, unless your organization uses Teams, is a daily update check to GitHub, which you can turn off in Settings › General.</p>
+        <h2>midnightoil.app</h2>
+        <p>The website uses Fathom Analytics, which doesn't use cookies or collect personal data.</p>
+        <h2>Midnight Oil for Teams</h2>
+        <ul>
+          <li><strong>Admins:</strong> your email address and organization name, to sign you in and send license keys and billing notices.</li>
+          <li><strong>Billing:</strong> handled by Stripe. We never see your card number.</li>
+          <li><strong>Macs:</strong> only what your organization's profile turns on, listed on <a href="/docs/teams/privacy">what a Mac sends</a>. Session events are deleted after 30 days.</li>
+        </ul>
+        <p>Service providers: Vercel (hosting), Neon (database), Stripe (billing), Resend (email). We don't sell data or share it with anyone else.</p>
+        <h2>Your choices</h2>
+        <p>Admins can remove Macs and cancel at any time. To delete your organization's data, open an issue or email the address on your receipt, and we'll delete it within 30 days.</p>
+""",
+    },
+]
