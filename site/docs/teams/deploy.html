@@ -85,19 +85,19 @@
         <h2>2. Build the profile</h2>
         <p>Sign in to the <a href="https://app.midnightoil.app/dashboard/deploy">Teams dashboard</a> and open <strong>Deploy</strong>. Choose:</p>
         <ul>
-          <li><strong>Fleet reporting</strong>, if you want Macs on the Fleet page, and a <strong>Mac name</strong> using your MDM's variable so each Mac reports its own name.</li>
+          <li><strong>Fleet reporting</strong>, if you want Macs on the Fleet page, and a <strong>Mac name</strong> using your MDM's device-name variable so each Mac reports its own name. Check your MDM's docs for the variable; Midnight Oil sends exactly what the profile says.</li>
           <li><strong>Policies</strong>: turn off closed-lid mode, cap the length of sessions people start, set a battery floor.</li>
           <li><strong>Settings</strong> to lock on or off, or leave to each person.</li>
-          <li>An optional <strong>session webhook</strong> URL and signing secret.</li>
+          <li>An optional <strong>session webhook</strong> URL and its signing secret (required except for Slack).</li>
         </ul>
         <p>Download the profile. It's a standard <code>.mobileconfig</code> with your license key inside, so treat it like a credential and keep it in your MDM.</p>
         <h2>3. Upload it to your MDM</h2>
         <h3>Jamf Pro</h3>
         <p>Computers › Configuration Profiles › Upload. Scope it to the Macs (or a smart group of Macs with Midnight Oil installed). For the Mac name, use <code>$COMPUTERNAME</code>.</p>
         <h3>Kandji</h3>
-        <p>Library › Add new › Custom Profile, upload the file, and assign it to a Blueprint. For the Mac name, use <code>$COMPUTER_NAME</code>.</p>
+        <p>Library › Add new › Custom Profile, upload the file, and assign it to a Blueprint. For the Mac name, use <code>$DEVICE_NAME</code>.</p>
         <h3>Microsoft Intune</h3>
-        <p>Devices › macOS › Configuration › Create › Templates › Custom, upload the file, and assign it. Use the Device channel. For the Mac name, use <code>{{devicename}}</code>.</p>
+        <p>Devices › macOS › Configuration › Create › Templates › Custom, upload the file, and assign it. Use the Device channel. For the Mac name, use the device-name variable from Intune's docs, or leave it empty.</p>
         <h3>Mosyle, Addigy, JumpCloud, and others</h3>
         <p>Add a custom configuration profile, upload the file, and assign it to the Macs. Use your MDM's device-name variable for the Mac name.</p>
         <h3>A few Macs, no MDM</h3>

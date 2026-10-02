@@ -34,7 +34,7 @@ DEPLOY_MOCK = web("app.midnightoil.app/dashboard/deploy", "Deploy", """
 <div class="check"><i></i><span><b>Report to the fleet dashboard</b><br><span class="muted">Macs appear on the Fleet page.</span></span></div>
 <div class="check"><i></i><span><b>Turn off closed-lid mode</b><br><span class="muted">Laptops sleep when the lid closes, as usual.</span></span></div>
 <div style="display:flex;gap:12px;margin-top:6px"><div style="flex:1">Longest session (hours)<div class="field">8</div></div>
-<div style="flex:1">Always end below (battery %)<div class="field">20</div></div></div>
+<div style="flex:1">End sessions on battery below (%)<div class="field">20</div></div></div>
 <span class="btn">Download profile</span>
 </div>""")
 
@@ -80,13 +80,13 @@ TEAMS = {
          "Build a configuration profile in the dashboard: your license key, the settings to lock, and the rules to follow. Upload it to Jamf, Kandji, Intune, Mosyle, or any MDM. Every Mac it reaches is set up, with nothing for anyone to paste.",
          DEPLOY_MOCK),
         ("Lock the rules that matter.",
-         "Turn closed-lid mode off company-wide, cap how long a session someone starts can run, and set a battery floor no one can go under. Locked settings say so on the Mac, so nobody wonders why a switch won’t move.",
+         "Turn closed-lid mode off company-wide, cap how long a session someone starts can run, and set a battery floor that ends sessions on battery. Locked settings say so on the Mac, so nobody wonders why a switch won’t move.",
          LOCK_MOCK),
         ("See the whole fleet at a glance.",
          "Which Macs are awake right now, why (a schedule, a trigger, someone’s session), how long until they sleep, and their battery. Macs that haven’t checked in show as offline. Reporting is off until your profile turns it on.",
          FLEET_MOCK),
         ("Send sessions wherever you work.",
-         "Every Mac posts when a session starts and ends to a URL you choose, signed so you know it’s yours. Point it at a Slack channel for a readable feed, or at your own systems for logging and alerts.",
+         "Every Mac posts when a session starts and ends to a URL you choose, signed with your secret so you know it’s yours. Point it at a Slack channel for a readable feed, or at your own systems for logging and alerts.",
          WEBHOOK_MOCK),
     ],
     "included": [
@@ -100,11 +100,11 @@ TEAMS = {
         ("Do the people at my company need Teams to use Midnight Oil?",
          "No. Midnight Oil is free for everyone, at home or at work. Teams is for organizations that want to deploy it, lock its settings, and see their fleet."),
         ("What does a Mac send, and to whom?",
-         "Nothing, unless your profile turns on fleet reporting or a webhook. Then it sends session status (awake or not, why, until when) and battery, to the Teams dashboard or the URL you set. Never the computer’s name, user names, files, or what apps are doing. The full list is on the <a href=\"/docs/teams/privacy\">privacy page</a>."),
+         "Only a daily update check, unless your organization turns on fleet reporting or a webhook. Then a Mac sends session status (awake or not, why, until when) to the Teams dashboard or your URL, plus its battery to the dashboard. Midnight Oil never reads the computer’s name, user names, files, or what apps are doing. The full list is on the <a href=\"/docs/teams/privacy\">privacy page</a>."),
         ("Does the license key need an internet connection?",
          "No. Keys are signed and checked on the Mac itself. Macs that report to the dashboard pick up renewed keys on their own; others get them in your next profile."),
         ("What happens if the subscription lapses?",
-         "Keys stay valid for 30 days past the paid period. After that, Teams features turn off and Midnight Oil keeps working as the free app. Nothing breaks."),
+         "Keys stay valid for 30 days past the last paid period. After that, policies, reporting, and the webhook turn off, and Midnight Oil keeps working as the free app. Settings your profile locks stay locked until you remove or change the profile; that part is macOS."),
         ("Which MDMs does it work with?",
          "Any MDM that deploys configuration profiles: Jamf Pro, Kandji, Microsoft Intune, Mosyle, Addigy, JumpCloud, and others. You can also install the profile by hand for a few Macs. See the <a href=\"/docs/teams/deploy\">deployment guide</a>."),
         ("What if more Macs report than I paid for?",
@@ -126,19 +126,19 @@ DOCS = [
         <h2>2. Build the profile</h2>
         <p>Sign in to the <a href="https://app.midnightoil.app/dashboard/deploy">Teams dashboard</a> and open <strong>Deploy</strong>. Choose:</p>
         <ul>
-          <li><strong>Fleet reporting</strong>, if you want Macs on the Fleet page, and a <strong>Mac name</strong> using your MDM's variable so each Mac reports its own name.</li>
+          <li><strong>Fleet reporting</strong>, if you want Macs on the Fleet page, and a <strong>Mac name</strong> using your MDM's device-name variable so each Mac reports its own name. Check your MDM's docs for the variable; Midnight Oil sends exactly what the profile says.</li>
           <li><strong>Policies</strong>: turn off closed-lid mode, cap the length of sessions people start, set a battery floor.</li>
           <li><strong>Settings</strong> to lock on or off, or leave to each person.</li>
-          <li>An optional <strong>session webhook</strong> URL and signing secret.</li>
+          <li>An optional <strong>session webhook</strong> URL and its signing secret (required except for Slack).</li>
         </ul>
         <p>Download the profile. It's a standard <code>.mobileconfig</code> with your license key inside, so treat it like a credential and keep it in your MDM.</p>
         <h2>3. Upload it to your MDM</h2>
         <h3>Jamf Pro</h3>
         <p>Computers › Configuration Profiles › Upload. Scope it to the Macs (or a smart group of Macs with Midnight Oil installed). For the Mac name, use <code>$COMPUTERNAME</code>.</p>
         <h3>Kandji</h3>
-        <p>Library › Add new › Custom Profile, upload the file, and assign it to a Blueprint. For the Mac name, use <code>$COMPUTER_NAME</code>.</p>
+        <p>Library › Add new › Custom Profile, upload the file, and assign it to a Blueprint. For the Mac name, use <code>$DEVICE_NAME</code>.</p>
         <h3>Microsoft Intune</h3>
-        <p>Devices › macOS › Configuration › Create › Templates › Custom, upload the file, and assign it. Use the Device channel. For the Mac name, use <code>{{devicename}}</code>.</p>
+        <p>Devices › macOS › Configuration › Create › Templates › Custom, upload the file, and assign it. Use the Device channel. For the Mac name, use the device-name variable from Intune's docs, or leave it empty.</p>
         <h3>Mosyle, Addigy, JumpCloud, and others</h3>
         <p>Add a custom configuration profile, upload the file, and assign it to the Macs. Use your MDM's device-name variable for the Mac name.</p>
         <h3>A few Macs, no MDM</h3>
@@ -193,7 +193,7 @@ DOCS = [
           <li><code>endCause</code> is one of <code>you</code>, <code>timeUp</code>, <code>appQuit</code>, <code>downloadFinished</code>, <code>lowBattery</code>, <code>unplugged</code>, <code>triggerEnded</code>, <code>scheduleEnded</code>, <code>schedulePaused</code>, <code>policyLimit</code>, <code>replaced</code>, <code>midnightOilQuit</code>.</li>
         </ul>
         <h2>Verifying the signature</h2>
-        <p>With a signing secret in your profile, each request carries <code>X-MidnightOil-Signature: t=&lt;unix seconds&gt;,v1=&lt;hex&gt;</code>. <code>v1</code> is the HMAC-SHA256 of <code>&lt;t&gt;.&lt;raw body&gt;</code> using your secret, the same scheme as Stripe's. Compare in constant time, and reject timestamps more than five minutes old.</p>
+        <p>The profile builder requires a signing secret (except for Slack), and each request carries <code>X-MidnightOil-Signature: t=&lt;unix seconds&gt;,v1=&lt;hex&gt;</code>. <code>v1</code> is the HMAC-SHA256 of <code>&lt;t&gt;.&lt;raw body&gt;</code> using your secret, the same scheme as Stripe's. Compare in constant time, and reject timestamps more than five minutes old.</p>
 <pre><code>// Node.js
 import { createHmac, timingSafeEqual } from "node:crypto";
 
@@ -214,7 +214,8 @@ def verify(raw_body: bytes, header: str, secret: str) -&gt; bool:
     return hmac.compare_digest(expected, parts["v1"])</code></pre>
         <h2>Delivery</h2>
         <ul>
-          <li>Your URL must use <code>https</code>. Redirects aren't followed.</li>
+          <li>Your URL must use <code>https</code>; plain <code>http</code> is allowed only to the Mac itself, for a local relay. Redirects aren't followed.</li>
+          <li>Each retry first checks the license and URL are still in place, so removing either stops further attempts.</li>
           <li>Answer with any 2xx. Network errors, 429, and 5xx are retried after 2 seconds, 10 seconds, and a minute; other responses aren't.</li>
           <li>When Midnight Oil quits mid-session, it waits up to three seconds to send <code>session.ended</code>.</li>
         </ul>
@@ -231,9 +232,9 @@ def verify(raw_body: bytes, header: str, secret: str) -&gt; bool:
         "lede": "The free app sends nothing beyond an update check you can turn off. With Teams, a Mac reports only what's listed here, and only when your organization's profile turns it on.",
         "html": """
         <h2>Fleet reporting</h2>
-        <p>Off unless the profile sets <code>fleetReporting</code>. Then, every five minutes and when a session starts or ends, a Mac sends to <code>app.midnightoil.app</code>:</p>
+        <p>Off unless your organization turns on <code>fleetReporting</code> (normally in its profile). Then, every five minutes and when a session starts or ends, a Mac sends to <code>app.midnightoil.app</code>:</p>
         <ul>
-          <li>A random device id the app made for itself, and the name your profile gives the Mac, if any.</li>
+          <li>A random device id the app made for itself, and the name your profile gives the Mac, if any. If that name is your MDM's computer-name variable, the computer's name is what's sent.</li>
           <li>The Midnight Oil version.</li>
           <li>Whether it's being kept awake; if so, whether by hand, a schedule, or a trigger, that schedule or trigger's name, when it started and ends, and whether closed-lid mode is on.</li>
           <li>Battery level and whether it's plugged in.</li>
@@ -241,13 +242,13 @@ def verify(raw_body: bytes, header: str, secret: str) -&gt; bool:
           <li>Your license key, to say which organization the Mac belongs to.</li>
         </ul>
         <h2>The session webhook</h2>
-        <p>Off unless the profile sets <code>webhookURL</code>. Then each session start and end goes to that URL, which you control, with the <a href="/docs/teams/webhook">payload described here</a>.</p>
+        <p>Off unless your organization sets <code>webhookURL</code> (normally in its profile). Then each session start and end goes to that URL, which you control, with the <a href="/docs/teams/webhook">payload described here</a>.</p>
         <h2>Never sent</h2>
-        <p>The computer's own name, user names, IP or Wi-Fi details, which apps are running, files, keystrokes, or screen contents. Triggers that use those things are evaluated on the Mac; only their names are reported.</p>
+        <p>Midnight Oil never reads or sends the computer's own name, user names, Wi-Fi details, which apps are running, files, keystrokes, or screen contents. Triggers that use those things are evaluated on the Mac; only their names are reported. Like any web request, a report arrives from the Mac's IP address; the dashboard doesn't store it.</p>
         <h2>Kept for</h2>
-        <p>Each Mac's latest status stays until you remove it or end your subscription. Session events are deleted after 30 days. The dashboard runs on Vercel with a Neon Postgres database in the US.</p>
+        <p>Each Mac's latest status stays until you remove it on the Fleet page or your subscription ends. Session events are deleted 30 days after they arrive, by a daily cleanup. The dashboard runs on Vercel with a Neon Postgres database in the US (Ohio).</p>
         <h2>Turning it off</h2>
-        <p>Deploy a profile without fleet reporting or the webhook, and Macs stop sending within a few seconds.</p>
+        <p>Deploy a profile without fleet reporting or the webhook, and Macs stop within about ten seconds of the new profile arriving, including retries of a webhook already in progress.</p>
 """,
     },
 ]
@@ -286,7 +287,7 @@ LEGAL = [
         <h2>The Midnight Oil app</h2>
         <p>The app collects nothing about you. Its only network request, unless your organization uses Teams, is a daily update check to GitHub, which you can turn off in Settings › General.</p>
         <h2>midnightoil.app</h2>
-        <p>The website uses Fathom Analytics, which doesn't use cookies or collect personal data.</p>
+        <p>The website uses Fathom Analytics, which doesn't use cookies. Fathom is loaded through TracerKit, a tag manager, which sets a first-party anonymous id (a cookie and local storage) and records whether each tag loaded, so we know analytics is working. Neither collects your name, email, or anything you type.</p>
         <h2>Midnight Oil for Teams</h2>
         <ul>
           <li><strong>Admins:</strong> your email address and organization name, to sign you in and send license keys and billing notices.</li>
