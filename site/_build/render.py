@@ -74,6 +74,7 @@ def nav():
       <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
+        <a href="/teams">Teams</a>
         <a href="/#faq">FAQ</a>
         <a href="{REPO}">GitHub</a>
         <a class="pill" href="{DOWNLOAD}">Download</a>
@@ -93,7 +94,7 @@ def footer():
     return f'''  <footer>
     <div class="wrap">
 {footer_alternatives()}      <span>© 2026 Corey Haines. <a href="{REPO}/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
-      <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="{REPO}/issues">Issues</a></span>
+      <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="{REPO}/issues">Issues</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
     </div>
   </footer>
 '''
