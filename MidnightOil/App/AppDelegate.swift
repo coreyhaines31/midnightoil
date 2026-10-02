@@ -9,6 +9,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let scheduleStore = ScheduleStore()
     private let teamsLicense = TeamsLicense()
     private lazy var webhook = SessionWebhookSender(license: teamsLicense)
+    private lazy var fleet = FleetReporter(license: teamsLicense, sessions: sessions)
     private var triggerController: TriggerController?
     private var driveAlive: DriveAliveController?
     private var statusItemController: StatusItemController?
@@ -19,7 +20,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         sessions.policy = { [teamsLicense] in
             TeamsPolicy.read(from: .standard, licensed: teamsLicense.unlocks(.policies))
         }
-        sessions.onSessionEvent = { [weak self] event in self?.webhook.send(event) }
+        sessions.onSessionEvent = { [weak self] event in
+            self?.webhook.send(event)
+            self?.fleet.report(event)
+        }
+        fleet.start()
         statusItemController = StatusItemController(
             sessions: sessions,
             triggers: triggerStore,
@@ -38,7 +43,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // End the session now so its webhook event can go out, then give it a moment.
         sessions.end(reason: .quit)
         Task {
-            await webhook.waitForDeliveries(timeout: .seconds(3))
+            async let webhookDone: Void = webhook.waitForDeliveries(timeout: .seconds(3))
+            async let fleetDone: Void = fleet.waitForReports(timeout: .seconds(3))
+            _ = await (webhookDone, fleetDone)
             sender.reply(toApplicationShouldTerminate: true)
         }
         return .terminateLater
