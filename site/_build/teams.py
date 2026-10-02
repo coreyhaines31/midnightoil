@@ -112,6 +112,144 @@ TEAMS = {
     ],
 }
 
-DOCS = []
+DOCS = [
+    {
+        "path": "/docs/teams/deploy",
+        "title": "Deploy Midnight Oil for Teams with your MDM",
+        "description": "Build a configuration profile with your license key, settings, and policies, and deploy it with Jamf, Kandji, Intune, Mosyle, or by hand.",
+        "eyebrow": "Teams docs",
+        "h1": "Deploy with your MDM",
+        "lede": "One configuration profile carries your license key, settings, and policies. Build it in the dashboard, upload it to your MDM, and scope it to the Macs running Midnight Oil.",
+        "html": """
+        <h2>1. Install Midnight Oil on your Macs</h2>
+        <p>Deploy the app the way you deploy other apps: the DMG from <a href="https://github.com/coreyhaines31/midnightoil/releases/latest">GitHub Releases</a>, or <code>brew install --cask coreyhaines31/tap/midnightoil</code>. It's signed and notarized by Apple and updates itself. To push updates yourself instead, add <code>SUEnableAutomaticChecks</code> set to <code>false</code> to the profile (the standard key for apps that update with Sparkle).</p>
+        <h2>2. Build the profile</h2>
+        <p>Sign in to the <a href="https://app.midnightoil.app/dashboard/deploy">Teams dashboard</a> and open <strong>Deploy</strong>. Choose:</p>
+        <ul>
+          <li><strong>Fleet reporting</strong>, if you want Macs on the Fleet page, and a <strong>Mac name</strong> using your MDM's variable so each Mac reports its own name.</li>
+          <li><strong>Policies</strong>: turn off closed-lid mode, cap the length of sessions people start, set a battery floor.</li>
+          <li><strong>Settings</strong> to lock on or off, or leave to each person.</li>
+          <li>An optional <strong>session webhook</strong> URL and signing secret.</li>
+        </ul>
+        <p>Download the profile. It's a standard <code>.mobileconfig</code> with your license key inside, so treat it like a credential and keep it in your MDM.</p>
+        <h2>3. Upload it to your MDM</h2>
+        <h3>Jamf Pro</h3>
+        <p>Computers › Configuration Profiles › Upload. Scope it to the Macs (or a smart group of Macs with Midnight Oil installed). For the Mac name, use <code>$COMPUTERNAME</code>.</p>
+        <h3>Kandji</h3>
+        <p>Library › Add new › Custom Profile, upload the file, and assign it to a Blueprint. For the Mac name, use <code>$COMPUTER_NAME</code>.</p>
+        <h3>Microsoft Intune</h3>
+        <p>Devices › macOS › Configuration › Create › Templates › Custom, upload the file, and assign it. Use the Device channel. For the Mac name, use <code>{{devicename}}</code>.</p>
+        <h3>Mosyle, Addigy, JumpCloud, and others</h3>
+        <p>Add a custom configuration profile, upload the file, and assign it to the Macs. Use your MDM's device-name variable for the Mac name.</p>
+        <h3>A few Macs, no MDM</h3>
+        <p>Double-click the profile on each Mac, then approve it in System Settings › General › Device Management. Installing needs an administrator.</p>
+        <h2>4. Check a Mac</h2>
+        <p>In Midnight Oil, open Settings › General. The <strong>Midnight Oil for Teams</strong> section shows your organization, seats, and policies, and says the license was deployed by your organization. Locked settings are dimmed with a note at the top of their pane. If fleet reporting is on, the Mac appears on the Fleet page within a minute.</p>
+        <h2>Updating the profile</h2>
+        <p>Build a new profile and upload it in place of the old one. Profiles from your dashboard share an identifier, so the new one replaces the old on each Mac. Renewed keys reach reporting Macs automatically; redeploy the profile so the rest get them too.</p>
+        <h2>Every managed key</h2>
+        <p>For MDMs that prefer key-value settings over an uploaded profile, these are the preferences for the domain <code>app.midnightoil.MidnightOil</code>:</p>
+        <ul>
+          <li><code>teamsLicenseKey</code> (string): your license key.</li>
+          <li><code>fleetReporting</code> (boolean): report to the fleet dashboard.</li>
+          <li><code>deviceLabel</code> (string): the Mac's name on the Fleet page and in webhooks.</li>
+          <li><code>webhookURL</code>, <code>webhookSecret</code> (string): the session webhook.</li>
+          <li><code>policyDisallowClosedLid</code> (boolean), <code>policyMaxSessionHours</code> (integer, 1–168), <code>policyMinimumBatteryFloor</code> (integer, 1–99).</li>
+          <li>Any setting, such as <code>allowsDisplaySleep</code>, <code>startsSessionAtLaunch</code>, <code>endsWhenUnplugged</code>, <code>staysAwakeWithLidClosed</code>, <code>batteryFloorEnabled</code>, <code>batteryFloorPercent</code>, <code>triggersEnabled</code>, <code>driveAliveEnabled</code>.</li>
+        </ul>
+""",
+    },
+    {
+        "path": "/docs/teams/webhook",
+        "title": "Midnight Oil session webhook: payload and signatures",
+        "description": "Every Mac posts session.started and session.ended to your URL, signed with HMAC-SHA256. Payload reference and how to verify the signature.",
+        "eyebrow": "Teams docs",
+        "h1": "Session webhook",
+        "lede": "Each Mac posts a JSON event to your URL when a session starts and when it ends. Requests are signed so you can tell they came from your Macs.",
+        "html": """
+        <h2>Events</h2>
+        <p><code>session.started</code> and <code>session.ended</code>, sent as a <code>POST</code> with <code>Content-Type: application/json</code>.</p>
+<pre><code>{
+  "event": "session.ended",
+  "id": "5e0b6b0e-1f0f-4c1a-9a63-2c0d7c4a1e55",
+  "occurredAt": "2026-10-02T07:00:03Z",
+  "device": { "id": "mac_0b4b5e2c-…", "label": "Build Mac 1", "appVersion": "1.4.0" },
+  "session": {
+    "startedAt": "2026-10-01T23:00:00Z",
+    "endedAt": "2026-10-02T07:00:03Z",
+    "source": "schedule",
+    "sourceName": "Overnight agents",
+    "allowsDisplaySleep": true,
+    "staysAwakeWithLidClosed": false,
+    "endCause": "scheduleEnded",
+    "awakeSeconds": 28803,
+    "awaySeconds": 27950
+  }
+}</code></pre>
+        <ul>
+          <li><code>id</code> is unique per delivery. Retries reuse it, so you can ignore one you've already handled.</li>
+          <li><code>source</code> is <code>manual</code>, <code>schedule</code>, or <code>trigger</code>; <code>sourceName</code> is the schedule or trigger's name.</li>
+          <li><code>endsAt</code> appears when the session has an end time. <code>endedAt</code>, <code>endCause</code>, <code>awakeSeconds</code>, and <code>awaySeconds</code> appear on <code>session.ended</code>.</li>
+          <li><code>endCause</code> is one of <code>you</code>, <code>timeUp</code>, <code>appQuit</code>, <code>downloadFinished</code>, <code>lowBattery</code>, <code>unplugged</code>, <code>triggerEnded</code>, <code>scheduleEnded</code>, <code>schedulePaused</code>, <code>policyLimit</code>, <code>replaced</code>, <code>midnightOilQuit</code>.</li>
+        </ul>
+        <h2>Verifying the signature</h2>
+        <p>With a signing secret in your profile, each request carries <code>X-MidnightOil-Signature: t=&lt;unix seconds&gt;,v1=&lt;hex&gt;</code>. <code>v1</code> is the HMAC-SHA256 of <code>&lt;t&gt;.&lt;raw body&gt;</code> using your secret, the same scheme as Stripe's. Compare in constant time, and reject timestamps more than five minutes old.</p>
+<pre><code>// Node.js
+import { createHmac, timingSafeEqual } from "node:crypto";
+
+function verify(rawBody, header, secret) {
+  const { t, v1 } = Object.fromEntries(header.split(",").map((part) =&gt; part.split("=")));
+  if (Math.abs(Date.now() / 1000 - Number(t)) &gt; 300) return false;
+  const expected = createHmac("sha256", secret).update(`${t}.${rawBody}`).digest("hex");
+  return v1.length === expected.length &amp;&amp; timingSafeEqual(Buffer.from(v1), Buffer.from(expected));
+}</code></pre>
+<pre><code># Python
+import hmac, hashlib, time
+
+def verify(raw_body: bytes, header: str, secret: str) -&gt; bool:
+    parts = dict(part.split("=", 1) for part in header.split(","))
+    if abs(time.time() - int(parts["t"])) &gt; 300:
+        return False
+    expected = hmac.new(secret.encode(), f"{parts['t']}.".encode() + raw_body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected, parts["v1"])</code></pre>
+        <h2>Delivery</h2>
+        <ul>
+          <li>Your URL must use <code>https</code>. Redirects aren't followed.</li>
+          <li>Answer with any 2xx. Network errors, 429, and 5xx are retried after 2 seconds, 10 seconds, and a minute; other responses aren't.</li>
+          <li>When Midnight Oil quits mid-session, it waits up to three seconds to send <code>session.ended</code>.</li>
+        </ul>
+        <h2>Slack</h2>
+        <p>Use a Slack incoming-webhook URL (<code>https://hooks.slack.com/…</code>) and Macs post readable messages instead, like “🔥 Build Mac 1 is staying awake on the “Overnight agents” schedule.” Slack messages aren't signed.</p>
+""",
+    },
+    {
+        "path": "/docs/teams/privacy",
+        "title": "What Midnight Oil for Teams sends, and when",
+        "description": "The free app sends nothing. With Teams, Macs report session status and battery only when your profile turns it on. The full list.",
+        "eyebrow": "Teams docs",
+        "h1": "What a Mac sends, and when",
+        "lede": "The free app sends nothing beyond an update check you can turn off. With Teams, a Mac reports only what's listed here, and only when your organization's profile turns it on.",
+        "html": """
+        <h2>Fleet reporting</h2>
+        <p>Off unless the profile sets <code>fleetReporting</code>. Then, every five minutes and when a session starts or ends, a Mac sends to <code>app.midnightoil.app</code>:</p>
+        <ul>
+          <li>A random device id the app made for itself, and the name your profile gives the Mac, if any.</li>
+          <li>The Midnight Oil version.</li>
+          <li>Whether it's being kept awake; if so, whether by hand, a schedule, or a trigger, that schedule or trigger's name, when it started and ends, and whether closed-lid mode is on.</li>
+          <li>Battery level and whether it's plugged in.</li>
+          <li>The session start or end event, with the fields in the <a href="/docs/teams/webhook">webhook payload</a>.</li>
+          <li>Your license key, to say which organization the Mac belongs to.</li>
+        </ul>
+        <h2>The session webhook</h2>
+        <p>Off unless the profile sets <code>webhookURL</code>. Then each session start and end goes to that URL, which you control, with the <a href="/docs/teams/webhook">payload described here</a>.</p>
+        <h2>Never sent</h2>
+        <p>The computer's own name, user names, IP or Wi-Fi details, which apps are running, files, keystrokes, or screen contents. Triggers that use those things are evaluated on the Mac; only their names are reported.</p>
+        <h2>Kept for</h2>
+        <p>Each Mac's latest status stays until you remove it or end your subscription. Session events are deleted after 30 days. The dashboard runs on Vercel with a Neon Postgres database in the US.</p>
+        <h2>Turning it off</h2>
+        <p>Deploy a profile without fleet reporting or the webhook, and Macs stop sending within a few seconds.</p>
+""",
+    },
+]
 
 LEGAL = []
