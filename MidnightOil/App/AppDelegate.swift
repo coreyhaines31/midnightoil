@@ -16,6 +16,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var triggerController: TriggerController?
     private var driveAlive: DriveAliveController?
     private var statusItemController: StatusItemController?
+    private var lastScheduleEnd: (start: Date, end: Date)?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         Preferences.registerDefaults()
@@ -46,16 +47,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// organization's time limit, whichever comes first.
     private func expectedEnd(of session: Session) -> Date? {
         var end = session.endDate
-        if case .schedule(let id, _) = session.source,
-           let schedule = scheduleStore.schedules.first(where: { $0.id == id }) {
-            // The window the session started in, which still answers after that window closes.
-            end = schedule.schedule.windowEnd(containing: session.start, calendar: .current) ?? end
+        if case .schedule(let id, _) = session.source {
+            end = scheduleEnd(of: session, scheduleID: id) ?? end
         }
         if session.source == .manual, let limit = sessions.policy().maxManualSession {
             let cutoff = session.start.addingTimeInterval(limit)
             end = min(end ?? cutoff, cutoff)
         }
         return end
+    }
+
+    /// The window the session started in, which still answers after that window closes. If the
+    /// schedule was edited so that window no longer exists, the window open now, and failing
+    /// that, the last end found for this session.
+    private func scheduleEnd(of session: Session, scheduleID: UUID) -> Date? {
+        let schedule = scheduleStore.schedules.first(where: { $0.id == scheduleID })?.schedule
+        let found = schedule?.windowEnd(containing: session.start, calendar: .current)
+            ?? schedule?.windowEnd(containing: Date(), calendar: .current)
+        if let found {
+            lastScheduleEnd = (session.start, found)
+            return found
+        }
+        return lastScheduleEnd?.start == session.start ? lastScheduleEnd?.end : nil
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
