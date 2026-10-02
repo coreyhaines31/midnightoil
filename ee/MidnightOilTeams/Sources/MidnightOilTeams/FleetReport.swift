@@ -25,7 +25,14 @@ public struct FleetReport: Codable, Equatable, Sendable {
     /// The event behind this report; nil for the regular heartbeat.
     public var event: WebhookPayload?
 
-    public init(device: TeamsDevice, session: Session?, power: PowerState, event: SessionEvent?, at now: Date = .now) {
+    public init(
+        device: TeamsDevice,
+        session: Session?,
+        endsAt: Date? = nil,
+        power: PowerState,
+        event: SessionEvent?,
+        at now: Date = .now
+    ) {
         self.device = device
         self.awake = session != nil
         self.session = session.map { session in
@@ -36,11 +43,11 @@ public struct FleetReport: Codable, Equatable, Sendable {
             }
             return SessionState(
                 source: source, name: name, startedAt: session.start,
-                endsAt: session.endDate, lidMode: session.staysAwakeWithLidClosed
+                endsAt: endsAt ?? session.endDate, lidMode: session.staysAwakeWithLidClosed
             )
         }
         self.battery = Battery(percent: power.batteryPercent, onBattery: power.isOnBattery)
-        self.event = event.map { WebhookPayload($0, device: device, at: now) }
+        self.event = event.map { WebhookPayload($0, device: device, endsAt: endsAt, at: now) }
     }
 
     public func body() throws -> Data {

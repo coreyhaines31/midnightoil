@@ -80,6 +80,20 @@ struct LicenseKeyTests {
         #expect(key.payload.features == [.fleet])
     }
 
+    @Test func aRenewalReplacesTheInstalledKeyOnlyForTheSameOrgAndALaterDate() throws {
+        func key(org: String, exp: TimeInterval) throws -> LicenseKey {
+            var payload = payload(exp: Date(timeIntervalSince1970: exp))
+            payload.org = org
+            return try LicenseKey(try sign(payload), publicKey: signer.publicKey)
+        }
+        let installed = try key(org: "a", exp: 2_000_000_000)
+        let later = try key(org: "a", exp: 2_100_000_000)
+        #expect(LicenseKey.current(installed: installed, renewal: later) == later)
+        #expect(LicenseKey.current(installed: later, renewal: installed) == later)
+        #expect(LicenseKey.current(installed: installed, renewal: try key(org: "b", exp: 2_100_000_000)) == installed)
+        #expect(LicenseKey.current(installed: nil, renewal: later) == nil)
+    }
+
     /// Signed by Node's crypto with a throwaway key, exactly as the cloud app signs.
     /// Guards the format both sides must agree on (no fractional seconds in `exp`).
     @Test func aKeySignedByTheCloudAppVerifies() throws {

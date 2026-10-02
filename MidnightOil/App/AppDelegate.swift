@@ -1,4 +1,5 @@
 import AppKit
+import MidnightOilCore
 import MidnightOilTeams
 
 @MainActor
@@ -8,8 +9,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let triggerStore = TriggerStore()
     private let scheduleStore = ScheduleStore()
     private let teamsLicense = TeamsLicense()
-    private lazy var webhook = SessionWebhookSender(license: teamsLicense)
-    private lazy var fleet = FleetReporter(license: teamsLicense, sessions: sessions)
+    private lazy var webhook = SessionWebhookSender(license: teamsLicense) { [weak self] in self?.expectedEnd(of: $0) }
+    private lazy var fleet = FleetReporter(license: teamsLicense, sessions: sessions) { [weak self] in
+        self?.expectedEnd(of: $0)
+    }
     private var triggerController: TriggerController?
     private var driveAlive: DriveAliveController?
     private var statusItemController: StatusItemController?
@@ -37,6 +40,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if Preferences.startsSessionAtLaunch {
             sessions.start(.indefinite)
         }
+    }
+
+    /// When a session will end on its own: its own end time, its schedule's window, or the
+    /// organization's time limit, whichever comes first.
+    private func expectedEnd(of session: Session) -> Date? {
+        var end = session.endDate
+        if case .schedule(let id, _) = session.source,
+           let schedule = scheduleStore.schedules.first(where: { $0.id == id }) {
+            end = schedule.schedule.windowEnd(containing: .now, calendar: .current) ?? end
+        }
+        if session.source == .manual, let limit = sessions.policy().maxManualSession {
+            let cutoff = session.start.addingTimeInterval(limit)
+            end = min(end ?? cutoff, cutoff)
+        }
+        return end
     }
 
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {

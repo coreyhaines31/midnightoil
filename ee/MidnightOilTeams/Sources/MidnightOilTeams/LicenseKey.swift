@@ -95,6 +95,15 @@ public struct LicenseKey: Equatable, Sendable {
         return .valid
     }
 
+    /// The key to use: a renewal fetched from the dashboard replaces the installed key only when
+    /// it's for the same organization and runs later. Without an installed key there's nothing to renew.
+    public static func current(installed: LicenseKey?, renewal: LicenseKey?) -> LicenseKey? {
+        guard let installed else { return nil }
+        guard let renewal, renewal.payload.org == installed.payload.org, renewal.payload.exp > installed.payload.exp
+        else { return installed }
+        return renewal
+    }
+
     /// True while the key hasn't expired and includes `feature`.
     public func unlocks(_ feature: TeamsFeature, at now: Date = .now) -> Bool {
         status(at: now) != .expired && payload.features.contains(feature)
