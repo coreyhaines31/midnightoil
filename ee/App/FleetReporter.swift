@@ -66,10 +66,16 @@ final class FleetReporter {
         guard isEnabled, let key = license.key?.string else { return }
         lastReport = .now
         let session = sessions.session
+        // An ending event's session is already gone from the controller, so time it from the event.
+        let eventSession: Session? = event.map { event in
+            switch event {
+            case .started(let session), .ended(let session, _): session
+            }
+        }
         let report = FleetReport(
             device: TeamsDeviceInfo.current(defaults: defaults),
             session: session,
-            endsAt: session.flatMap(endsAt),
+            endsAt: (eventSession ?? session).flatMap(endsAt),
             power: PowerSourceReader.current(),
             event: event
         )

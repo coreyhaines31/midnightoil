@@ -48,7 +48,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         var end = session.endDate
         if case .schedule(let id, _) = session.source,
            let schedule = scheduleStore.schedules.first(where: { $0.id == id }) {
-            end = schedule.schedule.windowEnd(containing: .now, calendar: .current) ?? end
+            // The window the session started in, which still answers after that window closes.
+            end = schedule.schedule.windowEnd(containing: session.start, calendar: .current) ?? end
         }
         if session.source == .manual, let limit = sessions.policy().maxManualSession {
             let cutoff = session.start.addingTimeInterval(limit)
