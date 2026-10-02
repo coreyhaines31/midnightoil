@@ -10,7 +10,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from pages import PAGES, HUB  # noqa: E402
-from teams import CHECKOUT, DOCS, LEGAL, TEAMS  # noqa: E402
+from teams import CHECKOUT, DOCS, LEGAL, SALES_OPEN, TEAMS  # noqa: E402
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 DOWNLOAD = "https://github.com/coreyhaines31/midnightoil/releases/latest"
@@ -270,10 +270,10 @@ def render_teams():
           <div class="amount">$5 <small>per Mac per month, billed yearly</small></div>
           <p style="color:var(--muted);margin:6px 0 0">$60 per Mac per year. Five Macs minimum. Midnight Oil itself stays free for everyone.</p>
           <ul>{included}</ul>
-          <form class="seat-row" action="{CHECKOUT}" method="get">
+          <form class="seat-row" action="{CHECKOUT if SALES_OPEN else "#pricing"}" method="get">
             <label>Macs <input id="seats" name="seats" type="number" min="5" max="1000" value="10"></label>
             <span class="total" id="total">$600/yr</span>
-            <button class="pill" type="submit">Buy for your team</button>
+            {'<button class="pill" type="submit">Buy for your team</button>' if SALES_OPEN else '<span class="pill soon" aria-disabled="true">Coming soon</span>'}
           </form>
         </div>
       </div>

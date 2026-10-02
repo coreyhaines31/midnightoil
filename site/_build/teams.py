@@ -1,6 +1,8 @@
 """Content for /teams, the Teams docs, and the legal pages. Rendered by render.py."""
 
 CHECKOUT = "https://app.midnightoil.app/checkout"
+# Until checkout takes orders, the pricing card says "Coming soon" instead of linking to it.
+SALES_OPEN = False
 DASHBOARD = "https://app.midnightoil.app/dashboard"
 
 FLAME = ('<svg viewBox="0 0 24 32" fill="#ff8c42" aria-hidden="true"><path d="M12 30c6.8 -0 10 -4.7 10 -10.6 0 -6.3 '
