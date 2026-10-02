@@ -11,3 +11,6 @@ build/
 .build/
 .swiftpm/
 site/.vercel
+
+# Python bytecode from the site generator
+__pycache__/
