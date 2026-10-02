@@ -122,4 +122,19 @@ struct LicenseKeyTests {
         #expect(key.payload.seats == 12)
         #expect(key.payload.features == [.policies, .webhook, .fleet])
     }
+
+    /// The cloud app's current format, with the issue date, signed by Node with a throwaway key.
+    @Test func aCloudKeyWithAnIssueDateVerifies() throws {
+        let publicKey = try Curve25519.Signing.PublicKey(
+            rawRepresentation: Data(base64Encoded: "+DHNy1JXdbQ4Q9m6T/FxE8+73BNtSwVqPHdNfia69Mk=") ?? Data()
+        )
+        let text = "MO1-"
+            + "eyJ2IjoxLCJvcmciOiJvcmdfdGVzdCIsIm5hbWUiOiJBY21lIiwic2VhdHMiOjIwLCJleHAiOiIyMDMwLTAx"
+            + "LTAxVDAwOjAwOjAwWiIsImZlYXR1cmVzIjpbInBvbGljaWVzIiwid2ViaG9vayIsImZsZWV0Il0sImlhdCI6"
+            + "IjIwMjktMDYtMDFUMTI6MDA6MDBaIn0"
+            + ".zpwPb-jfe6y6Z1csGw899HzxDEpVJxcWvfZ4oMZLnFjHaLLkN_sfxIsOf7jAMaEbGjyPAgng6mMy4FMOweYuAw"
+        let key = try LicenseKey(text, publicKey: publicKey)
+        #expect(key.payload.seats == 20)
+        #expect(key.payload.iat == Date(timeIntervalSince1970: 1_875_009_600))
+    }
 }
