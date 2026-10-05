@@ -14,13 +14,13 @@
   <link rel="apple-touch-icon" href="/images/icon.png">
   <link rel="stylesheet" href="/site.css">
   <style>
-    .sub-hero { padding: 72px 0 40px; }
+    .sub-hero { padding: 72px 22px 40px; }
     .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
     .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
     .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
     .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
-    .sub-hero .actions { display: flex; align-items: center; gap: 22px; margin-top: 28px; flex-wrap: wrap; }
-    .tldr { background: var(--gray); border-radius: var(--radius); padding: 26px 28px; margin: 44px 0 0; max-width: 900px; }
+    .sub-hero .actions { display: flex; align-items: center; gap: 14px; margin-top: 28px; flex-wrap: wrap; }
+    .tldr { background: var(--glass); border-radius: 28px; padding: 26px 28px; margin: 44px 0 0; max-width: 900px; position: relative; box-shadow: var(--glass-shadow); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
     .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
     .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
     .prose { max-width: 760px; }
@@ -38,7 +38,7 @@
     .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
     .prose blockquote cite a { color: var(--faint); }
     .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
-    .two > div { background: var(--gray); border-radius: 16px; padding: 22px; }
+    .two > div { background: var(--glass); border-radius: 22px; padding: 22px; box-shadow: var(--glass-shadow); }
     .two h3 { margin: 0 0 10px; font-size: 18px; }
     .two ul { margin: 0; padding-left: 18px; }
     .two li { font-size: 15px; margin-bottom: 6px; }
@@ -49,16 +49,23 @@
     .glance { max-width: 760px; margin: 0 0 44px; }
     .glance .compare td:first-child { font-weight: 500; }
     .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
-    .related a { display: block; background: #fff; border-radius: 14px; padding: 18px 20px; text-decoration: none; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
-    .related a:hover { box-shadow: 0 0 0 0.5px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.06); }
+    .related a { display: block; background: var(--glass); border-radius: 22px; padding: 18px 20px; text-decoration: none; box-shadow: var(--glass-shadow); transition: transform .2s ease, background .2s ease; }
+    .related a:hover { background: var(--glass-strong); transform: translateY(-2px); }
     .related b { display: block; margin-bottom: 4px; }
     .related span { color: var(--muted); font-size: 14px; }
     section.tight { padding: 64px 0; }
-    @media (max-width: 720px) { .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; } }
+    .tldr::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; background: var(--rim);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+    @media (max-width: 720px) {
+      .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; }
+      .sub-hero .actions:has(.glass) { flex-direction: column; align-items: stretch; max-width: 340px; }
+      .sub-hero .actions .pill { justify-content: center; }
+    }
   </style>
   <script async src="https://tracerkit.com/t.js" data-key="tk__vMOLefQSrM_pLCt"></script>
 </head>
 <body>
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="nav">
     <div class="wrap">
       <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
