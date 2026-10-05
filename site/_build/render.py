@@ -20,7 +20,7 @@ FLAME = ('<svg viewBox="0 0 24 30" fill="currentColor" aria-hidden="true"><path 
          '9.4-7.5 18.4-.9-3.8-3.6-6.6-4.7-10.3-1 1.9-2.5 4-3.9 5.1C2.6 21.5 2 18.2 2 15.4 2 8.8 4.8 0 12 0z"/></svg>')
 
 PAGE_CSS = """
-    .sub-hero { padding: 72px 0 40px; }
+    .sub-hero { padding: 72px 22px 40px; }
     .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
     .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
     .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
