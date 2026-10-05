@@ -186,8 +186,15 @@
     .faq p { color: var(--muted); margin: -6px 0 22px; line-height: 1.55; }
 
     /* CTA + footer */
-    .cta { text-align: center; }
+    .cta { text-align: center; background: radial-gradient(40% 60% at 22% 40%, rgba(255,165,92,0.30), transparent 70%), radial-gradient(40% 60% at 78% 60%, rgba(139,132,255,0.30), transparent 70%), radial-gradient(30% 40% at 50% 100%, rgba(255,143,182,0.20), transparent 70%); }
     .cta h2 { margin-bottom: 26px; }
+    .cta-card { max-width: 760px; margin: 0 auto; padding: 52px 32px 40px; border-radius: 36px; position: relative;
+      background: var(--glass); box-shadow: var(--glass-shadow); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+    .cta-card img { margin: 0 auto 18px; width: 96px; height: 96px; filter: drop-shadow(0 12px 22px rgba(20,22,48,0.22)); }
+    .cta-card h2 { margin-bottom: 10px; }
+    .cta-card > p:not(.fineprint) { font-size: clamp(17px, 1.8vw, 20px); color: var(--muted); margin: 0; }
+    .cta .actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 28px; }
+    #free { background: radial-gradient(45% 50% at 15% 30%, rgba(255,165,92,0.16), transparent 70%), radial-gradient(45% 50% at 85% 75%, rgba(139,132,255,0.16), transparent 70%); }
     footer { background: var(--gray); color: var(--faint); font-size: 12px; padding: 22px 0 40px; }
     footer .wrap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
     footer a { color: var(--muted); text-decoration: none; }
@@ -368,6 +375,9 @@
     @media (max-width: 720px) {
       .nav nav a:not(.pill) { display: none; }
       .hero { padding-top: 56px; }
+      .hero .actions, .cta .actions { flex-direction: column; align-items: stretch; max-width: 320px; margin-left: auto; margin-right: auto; }
+      .hero .actions .pill, .cta .actions .pill { justify-content: center; }
+      .cta-card { padding: 40px 20px 32px; }
 
       section { padding: 64px 0; }
     }

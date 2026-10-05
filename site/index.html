@@ -357,9 +357,16 @@
 
     <section class="cta">
       <div class="wrap">
-        <h2>Give your agents the night shift.</h2>
-        <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download for macOS</a>
-        <p class="fineprint">Free · Source on GitHub · macOS 14 or later</p>
+        <div class="cta-card">
+          <img src="/images/icon.png" alt="" width="96" height="96">
+          <h2>Give your agents the night shift.</h2>
+          <p>Free. No account, no subscription.</p>
+          <div class="actions">
+            <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest"><svg aria-hidden="true"><use href="#i-download"/></svg>Download free</a>
+            <a class="pill big glass" href="https://github.com/coreyhaines31/midnightoil"><svg aria-hidden="true"><use href="#i-github"/></svg>View source code</a>
+          </div>
+          <p class="fineprint">macOS 14 or later · Apple Silicon and Intel · Notarized by Apple</p>
+        </div>
       </div>
     </section>
   </main>
@@ -379,14 +386,6 @@
     const pin = () => { if (log) log.scrollTop = log.scrollHeight; };
     pin(); window.addEventListener("resize", pin);
 
-    // Live GitHub star count. Fails quietly: the page never depends on it.
-    (async () => {
-      try {
-        const res = await fetch("https://api.github.com/repos/coreyhaines31/midnightoil", { headers: { Accept: "application/vnd.github+json" } });
-        if (!res.ok) return;
-        const { stargazers_count: stars } = await res.json();
-        if (typeof stars !== "number") return;
-        const text = new Intl.NumberFormat("en-US", { notation: stars >= 10000 ? "compact" : "standard" }).format(stars);
     // The nav turns to dark glass while it floats over a dark part of the page.
     const nav = document.querySelector(".nav");
     const darkZones = () => [...document.querySelectorAll("section.dark")].map(el => el.getBoundingClientRect())
@@ -397,6 +396,14 @@
     const tint = () => nav.classList.toggle("on-dark", darkZones().some(r => r.top <= 40 && r.bottom >= 40));
     tint(); window.addEventListener("scroll", tint, { passive: true }); window.addEventListener("resize", tint);
 
+    // Live GitHub star count. Fails quietly: the page never depends on it.
+    (async () => {
+      try {
+        const res = await fetch("https://api.github.com/repos/coreyhaines31/midnightoil", { headers: { Accept: "application/vnd.github+json" } });
+        if (!res.ok) return;
+        const { stargazers_count: stars } = await res.json();
+        if (typeof stars !== "number") return;
+        const text = new Intl.NumberFormat("en-US", { notation: stars >= 10000 ? "compact" : "standard" }).format(stars);
         document.querySelectorAll("[data-stars-count]").forEach(el => { el.textContent = text; });
         document.querySelectorAll("[data-stars-label]").forEach(el => { el.textContent = stars === 1 ? "star" : "stars"; });
         // The hero pill only helps once the number is worth showing.
