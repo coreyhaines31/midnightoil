@@ -56,7 +56,7 @@ PAGE_CSS = """
     .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
     .prose blockquote cite a { color: var(--faint); }
     .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
-    .two > div { background: var(--gray); border-radius: 16px; padding: 22px; }
+    .two > div { background: var(--glass); border-radius: 22px; padding: 22px; box-shadow: var(--glass-shadow); }
     .two h3 { margin: 0 0 10px; font-size: 18px; }
     .two ul { margin: 0; padding-left: 18px; }
     .two li { font-size: 15px; margin-bottom: 6px; }
@@ -67,8 +67,8 @@ PAGE_CSS = """
     .glance { max-width: 760px; margin: 0 0 44px; }
     .glance .compare td:first-child { font-weight: 500; }
     .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
-    .related a { display: block; background: #fff; border-radius: 14px; padding: 18px 20px; text-decoration: none; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
-    .related a:hover { box-shadow: 0 0 0 0.5px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.06); }
+    .related a { display: block; background: var(--glass); border-radius: 22px; padding: 18px 20px; text-decoration: none; box-shadow: var(--glass-shadow); transition: transform .2s ease, background .2s ease; }
+    .related a:hover { background: var(--glass-strong); transform: translateY(-2px); }
     .related b { display: block; margin-bottom: 4px; }
     .related span { color: var(--muted); font-size: 14px; }
     section.tight { padding: 64px 0; }
@@ -87,7 +87,8 @@ def esc(t):
 
 
 def nav():
-    return f'''  <div class="nav">
+    return f'''  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="nav">
     <div class="wrap">
       <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
       <nav>
