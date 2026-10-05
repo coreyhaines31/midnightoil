@@ -76,6 +76,10 @@ enum Help {
         )
     }
 
+    // MARK: - Managed
+
+    static let managedSetting = "Some settings here are managed by your organization and can't be changed on this Mac."
+
     // MARK: - General
 
     static let launchAtLogin = """

@@ -18,7 +18,13 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private let schedules: ScheduleStore
     private let card = SessionCardModel()
 
-    init(sessions: SessionController, triggers: TriggerStore, schedules: ScheduleStore, updater: Updater) {
+    init(
+        sessions: SessionController,
+        triggers: TriggerStore,
+        schedules: ScheduleStore,
+        teams: TeamsLicense,
+        updater: Updater
+    ) {
         self.sessions = sessions
         self.updater = updater
         self.schedules = schedules
@@ -26,6 +32,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             helper: sessions.helper,
             triggers: triggers,
             schedules: schedules,
+            teams: teams,
             history: sessions.history,
             updater: updater
         )
@@ -66,7 +73,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             statusItem.button?.title = title
         }
         if let session = sessions.session {
-            card.update(from: session, schedules: schedules.schedules)
+            card.update(from: session, schedules: schedules.schedules, policy: sessions.policy())
         }
     }
 
@@ -119,10 +126,11 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     private func addCurrentSessionItems(for session: Session, to menu: NSMenu) {
-        card.update(from: session, schedules: schedules.schedules)
+        card.update(from: session, schedules: schedules.schedules, policy: sessions.policy())
         let cardView = SessionCardView(
             model: card,
-            showsLidOption: LidState.hasLid,
+            showsLidOption: LidState.hasLid && !sessions.policy().disallowsClosedLid,
+            displaySleepLocked: sessions.isDisplaySleepLocked,
             onAllowDisplaySleep: { [weak self] allowed in self?.sessions.setAllowsDisplaySleep(allowed) },
             onStayAwakeWithLidClosed: { [weak self] _ in
                 guard let self, let session = sessions.session else { return }
@@ -152,42 +160,6 @@ final class StatusItemController: NSObject, NSMenuDelegate {
                 self?.sessions.end()
             }.withToolTip(Help.Menu.end))
         }
-    }
-
-    /// "Skip Until Wed 9:00 AM": when the schedule next opens after this window.
-    private func skipTitle(for id: UUID) -> String {
-        guard let schedule = schedules.schedules.first(where: { $0.id == id }),
-              let end = SessionCardModel.windowEnd(of: id, in: schedules.schedules),
-              let next = schedule.schedule.nextStart(after: end, calendar: .current)
-        else { return "Skip This Window" }
-        return "Skip Until \(SessionCardModel.upcomingTime(next))"
-    }
-
-    /// "Work hours is waiting: On power adapter" when a window is open but a condition
-    /// isn't met, otherwise "Work hours starts Mon 9:00 AM" for the soonest schedule.
-    private func nextScheduleItem() -> NSMenuItem? {
-        let enabled = schedules.schedules.filter(\.isEnabled)
-        let open = enabled.filter { !$0.conditions.isEmpty && $0.schedule.contains(.now, calendar: .current) }
-        if !open.isEmpty {
-            let state = SystemStateReader.current(needs: TriggerController.needs(for: open.map(\.asTrigger)))
-            for schedule in open {
-                guard let failed = schedule.conditions.first(where: { !$0.matches(state) }) else { continue }
-                let title = "\(schedule.name) is waiting: \(failed.summary)"
-                let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
-                item.isEnabled = false
-                return item.withToolTip(Help.Menu.scheduleWaiting)
-            }
-        }
-        let upcoming = enabled
-            .compactMap { schedule in
-                schedule.schedule.nextStart(after: .now, calendar: .current).map { (schedule.name, $0) }
-            }
-            .min { $0.1 < $1.1 }
-        guard let (name, start) = upcoming else { return nil }
-        let title = "\(name) starts \(SessionCardModel.upcomingTime(start))"
-        let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
-        item.isEnabled = false
-        return item.withToolTip(Help.Menu.nextSchedule)
     }
 
     private func durationItems() -> [NSMenuItem] {
@@ -282,5 +254,44 @@ private extension NSMenuItem {
     func withToolTip(_ text: String) -> NSMenuItem {
         toolTip = text
         return self
+    }
+}
+
+// Schedule lines in the menu.
+extension StatusItemController {
+    /// "Skip Until Wed 9:00 AM": when the schedule next opens after this window.
+    fileprivate func skipTitle(for id: UUID) -> String {
+        guard let schedule = schedules.schedules.first(where: { $0.id == id }),
+              let end = SessionCardModel.windowEnd(of: id, in: schedules.schedules),
+              let next = schedule.schedule.nextStart(after: end, calendar: .current)
+        else { return "Skip This Window" }
+        return "Skip Until \(SessionCardModel.upcomingTime(next))"
+    }
+
+    /// "Work hours is waiting: On power adapter" when a window is open but a condition
+    /// isn't met, otherwise "Work hours starts Mon 9:00 AM" for the soonest schedule.
+    fileprivate func nextScheduleItem() -> NSMenuItem? {
+        let enabled = schedules.schedules.filter(\.isEnabled)
+        let open = enabled.filter { !$0.conditions.isEmpty && $0.schedule.contains(.now, calendar: .current) }
+        if !open.isEmpty {
+            let state = SystemStateReader.current(needs: TriggerController.needs(for: open.map(\.asTrigger)))
+            for schedule in open {
+                guard let failed = schedule.conditions.first(where: { !$0.matches(state) }) else { continue }
+                let title = "\(schedule.name) is waiting: \(failed.summary)"
+                let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+                item.isEnabled = false
+                return item.withToolTip(Help.Menu.scheduleWaiting)
+            }
+        }
+        let upcoming = enabled
+            .compactMap { schedule in
+                schedule.schedule.nextStart(after: .now, calendar: .current).map { (schedule.name, $0) }
+            }
+            .min { $0.1 < $1.1 }
+        guard let (name, start) = upcoming else { return nil }
+        let title = "\(name) starts \(SessionCardModel.upcomingTime(start))"
+        let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        item.isEnabled = false
+        return item.withToolTip(Help.Menu.nextSchedule)
     }
 }

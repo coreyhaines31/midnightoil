@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Midnight Oil session webhook: payload and signatures</title>
+  <meta name="description" content="Every Mac posts session.started and session.ended to your URL, signed with HMAC-SHA256. Payload reference and how to verify the signature.">
+  <link rel="canonical" href="https://midnightoil.app/docs/teams/webhook">
+  <meta property="og:title" content="Midnight Oil session webhook: payload and signatures">
+  <meta property="og:description" content="Every Mac posts session.started and session.ended to your URL, signed with HMAC-SHA256. Payload reference and how to verify the signature.">
+  <meta property="og:image" content="https://midnightoil.app/images/icon.png">
+  <meta property="og:url" content="https://midnightoil.app/docs/teams/webhook">
+  <link rel="icon" href="/images/icon.png">
+  <link rel="apple-touch-icon" href="/images/icon.png">
+  <link rel="stylesheet" href="/site.css">
+  <style>
+    .sub-hero { padding: 72px 22px 40px; }
+    .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
+    .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
+    .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
+    .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
+    .sub-hero .actions { display: flex; align-items: center; gap: 14px; margin-top: 28px; flex-wrap: wrap; }
+    .tldr { background: var(--glass); border-radius: 28px; padding: 26px 28px; margin: 44px 0 0; max-width: 900px; position: relative; box-shadow: var(--glass-shadow); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+    .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
+    .prose { max-width: 760px; }
+    .prose h2 { font-size: clamp(28px, 3.6vw, 40px); margin: 0 0 16px; }
+    .prose h3 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 8px; }
+    .prose p, .prose li { color: var(--muted); font-size: 17px; line-height: 1.6; }
+    .prose p strong { color: var(--text); font-weight: 600; }
+    .prose ul { padding-left: 20px; margin: 0 0 8px; }
+    .prose li { margin-bottom: 6px; }
+    .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
+    .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    .prose blockquote { margin: 18px 0; padding: 14px 20px; border-left: 3px solid var(--gold); background: var(--gray); border-radius: 0 12px 12px 0; }
+    .prose blockquote p { margin: 0; font-size: 16px; }
+    .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
+    .prose blockquote cite a { color: var(--faint); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+    .two > div { background: var(--glass); border-radius: 22px; padding: 22px; box-shadow: var(--glass-shadow); }
+    .two h3 { margin: 0 0 10px; font-size: 18px; }
+    .two ul { margin: 0; padding-left: 18px; }
+    .two li { font-size: 15px; margin-bottom: 6px; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
+    .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
+    .glance { max-width: 760px; margin: 0 0 44px; }
+    .glance .compare td:first-child { font-weight: 500; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+    .related a { display: block; background: var(--glass); border-radius: 22px; padding: 18px 20px; text-decoration: none; box-shadow: var(--glass-shadow); transition: transform .2s ease, background .2s ease; }
+    .related a:hover { background: var(--glass-strong); transform: translateY(-2px); }
+    .related b { display: block; margin-bottom: 4px; }
+    .related span { color: var(--muted); font-size: 14px; }
+    section.tight { padding: 64px 0; }
+    .tldr::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; background: var(--rim);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+    @media (max-width: 720px) {
+      .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; }
+      .sub-hero .actions:has(.glass) { flex-direction: column; align-items: stretch; max-width: 340px; }
+      .sub-hero .actions .pill { justify-content: center; }
+    }
+  </style>
+  <script async src="https://tracerkit.com/t.js" data-key="tk__vMOLefQSrM_pLCt"></script>
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="nav">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
+      <nav>
+        <a href="/#features">Features</a>
+        <a href="/teams">Teams</a>
+        <a href="/#faq">FAQ</a>
+        <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
+        <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
+      </nav>
+    </div>
+  </div>
+  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">Teams docs</div>
+      <h1>Session webhook</h1>
+      <p class="lede">Each Mac posts a JSON event to your URL when a session starts and when it ends. Requests are signed so you can tell they came from your Macs.</p>
+    </div>
+    <section class="tight">
+      <div class="wrap"><div class="prose">
+
+        <h2>Events</h2>
+        <p><code>session.started</code> and <code>session.ended</code>, sent as a <code>POST</code> with <code>Content-Type: application/json</code>.</p>
+<pre><code>{
+  "event": "session.ended",
+  "id": "5e0b6b0e-1f0f-4c1a-9a63-2c0d7c4a1e55",
+  "occurredAt": "2026-10-02T07:00:03Z",
+  "device": { "id": "mac_0b4b5e2c-…", "label": "Build Mac 1", "appVersion": "1.4.0" },
+  "session": {
+    "startedAt": "2026-10-01T23:00:00Z",
+    "endedAt": "2026-10-02T07:00:03Z",
+    "source": "schedule",
+    "sourceName": "Overnight agents",
+    "allowsDisplaySleep": true,
+    "staysAwakeWithLidClosed": false,
+    "endCause": "scheduleEnded",
+    "awakeSeconds": 28803,
+    "awaySeconds": 27950
+  }
+}</code></pre>
+        <ul>
+          <li><code>id</code> is unique per delivery. Retries reuse it, so you can ignore one you've already handled.</li>
+          <li><code>source</code> is <code>manual</code>, <code>schedule</code>, or <code>trigger</code>; <code>sourceName</code> is the schedule or trigger's name.</li>
+          <li><code>endsAt</code> appears when the session has an end time. <code>endedAt</code>, <code>endCause</code>, <code>awakeSeconds</code>, and <code>awaySeconds</code> appear on <code>session.ended</code>.</li>
+          <li><code>endCause</code> is one of <code>you</code>, <code>timeUp</code>, <code>appQuit</code>, <code>downloadFinished</code>, <code>lowBattery</code>, <code>unplugged</code>, <code>triggerEnded</code>, <code>scheduleEnded</code>, <code>schedulePaused</code>, <code>policyLimit</code>, <code>replaced</code>, <code>midnightOilQuit</code>.</li>
+        </ul>
+        <h2>Verifying the signature</h2>
+        <p>The profile builder requires a signing secret (except for Slack), and each request carries <code>X-MidnightOil-Signature: t=&lt;unix seconds&gt;,v1=&lt;hex&gt;</code>. <code>v1</code> is the HMAC-SHA256 of <code>&lt;t&gt;.&lt;raw body&gt;</code> using your secret, the same scheme as Stripe's. Compare in constant time, and reject timestamps more than five minutes old.</p>
+<pre><code>// Node.js
+import { createHmac, timingSafeEqual } from "node:crypto";
+
+function verify(rawBody, header, secret) {
+  const { t, v1 } = Object.fromEntries(header.split(",").map((part) =&gt; part.split("=")));
+  if (Math.abs(Date.now() / 1000 - Number(t)) &gt; 300) return false;
+  const expected = createHmac("sha256", secret).update(`${t}.${rawBody}`).digest("hex");
+  return v1.length === expected.length &amp;&amp; timingSafeEqual(Buffer.from(v1), Buffer.from(expected));
+}</code></pre>
+<pre><code># Python
+import hmac, hashlib, time
+
+def verify(raw_body: bytes, header: str, secret: str) -&gt; bool:
+    parts = dict(part.split("=", 1) for part in header.split(","))
+    if abs(time.time() - int(parts["t"])) &gt; 300:
+        return False
+    expected = hmac.new(secret.encode(), f"{parts['t']}.".encode() + raw_body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected, parts["v1"])</code></pre>
+        <h2>Delivery</h2>
+        <ul>
+          <li>Your URL must use <code>https</code>; plain <code>http</code> is allowed only to the Mac itself, for a local relay. Redirects aren't followed.</li>
+          <li>Each retry first checks the license and URL are still in place, so removing either stops further attempts.</li>
+          <li>Answer with any 2xx. Network errors, 429, and 5xx are retried after 2 seconds, 10 seconds, and a minute; other responses aren't.</li>
+          <li>When Midnight Oil quits mid-session, it waits up to three seconds to send <code>session.ended</code>.</li>
+        </ul>
+        <h2>Slack</h2>
+        <p>Use a Slack incoming-webhook URL (<code>https://hooks.slack.com/…</code>) and Macs post readable messages instead, like “🔥 Build Mac 1 is staying awake on the “Overnight agents” schedule.” Slack messages aren't signed.</p>
+
+      </div></div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives/">Alternatives</a><a href="/alternatives/amphetamine">Amphetamine alternative</a><a href="/alternatives/caffeine">Caffeine alternative</a><a href="/alternatives/caffeinate">caffeinate alternative</a><a href="/alternatives/keepingyouawake">KeepingYouAwake alternative</a><a href="/alternatives/mouse-jiggler">Mouse jiggler alternative</a></nav>
+      <span>© 2026 Corey Haines. <a href="https://github.com/coreyhaines31/midnightoil/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
+    </div>
+  </footer>
+</body>
+</html>

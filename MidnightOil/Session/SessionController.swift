@@ -4,7 +4,7 @@ import MidnightOilCore
 enum SessionEndReason {
     case user
     case timeUp
-    case lowBattery
+    case lowBattery(floor: Int)
     case appQuit(String)
     case downloadFinished(String)
     case unplugged
@@ -12,6 +12,8 @@ enum SessionEndReason {
     case scheduleEnded(String)
     /// A schedule's window is still open but one of its conditions stopped holding.
     case schedulePaused(String, condition: String)
+    /// A manual session reached the organization's time limit.
+    case policyLimit(TimeInterval)
     case replaced
     case quit
 
@@ -26,6 +28,7 @@ enum SessionEndReason {
         case .triggerEnded: .triggerEnded
         case .scheduleEnded: .scheduleEnded
         case .schedulePaused: .schedulePaused
+        case .policyLimit: .policyLimit
         case .replaced: .replaced
         case .quit: .midnightOilQuit
         }
@@ -39,6 +42,11 @@ final class SessionController {
     private(set) var session: Session?
     /// Called whenever the session starts, ends, changes, or ticks.
     var onChange: (() -> Void)?
+    /// The organization's rules for sessions, from Midnight Oil for Teams. Read on every check,
+    /// so a newly deployed profile applies right away.
+    var policy: () -> SessionPolicy = { .none }
+    /// Called when a session starts or ends. Midnight Oil for Teams reports these.
+    var onSessionEvent: ((SessionEvent) -> Void)?
     /// Called when the user ends a session a trigger or schedule started, with its id.
     var onUserEndedAutomaticSession: ((UUID) -> Void)?
 
@@ -82,7 +90,7 @@ final class SessionController {
             start: .now,
             end: end,
             allowsDisplaySleep: Preferences.allowsDisplaySleep,
-            staysAwakeWithLidClosed: Preferences.staysAwakeWithLidClosed && helper.status == .installed
+            staysAwakeWithLidClosed: Preferences.staysAwakeWithLidClosed && canUseLidMode
         ))
     }
 
@@ -90,8 +98,8 @@ final class SessionController {
         begin(Session(
             start: .now,
             end: .indefinite,
-            allowsDisplaySleep: trigger.allowsDisplaySleep,
-            staysAwakeWithLidClosed: trigger.staysAwakeWithLidClosed && helper.status == .installed,
+            allowsDisplaySleep: displaySleep(trigger.allowsDisplaySleep),
+            staysAwakeWithLidClosed: trigger.staysAwakeWithLidClosed && canUseLidMode,
             source: .trigger(id: trigger.id, name: trigger.name)
         ))
     }
@@ -100,8 +108,8 @@ final class SessionController {
         begin(Session(
             start: .now,
             end: .indefinite,
-            allowsDisplaySleep: schedule.allowsDisplaySleep,
-            staysAwakeWithLidClosed: schedule.staysAwakeWithLidClosed && helper.status == .installed,
+            allowsDisplaySleep: displaySleep(schedule.allowsDisplaySleep),
+            staysAwakeWithLidClosed: schedule.staysAwakeWithLidClosed && canUseLidMode,
             source: .schedule(id: schedule.id, name: schedule.name)
         ))
     }
@@ -126,6 +134,7 @@ final class SessionController {
         applyAssertions()
         syncLidClosedMode()
         startTicker()
+        onSessionEvent?(.started(newSession))
         onChange?()
     }
 
@@ -195,6 +204,7 @@ final class SessionController {
             batteryEnd: PowerSourceReader.current().batteryPercent
         )
         history.record(record)
+        onSessionEvent?(.ended(session, record))
         return record
     }
 
@@ -203,14 +213,24 @@ final class SessionController {
         onChange?()
     }
 
+    /// A display-sleep setting the organization locks wins over a trigger's, a schedule's, or the menu's.
+    var isDisplaySleepLocked: Bool { ManagedSettings.isForced([Preferences.Key.allowsDisplaySleep]) }
+
+    private func displaySleep(_ requested: Bool) -> Bool {
+        isDisplaySleepLocked ? Preferences.allowsDisplaySleep : requested
+    }
+
     func setAllowsDisplaySleep(_ allowed: Bool) {
-        session?.allowsDisplaySleep = allowed
+        session?.allowsDisplaySleep = displaySleep(allowed)
         applyAssertions()
         onChange?()
     }
 
+    /// Closed-lid mode needs the helper, and an organization can switch it off.
+    var canUseLidMode: Bool { helper.status == .installed && !policy().disallowsClosedLid }
+
     func setStaysAwakeWithLidClosed(_ staysAwake: Bool) {
-        session?.staysAwakeWithLidClosed = staysAwake
+        session?.staysAwakeWithLidClosed = staysAwake && !policy().disallowsClosedLid
         syncLidClosedMode()
         onChange?()
     }
@@ -247,6 +267,10 @@ final class SessionController {
     private func tick() {
         guard let session else { return }
         sampleTally()
+        // A profile deployed mid-session can switch closed-lid mode off.
+        if session.staysAwakeWithLidClosed, policy().disallowsClosedLid {
+            setStaysAwakeWithLidClosed(false)
+        }
         if let reason = endReason(for: session) {
             end(reason: reason)
         } else {
@@ -271,6 +295,10 @@ final class SessionController {
         if session.isFinished(at: .now) {
             return .timeUp
         }
+        let policy = policy()
+        if policy.isOverLimit(session, at: .now), let limit = policy.maxManualSession {
+            return .policyLimit(limit)
+        }
         if case .whileAppRunning(let app) = session.end,
            NSRunningApplication.runningApplications(withBundleIdentifier: app.bundleIdentifier).isEmpty {
             return .appQuit(app.name)
@@ -283,8 +311,9 @@ final class SessionController {
         if Preferences.endsWhenUnplugged, BatteryGuard.wasUnplugged(from: lastPower, to: power) {
             return .unplugged
         }
-        if BatteryGuard.shouldEndSession(power: power, floorPercent: Preferences.batteryFloorPercent) {
-            return .lowBattery
+        let floor = policy.batteryFloor(user: Preferences.batteryFloorPercent)
+        if let floor, BatteryGuard.shouldEndSession(power: power, floorPercent: floor) {
+            return .lowBattery(floor: floor)
         }
         return nil
     }

@@ -57,8 +57,10 @@ enum SessionNotifier {
         case .scheduleEnded(let name): "Your “\(name)” schedule is over, so your Mac can sleep again."
         case .schedulePaused(let name, let condition):
             "Your “\(name)” schedule paused because “\(condition)” stopped holding. It picks up again when it does."
-        case .lowBattery:
-            "Your battery dropped below \(Preferences.batteryFloorPercent ?? 0)%, so your Mac can sleep again."
+        case .policyLimit(let limit):
+            "Your organization limits sessions to \(RemainingTime.short(limit)), so your Mac can sleep again."
+        case .lowBattery(let floor):
+            "Your battery dropped below \(floor)%, so your Mac can sleep again."
         }
     }
 }

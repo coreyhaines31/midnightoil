@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Midnight Oil for Teams: keep your Macs awake on purpose</title>
+  <meta name="description" content="Deploy Midnight Oil with your MDM, lock the rules that matter, and see which Macs are working right now. $5 per Mac per month, billed yearly.">
+  <link rel="canonical" href="https://midnightoil.app/teams">
+  <meta property="og:title" content="Midnight Oil for Teams: keep your Macs awake on purpose">
+  <meta property="og:description" content="Deploy Midnight Oil with your MDM, lock the rules that matter, and see which Macs are working right now. $5 per Mac per month, billed yearly.">
+  <meta property="og:image" content="https://midnightoil.app/images/icon.png">
+  <meta property="og:url" content="https://midnightoil.app/teams">
+  <link rel="icon" href="/images/icon.png">
+  <link rel="apple-touch-icon" href="/images/icon.png">
+  <link rel="stylesheet" href="/site.css">
+  <style>
+    .sub-hero { padding: 72px 22px 40px; }
+    .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
+    .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
+    .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
+    .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
+    .sub-hero .actions { display: flex; align-items: center; gap: 14px; margin-top: 28px; flex-wrap: wrap; }
+    .tldr { background: var(--glass); border-radius: 28px; padding: 26px 28px; margin: 44px 0 0; max-width: 900px; position: relative; box-shadow: var(--glass-shadow); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+    .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
+    .prose { max-width: 760px; }
+    .prose h2 { font-size: clamp(28px, 3.6vw, 40px); margin: 0 0 16px; }
+    .prose h3 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 8px; }
+    .prose p, .prose li { color: var(--muted); font-size: 17px; line-height: 1.6; }
+    .prose p strong { color: var(--text); font-weight: 600; }
+    .prose ul { padding-left: 20px; margin: 0 0 8px; }
+    .prose li { margin-bottom: 6px; }
+    .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
+    .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    .prose blockquote { margin: 18px 0; padding: 14px 20px; border-left: 3px solid var(--gold); background: var(--gray); border-radius: 0 12px 12px 0; }
+    .prose blockquote p { margin: 0; font-size: 16px; }
+    .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
+    .prose blockquote cite a { color: var(--faint); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+    .two > div { background: var(--glass); border-radius: 22px; padding: 22px; box-shadow: var(--glass-shadow); }
+    .two h3 { margin: 0 0 10px; font-size: 18px; }
+    .two ul { margin: 0; padding-left: 18px; }
+    .two li { font-size: 15px; margin-bottom: 6px; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
+    .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
+    .glance { max-width: 760px; margin: 0 0 44px; }
+    .glance .compare td:first-child { font-weight: 500; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+    .related a { display: block; background: var(--glass); border-radius: 22px; padding: 18px 20px; text-decoration: none; box-shadow: var(--glass-shadow); transition: transform .2s ease, background .2s ease; }
+    .related a:hover { background: var(--glass-strong); transform: translateY(-2px); }
+    .related b { display: block; margin-bottom: 4px; }
+    .related span { color: var(--muted); font-size: 14px; }
+    section.tight { padding: 64px 0; }
+    .tldr::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; background: var(--rim);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+    @media (max-width: 720px) {
+      .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; }
+      .sub-hero .actions:has(.glass) { flex-direction: column; align-items: stretch; max-width: 340px; }
+      .sub-hero .actions .pill { justify-content: center; }
+    }
+  </style>
+  <script async src="https://tracerkit.com/t.js" data-key="tk__vMOLefQSrM_pLCt"></script>
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="nav">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
+      <nav>
+        <a href="/#features">Features</a>
+        <a href="/teams">Teams</a>
+        <a href="/#faq">FAQ</a>
+        <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
+        <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
+      </nav>
+    </div>
+  </div>
+  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">Midnight Oil for Teams</div>
+      <h1>Every Mac in your fleet, awake on purpose.</h1>
+      <p class="lede">Deploy Midnight Oil with your MDM, lock the rules that matter, and see which Macs are working right now. For teams running agents, builds, and renders on Macs nobody is sitting at.</p>
+      <div class="actions">
+        <a class="pill big" href="#pricing">See pricing</a>
+        <a href="/docs/teams/deploy">How deployment works →</a>
+      </div>
+    </div>
+    <section class="tight">
+      <div class="wrap">
+        <div class="teams-feature">
+          <div><h2>Deploy it with one profile.</h2><p>Build a configuration profile in the dashboard: your license key, the settings to lock, and the rules to follow. Upload it to Jamf, Kandji, Intune, Mosyle, or any MDM. Every Mac it reaches is set up, with nothing for anyone to paste.</p></div>
+          <div class="art"><div class="mk-web" role="img" aria-label="The Midnight Oil for Teams dashboard, Deploy page"><div class="bar"><i></i><i></i><i></i><span>app.midnightoil.app/dashboard/deploy</span></div><div class="top"><b>Midnight Oil</b><span class="">Overview</span><span class="">Fleet</span><span class="on">Deploy</span><span class="">Members</span><span class="">Billing</span></div><div class="page">
+<h4>Deploy</h4><div class="sub">Build a configuration profile for your MDM.</div>
+<div class="card">
+<div class="check"><i></i><span><b>Report to the fleet dashboard</b><br><span class="muted">Macs appear on the Fleet page.</span></span></div>
+<div class="check"><i></i><span><b>Turn off closed-lid mode</b><br><span class="muted">Laptops sleep when the lid closes, as usual.</span></span></div>
+<div style="display:flex;gap:12px;margin-top:6px"><div style="flex:1">Longest session (hours)<div class="field">8</div></div>
+<div style="flex:1">End sessions on battery below (%)<div class="field">20</div></div></div>
+<span class="btn">Download profile</span>
+</div></div></div></div>
+        </div>
+        <div class="teams-feature">
+          <div><h2>Lock the rules that matter.</h2><p>Turn closed-lid mode off company-wide, cap how long a session someone starts can run, and set a battery floor that ends sessions on battery. Locked settings say so on the Mac, so nobody wonders why a switch won’t move.</p></div>
+          <div class="art"><div class="mk-win short" role="img" aria-label="Midnight Oil's Sessions settings, managed by the organization: controls are locked.">
+<div class="mk-pane">
+<div class="mk-intro"><svg viewBox="0 0 24 24" fill="none" stroke="#ff8c42" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M9 7h.01M15 7h.01M9 11h.01M15 11h.01M9 15h.01M15 15h.01M10 21v-3h4v3"/></svg><div>Some settings here are managed by your organization and can’t be changed on this Mac.</div></div>
+<div class="mk-h">Sessions</div>
+<div class="mk-group">
+<div class="mk-row" style="opacity:.5"><div class="mk-text"><div class="mk-title">Allow display sleep</div></div><div class="mk-switch"></div></div>
+</div>
+<div class="mk-h">Safety</div>
+<div class="mk-group">
+<div class="mk-row" style="opacity:.5"><div class="mk-text"><div class="mk-title">End sessions when the battery is low</div></div><div class="mk-switch"></div></div>
+<div class="mk-row" style="opacity:.5"><div class="mk-text"><div class="mk-title">Below 20%</div></div></div>
+</div>
+</div>
+<div class="mk-menu"><svg viewBox="0 0 24 32" fill="#ff8c42" aria-hidden="true"><path d="M12 30c6.8 -0 10 -4.7 10 -10.6 0 -6.3 -4.6 -9.4 -7.5 -18.4 -0.9 3.8 -3.6 6.6 -4.7 10.3 -1 -1.9 -2.5 -4 -3.9 -5.1C2.6 8.5 2 11.8 2 14.6 2 21.2 4.8 30 12 30z"/></svg><div><b>Keeping your Mac awake</b><span>Ends by 7:00 PM</span><small>Limit set by your organization</small></div></div>
+</div></div>
+        </div>
+        <div class="teams-feature">
+          <div><h2>See the whole fleet at a glance.</h2><p>Which Macs are awake right now, why (a schedule, a trigger, someone’s session), how long until they sleep, and their battery. Macs that haven’t checked in show as offline. Reporting is off until your profile turns it on.</p></div>
+          <div class="art"><div class="mk-web" role="img" aria-label="The Midnight Oil for Teams dashboard, Fleet page"><div class="bar"><i></i><i></i><i></i><span>app.midnightoil.app/dashboard/fleet</span></div><div class="top"><b>Midnight Oil</b><span class="">Overview</span><span class="on">Fleet</span><span class="">Deploy</span><span class="">Members</span><span class="">Billing</span></div><div class="page">
+<h4>Fleet</h4><div class="sub">3 of 5 Macs awake now · 5 of 25 seats used</div>
+<div class="card"><table>
+<tr><th>Mac</th><th>Status</th><th>Battery</th><th>Last seen</th></tr>
+<tr><td><b>Build Mac 1</b></td><td><span class="pill-on">Awake</span> <span class="muted">Schedule “Overnight agents”</span></td><td>plugged in</td><td class="muted">Just now</td></tr>
+<tr><td><b>Build Mac 2</b></td><td><span class="pill-on">Awake</span> <span class="muted">Trigger “Docked at desk”</span></td><td>plugged in</td><td class="muted">2 min ago</td></tr>
+<tr><td><b>Render Studio</b></td><td><span class="pill-on">Awake</span> <span class="muted">By hand · lid closed OK</span></td><td>71%</td><td class="muted">1 min ago</td></tr>
+<tr><td><b>Design MacBook</b></td><td><span class="pill-off">Can sleep</span></td><td>88%</td><td class="muted">4 min ago</td></tr>
+<tr><td><b>Marta’s MacBook</b></td><td><span class="pill-off">Offline</span></td><td class="muted">—</td><td class="muted">3 h ago</td></tr>
+</table></div></div></div></div>
+        </div>
+        <div class="teams-feature">
+          <div><h2>Send sessions wherever you work.</h2><p>Every Mac posts when a session starts and ends to a URL you choose, signed with your secret so you know it’s yours. Point it at a Slack channel for a readable feed, or at your own systems for logging and alerts.</p></div>
+          <div class="art"><div role="img" aria-label="Session events from Midnight Oil posted to Slack, and the signed JSON body.">
+<div class="mk-slack">
+<div class="msg"><div class="avatar"><svg viewBox="0 0 24 32" fill="#ff8c42" aria-hidden="true"><path d="M12 30c6.8 -0 10 -4.7 10 -10.6 0 -6.3 -4.6 -9.4 -7.5 -18.4 -0.9 3.8 -3.6 6.6 -4.7 10.3 -1 -1.9 -2.5 -4 -3.9 -5.1C2.6 8.5 2 11.8 2 14.6 2 21.2 4.8 30 12 30z"/></svg></div><div><b>Midnight Oil</b><span class="t">11:00 PM</span><div>🔥 Build Mac 1 is staying awake on the “Overnight agents” schedule.</div></div></div>
+<div class="msg"><div class="avatar"><svg viewBox="0 0 24 32" fill="#ff8c42" aria-hidden="true"><path d="M12 30c6.8 -0 10 -4.7 10 -10.6 0 -6.3 -4.6 -9.4 -7.5 -18.4 -0.9 3.8 -3.6 6.6 -4.7 10.3 -1 -1.9 -2.5 -4 -3.9 -5.1C2.6 8.5 2 11.8 2 14.6 2 21.2 4.8 30 12 30z"/></svg></div><div><b>Midnight Oil</b><span class="t">7:00 AM</span><div>Build Mac 1 can sleep again after 8h on the “Overnight agents” schedule.</div></div></div>
+</div>
+<div class="mk-json">{
+  <span class="k">"event"</span>: <span class="s">"session.ended"</span>,
+  <span class="k">"device"</span>: { <span class="k">"label"</span>: <span class="s">"Build Mac 1"</span>, … },
+  <span class="k">"session"</span>: {
+    <span class="k">"source"</span>: <span class="s">"schedule"</span>, <span class="k">"sourceName"</span>: <span class="s">"Overnight agents"</span>,
+    <span class="k">"endCause"</span>: <span class="s">"scheduleEnded"</span>, <span class="k">"awakeSeconds"</span>: 28800
+  }
+}</div>
+</div></div>
+        </div>
+      </div>
+    </section>
+    <section class="tight gray" id="pricing">
+      <div class="wrap">
+        <div class="section-head center"><h2>One price per Mac.</h2></div>
+        <div class="price-card">
+          <div class="amount">$5 <small>per Mac per month, billed yearly</small></div>
+          <p style="color:var(--muted);margin:6px 0 0">$60 per Mac per year. Five Macs minimum. Midnight Oil itself stays free for everyone.</p>
+          <ul><li>Managed settings and the license key in one configuration profile</li><li>Policies: closed-lid off, session time limit, battery floor</li><li>Fleet dashboard with seats, status, and battery</li><li>Signed session webhook, with Slack formatting built in</li><li>Admins for your team, and email support</li></ul>
+          <form class="seat-row" action="#pricing" method="get">
+            <label>Macs <input id="seats" name="seats" type="number" min="5" max="1000" value="10"></label>
+            <span class="total" id="total">$600/yr</span>
+            <span class="pill soon" aria-disabled="true">Coming soon</span>
+          </form>
+        </div>
+      </div>
+    </section>
+    <section class="tight" id="faq">
+      <div class="wrap">
+        <div class="section-head center"><h2>Questions</h2></div>
+        <div class="faq">
+          <details><summary>Do the people at my company need Teams to use Midnight Oil?</summary><p>No. Midnight Oil is free for everyone, at home or at work. Teams is for organizations that want to deploy it, lock its settings, and see their fleet.</p></details>
+          <details><summary>What does a Mac send, and to whom?</summary><p>Only a daily update check, unless your organization turns on fleet reporting or a webhook. Then a Mac sends session status (awake or not, why, until when) to the Teams dashboard or your URL, plus its battery to the dashboard. Midnight Oil never reads the computer’s name, user names, files, or what apps are doing. The full list is on the <a href="/docs/teams/privacy">privacy page</a>.</p></details>
+          <details><summary>Does the license key need an internet connection?</summary><p>No. Keys are signed and checked on the Mac itself. Macs that report to the dashboard pick up renewed keys on their own; others get them in your next profile.</p></details>
+          <details><summary>What happens if the subscription lapses?</summary><p>Keys stay valid for 30 days past the last paid period. After that, policies, reporting, and the webhook turn off, and Midnight Oil keeps working as the free app. Settings your profile locks stay locked until you remove or change the profile; that part is macOS.</p></details>
+          <details><summary>Which MDMs does it work with?</summary><p>Any MDM that deploys configuration profiles: Jamf Pro, Kandji, Microsoft Intune, Mosyle, Addigy, JumpCloud, and others. You can also install the profile by hand for a few Macs. See the <a href="/docs/teams/deploy">deployment guide</a>.</p></details>
+          <details><summary>What if more Macs report than I paid for?</summary><p>Nothing stops working. The dashboard shows the overage so you can add seats when it suits you. Seats change anytime from Billing, prorated.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives/">Alternatives</a><a href="/alternatives/amphetamine">Amphetamine alternative</a><a href="/alternatives/caffeine">Caffeine alternative</a><a href="/alternatives/caffeinate">caffeinate alternative</a><a href="/alternatives/keepingyouawake">KeepingYouAwake alternative</a><a href="/alternatives/mouse-jiggler">Mouse jiggler alternative</a></nav>
+      <span>© 2026 Corey Haines. <a href="https://github.com/coreyhaines31/midnightoil/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
+    </div>
+  </footer>
+  <script>
+    (() => {
+      const seats = document.getElementById("seats"), total = document.getElementById("total");
+      const update = () => {
+        const n = Math.max(5, Math.min(1000, Math.floor(Number(seats.value) || 5)));
+        total.textContent = "$" + (n * 60).toLocaleString("en-US") + "/yr";
+      };
+      seats.addEventListener("input", update);
+      update();
+    })();
+  </script>
+</body>
+</html>

@@ -10,6 +10,7 @@ struct SchedulesSettingsView: View {
     var body: some View {
         Form {
             PaneIntro(intro: Help.Pane.schedules)
+            ManagedNotice(keys: ["schedules"])
 
             Section {
                 if store.schedules.isEmpty {
@@ -58,6 +59,7 @@ struct SchedulesSettingsView: View {
                 Text(Help.scheduleSkip)
                     .foregroundStyle(.secondary)
             }
+            .disabled(ManagedSettings.isForced(["schedules"]))
         }
         .formStyle(.grouped)
         .frame(height: 500)

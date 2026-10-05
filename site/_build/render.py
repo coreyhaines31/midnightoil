@@ -10,22 +10,35 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from pages import PAGES, HUB  # noqa: E402
+from teams import CHECKOUT, DOCS, LEGAL, SALES_OPEN, TEAMS  # noqa: E402
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 DOWNLOAD = "https://github.com/coreyhaines31/midnightoil/releases/latest"
 REPO = "https://github.com/coreyhaines31/midnightoil"
 
+DOWNLOAD_ICON = ('<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14" fill="none" '
+                 'stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>')
+GITHUB_ICON = ('<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 '
+               '5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52'
+               '-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59'
+               '.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82'
+               '.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 '
+               '.21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>')
+# The two main calls to action, everywhere a page offers the download.
+CTAS = (f'<a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">{DOWNLOAD_ICON}Download free</a>\n'
+        f'        <a class="pill big glass" href="https://github.com/coreyhaines31/midnightoil">{GITHUB_ICON}View source code</a>')
+
 FLAME = ('<svg viewBox="0 0 24 30" fill="currentColor" aria-hidden="true"><path d="M12 0c6.8 0 10 4.7 10 10.6 0 6.3-4.6 '
          '9.4-7.5 18.4-.9-3.8-3.6-6.6-4.7-10.3-1 1.9-2.5 4-3.9 5.1C2.6 21.5 2 18.2 2 15.4 2 8.8 4.8 0 12 0z"/></svg>')
 
 PAGE_CSS = """
-    .sub-hero { padding: 72px 0 40px; }
+    .sub-hero { padding: 72px 22px 40px; }
     .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
     .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
     .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
     .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
-    .sub-hero .actions { display: flex; align-items: center; gap: 22px; margin-top: 28px; flex-wrap: wrap; }
-    .tldr { background: var(--gray); border-radius: var(--radius); padding: 26px 28px; margin: 44px 0 0; max-width: 900px; }
+    .sub-hero .actions { display: flex; align-items: center; gap: 14px; margin-top: 28px; flex-wrap: wrap; }
+    .tldr { background: var(--glass); border-radius: 28px; padding: 26px 28px; margin: 44px 0 0; max-width: 900px; position: relative; box-shadow: var(--glass-shadow); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
     .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
     .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
     .prose { max-width: 760px; }
@@ -43,7 +56,7 @@ PAGE_CSS = """
     .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
     .prose blockquote cite a { color: var(--faint); }
     .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
-    .two > div { background: var(--gray); border-radius: 16px; padding: 22px; }
+    .two > div { background: var(--glass); border-radius: 22px; padding: 22px; box-shadow: var(--glass-shadow); }
     .two h3 { margin: 0 0 10px; font-size: 18px; }
     .two ul { margin: 0; padding-left: 18px; }
     .two li { font-size: 15px; margin-bottom: 6px; }
@@ -54,12 +67,18 @@ PAGE_CSS = """
     .glance { max-width: 760px; margin: 0 0 44px; }
     .glance .compare td:first-child { font-weight: 500; }
     .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
-    .related a { display: block; background: #fff; border-radius: 14px; padding: 18px 20px; text-decoration: none; box-shadow: 0 0 0 0.5px rgba(0,0,0,0.08); }
-    .related a:hover { box-shadow: 0 0 0 0.5px rgba(0,0,0,0.16), 0 8px 24px rgba(0,0,0,0.06); }
+    .related a { display: block; background: var(--glass); border-radius: 22px; padding: 18px 20px; text-decoration: none; box-shadow: var(--glass-shadow); transition: transform .2s ease, background .2s ease; }
+    .related a:hover { background: var(--glass-strong); transform: translateY(-2px); }
     .related b { display: block; margin-bottom: 4px; }
     .related span { color: var(--muted); font-size: 14px; }
     section.tight { padding: 64px 0; }
-    @media (max-width: 720px) { .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; } }
+    .tldr::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; background: var(--rim);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+    @media (max-width: 720px) {
+      .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; }
+      .sub-hero .actions:has(.glass) { flex-direction: column; align-items: stretch; max-width: 340px; }
+      .sub-hero .actions .pill { justify-content: center; }
+    }
 """
 
 
@@ -68,11 +87,13 @@ def esc(t):
 
 
 def nav():
-    return f'''  <div class="nav">
+    return f'''  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="nav">
     <div class="wrap">
       <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
+        <a href="/teams">Teams</a>
         <a href="/#faq">FAQ</a>
         <a href="{REPO}">GitHub</a>
         <a class="pill" href="{DOWNLOAD}">Download</a>
@@ -92,7 +113,7 @@ def footer():
     return f'''  <footer>
     <div class="wrap">
 {footer_alternatives()}      <span>© 2026 Corey Haines. <a href="{REPO}/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
-      <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="{REPO}/issues">Issues</a></span>
+      <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="{REPO}/issues">Issues</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
     </div>
   </footer>
 '''
@@ -150,9 +171,15 @@ def faq_schema(faqs):
 def cta(text):
     return f'''    <section class="cta">
       <div class="wrap">
-        <h2>{text}</h2>
-        <a class="pill big" href="{DOWNLOAD}">Download for macOS</a>
-        <p class="fineprint">Free · Source on GitHub · macOS 14 or later · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+        <div class="cta-card">
+          <img src="/images/icon.png" alt="" width="96" height="96">
+          <h2>{text}</h2>
+          <p>Free. No account, no subscription.</p>
+          <div class="actions">
+            {CTAS}
+          </div>
+          <p class="fineprint">macOS 14 or later · Apple Silicon and Intel · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+        </div>
       </div>
     </section>
 '''
@@ -166,8 +193,7 @@ def render_page(p):
       <h1>{p["h1"]}</h1>
       <p class="lede">{p["lede"]}</p>
       <div class="actions">
-        <a class="pill big" href="{DOWNLOAD}">Download Midnight Oil</a>
-        <a class="link" href="#compare">See the comparison</a>
+        {CTAS}
       </div>
       <div class="tldr"><h2>The short version</h2><p>{p["tldr"]}</p></div>
     </div>
@@ -231,9 +257,103 @@ def render_hub():
         f.write(body)
 
 
+def write(path, body):
+    out = os.path.join(ROOT, path.strip("/") + ".html")
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    with open(out, "w") as f:
+        f.write(body)
+
+
+def render_teams():
+    t = TEAMS
+    features = "".join(f'''        <div class="teams-feature">
+          <div><h2>{esc(title)}</h2><p>{esc(text)}</p></div>
+          <div class="art">{art}</div>
+        </div>
+''' for title, text, art in t["features"])
+    included = "".join(f"<li>{esc(item)}</li>" for item in t["included"])
+    faqs = "".join(f'          <details><summary>{esc(q)}</summary><p>{a}</p></details>\n' for q, a in t["faqs"])
+    body = f'''{head(t["title"], t["description"], "/teams")}{nav()}  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">{esc(t["eyebrow"])}</div>
+      <h1>{esc(t["h1"])}</h1>
+      <p class="lede">{esc(t["lede"])}</p>
+      <div class="actions">
+        <a class="pill big" href="#pricing">See pricing</a>
+        <a href="/docs/teams/deploy">How deployment works →</a>
+      </div>
+    </div>
+    <section class="tight">
+      <div class="wrap">
+{features}      </div>
+    </section>
+    <section class="tight gray" id="pricing">
+      <div class="wrap">
+        <div class="section-head center"><h2>One price per Mac.</h2></div>
+        <div class="price-card">
+          <div class="amount">$5 <small>per Mac per month, billed yearly</small></div>
+          <p style="color:var(--muted);margin:6px 0 0">$60 per Mac per year. Five Macs minimum. Midnight Oil itself stays free for everyone.</p>
+          <ul>{included}</ul>
+          <form class="seat-row" action="{CHECKOUT if SALES_OPEN else "#pricing"}" method="get">
+            <label>Macs <input id="seats" name="seats" type="number" min="5" max="1000" value="10"></label>
+            <span class="total" id="total">$600/yr</span>
+            {'<button class="pill" type="submit">Buy for your team</button>' if SALES_OPEN else '<span class="pill soon" aria-disabled="true">Coming soon</span>'}
+          </form>
+        </div>
+      </div>
+    </section>
+    <section class="tight" id="faq">
+      <div class="wrap">
+        <div class="section-head center"><h2>Questions</h2></div>
+        <div class="faq">
+{faqs}        </div>
+      </div>
+    </section>
+  </main>
+{footer()}  <script>
+    (() => {{
+      const seats = document.getElementById("seats"), total = document.getElementById("total");
+      const update = () => {{
+        const n = Math.max(5, Math.min(1000, Math.floor(Number(seats.value) || 5)));
+        total.textContent = "$" + (n * 60).toLocaleString("en-US") + "/yr";
+      }};
+      seats.addEventListener("input", update);
+      update();
+    }})();
+  </script>
+</body>
+</html>
+'''
+    write("/teams", body)
+
+
+def render_doc(d, eyebrow=None):
+    body = f'''{head(d["title"], d["description"], d["path"])}{nav()}  <main>
+    <div class="wrap sub-hero">
+      {f'<div class="eyebrow">{esc(eyebrow)}</div>' if eyebrow else ""}
+      <h1>{esc(d["h1"])}</h1>
+      {f'<p class="lede">{esc(d["lede"])}</p>' if d.get("lede") else ""}
+    </div>
+    <section class="tight">
+      <div class="wrap"><div class="prose">
+{d["html"]}
+      </div></div>
+    </section>
+  </main>
+{footer()}</body>
+</html>
+'''
+    write(d["path"], body)
+
+
 if __name__ == "__main__":
     for p in PAGES:
         render_page(p)
     render_hub()
     render_homepage_footer()
-    print(f"rendered {len(PAGES)} pages + hub + homepage footer")
+    render_teams()
+    for d in DOCS:
+        render_doc(d, d["eyebrow"])
+    for d in LEGAL:
+        render_doc(d)
+    print(f"rendered {len(PAGES)} pages + hub + homepage footer + teams + {len(DOCS)} docs + {len(LEGAL)} legal")
