@@ -386,6 +386,16 @@
         const { stargazers_count: stars } = await res.json();
         if (typeof stars !== "number") return;
         const text = new Intl.NumberFormat("en-US", { notation: stars >= 10000 ? "compact" : "standard" }).format(stars);
+    // The nav turns to dark glass while it floats over a dark part of the page.
+    const nav = document.querySelector(".nav");
+    const darkZones = () => [...document.querySelectorAll("section.dark")].map(el => el.getBoundingClientRect())
+      .concat([...document.querySelectorAll(".night-stage")].map(el => {
+        const r = el.getBoundingClientRect();
+        return { top: r.top + r.height * 0.4, bottom: r.bottom };
+      }));
+    const tint = () => nav.classList.toggle("on-dark", darkZones().some(r => r.top <= 40 && r.bottom >= 40));
+    tint(); window.addEventListener("scroll", tint, { passive: true }); window.addEventListener("resize", tint);
+
         document.querySelectorAll("[data-stars-count]").forEach(el => { el.textContent = text; });
         document.querySelectorAll("[data-stars-label]").forEach(el => { el.textContent = stars === 1 ? "star" : "stars"; });
         // The hero pill only helps once the number is worth showing.

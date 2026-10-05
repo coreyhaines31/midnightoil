@@ -59,6 +59,12 @@
     .pill.glass { color: var(--text); background: var(--glass); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: var(--glass-shadow); }
     .pill.glass:hover { background: var(--glass-strong); }
     .nav nav a.pill { color: #fff; }
+    /* Over dark sections the bar turns to dark glass. */
+    .nav .wrap, .nav .brand, .nav nav a { transition: background .35s ease, color .35s ease, box-shadow .35s ease; }
+    .nav.on-dark .wrap { background: rgba(30,31,44,0.55); box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 12px 32px rgba(0,0,0,0.3); }
+    .nav.on-dark .wrap::after { background: var(--rim-dark); }
+    .nav.on-dark .brand, .nav.on-dark nav a { color: #f5f5f7; }
+    .nav.on-dark nav a.pill { color: var(--text); background: linear-gradient(180deg, #ffffff, #e9e9ee); box-shadow: inset 0 1px 0 #fff, 0 6px 18px rgba(0,0,0,0.3); }
 
     /* Hero */
     .hero { text-align: center; padding: 84px 22px 0; }
