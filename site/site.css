@@ -319,7 +319,7 @@
     .compare .note { display: block; font-weight: 400; color: var(--muted); font-size: 13px; margin-top: 2px; }
 
     /* Proof */
-    .proof { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+    .proof { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
     .proof span a { color: var(--text); }
     .proof b span { font-size: inherit; display: inline; color: inherit; }
     .stars {
@@ -353,7 +353,9 @@
     @media (max-width: 720px) {
       .compare { font-size: 13px; }
       .compare th, .compare td { padding: 10px 6px; }
-      .proof { grid-template-columns: 1fr; }
+      .proof { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .proof > div { padding: 18px; }
+      .proof b { font-size: 24px; }
     }
 
     @media (max-width: 900px) {
