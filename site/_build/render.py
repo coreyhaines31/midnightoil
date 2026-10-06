@@ -90,7 +90,7 @@ def nav():
     return f'''  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="nav">
     <div class="wrap">
-      <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
+      <a class="brand" href="/"><img src="/images/icon-192.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
         <a href="/teams">Teams</a>
@@ -141,10 +141,10 @@ def head(title, description, path):
   <link rel="canonical" href="https://midnightoil.app{path}">
   <meta property="og:title" content="{esc(title)}">
   <meta property="og:description" content="{esc(description)}">
-  <meta property="og:image" content="https://midnightoil.app/images/icon.png">
+  <meta property="og:image" content="https://midnightoil.app/images/icon-512.png">
   <meta property="og:url" content="https://midnightoil.app{path}">
-  <link rel="icon" href="/images/icon.png">
-  <link rel="apple-touch-icon" href="/images/icon.png">
+  <link rel="icon" href="/images/icon-192.png">
+  <link rel="apple-touch-icon" href="/images/icon-512.png">
   <link rel="stylesheet" href="/site.css">
   <style>{PAGE_CSS}  </style>
   <script async src="https://tracerkit.com/t.js" data-key="tk__vMOLefQSrM_pLCt"></script>
@@ -172,7 +172,7 @@ def cta(text):
     return f'''    <section class="cta">
       <div class="wrap">
         <div class="cta-card">
-          <img src="/images/icon.png" alt="" width="96" height="96">
+          <img src="/images/icon-192.png" alt="" width="96" height="96">
           <h2>{text}</h2>
           <p>Free. No account, no subscription.</p>
           <div class="actions">
