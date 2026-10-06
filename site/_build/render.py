@@ -5,7 +5,9 @@
 """
 import html
 import json
+import datetime
 import os
+import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -347,6 +349,30 @@ def render_doc(d, eyebrow=None):
     write(d["path"], body)
 
 
+def render_sitemap():
+    """Lists every page, with lastmod from the last commit that touched it."""
+    root = os.path.normpath(ROOT)
+    urls = []
+    for folder, _, files in os.walk(root):
+        if "_build" in os.path.relpath(folder, root).split(os.sep):
+            continue
+        for name in files:
+            if not name.endswith(".html") or name == "404.html":
+                continue
+            file = os.path.normpath(os.path.join(folder, name))
+            rel = os.path.relpath(file, root)[:-len(".html")]
+            path = "/" + (rel[:-len("index")].rstrip("/") if rel.endswith("index") else rel)
+            changed = subprocess.run(["git", "log", "-1", "--format=%cs", "--", file],
+                                     capture_output=True, text=True).stdout.strip()
+            urls.append((path, changed or datetime.date.today().isoformat()))
+    urls.sort(key=lambda u: (u[0] != "/", u[0]))
+    rows = "".join(f"  <url><loc>https://midnightoil.app{p}</loc><lastmod>{d}</lastmod></url>\n" for p, d in urls)
+    with open(os.path.join(ROOT, "sitemap.xml"), "w") as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + rows + "</urlset>\n")
+    return len(urls)
+
+
 if __name__ == "__main__":
     for p in PAGES:
         render_page(p)
@@ -357,4 +383,6 @@ if __name__ == "__main__":
         render_doc(d, d["eyebrow"])
     for d in LEGAL:
         render_doc(d)
+    pages = render_sitemap()
+    print(f"sitemap: {pages} pages")
     print(f"rendered {len(PAGES)} pages + hub + homepage footer + teams + {len(DOCS)} docs + {len(LEGAL)} legal")
