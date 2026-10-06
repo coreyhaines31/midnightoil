@@ -70,6 +70,11 @@ xcodebuild -exportArchive -archivePath "$BUILD/MidnightOil.xcarchive" \
   "${AUTH_ARGS[@]}" | quiet
 APP="$BUILD/export/$APP_NAME.app"
 codesign --verify --deep --strict --verbose=1 "$APP"
+# Without this the hardened runtime blocks Location, and Wi-Fi triggers never see a network name.
+if ! codesign -d --entitlements - "$APP" 2>/dev/null | grep -q "com.apple.security.personal-information.location"; then
+  echo "✗ The exported app is missing the Location entitlement" >&2
+  exit 1
+fi
 
 echo "▶ Notarizing the app"
 ditto -c -k --keepParent "$APP" "$BUILD/app.zip"
