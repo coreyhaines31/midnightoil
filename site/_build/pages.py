@@ -6,8 +6,8 @@ PAGES = [
     {
         "slug": "amphetamine",
         "competitor": "Amphetamine",
-        "title": "Amphetamine for Mac: what happened, and the alternative",
-        "description": "Amphetamine, the Mac keep-awake app, hasn't shipped an update since November 2023. Midnight Oil is the free, source-available replacement: same sessions and triggers, one-toggle closed-lid mode, and built for overnight AI-agent runs.",
+        "title": "Amphetamine app for Mac: what happened, and the alternative",
+        "description": "Amphetamine hasn't been updated since November 2023. Midnight Oil is the free replacement: the same sessions and triggers, plus one-toggle closed-lid mode.",
         "eyebrow": "Amphetamine alternative",
         "h1": "Amphetamine's last update was 2023.<br>Your agents run in 2026.",
         "lede": "Amphetamine was the best keep-awake app on the Mac, and it's still free. It's also been frozen at version 5.3.2 since November 10, 2023, with issues piling up unanswered. Midnight Oil is the maintained, source-available replacement built for the way people keep Macs awake now: overnight agent runs, long builds, the laptop closed in a bag.",
@@ -77,8 +77,8 @@ PAGES = [
     {
         "slug": "caffeine",
         "competitor": "Caffeine",
-        "title": "Caffeine for Mac: the original keep-awake app, and a modern alternative",
-        "description": "Caffeine is the one-click coffee cup that's kept Macs awake since 2006. It still works, but it has no timers you can see, no triggers, and no closed-lid mode. Midnight Oil is the free, source-available alternative for longer jobs.",
+        "title": "Caffeine for Mac: the classic app, and a modern alternative",
+        "description": "Caffeine has kept Macs awake since 2006, but it has no timers, triggers, or closed-lid mode. Midnight Oil is the free alternative for longer jobs.",
         "eyebrow": "Caffeine alternative",
         "h1": "Caffeine is a cup you click.<br>Midnight Oil is the rest of the night.",
         "lede": "Caffeine is the app that started this category: click the cup, your Mac stays awake. Two decades on it's still free and still tiny, and for a lot of people that's exactly enough. If you need it to run for a set time, react to what's happening, or keep a closed laptop working, you've outgrown it.",
@@ -147,8 +147,8 @@ PAGES = [
     {
         "slug": "caffeinate",
         "competitor": "caffeinate",
-        "title": "caffeinate on Mac: the command, its flags, and when you want an app instead",
-        "description": "How the built-in macOS caffeinate command works (-d, -i, -s, -u, -t, -w), what it can't do, and why people running Claude Code or long jobs overnight end up wanting a menu bar app with closed-lid mode.",
+        "title": "caffeinate command on Mac: flags, limits, and an app",
+        "description": "How the macOS caffeinate command works (-d, -i, -s, -u, -t, -w), what it can't do, and when a menu bar app with closed-lid mode is easier.",
         "eyebrow": "caffeinate vs an app",
         "h1": "<code>caffeinate</code> keeps your Mac awake until you close the lid.<br>Then it doesn't.",
         "lede": "Every Mac ships with <code>caffeinate</code>, a Terminal command that keeps the machine awake. It's free, it's already installed, and for a one-off job it's fine. This page covers the flags, the gotchas, and the point where a menu bar app is the better tool.",
@@ -229,8 +229,8 @@ caffeinate -dimsu     # everything</code></pre>
     {
         "slug": "keepingyouawake",
         "competitor": "KeepingYouAwake",
-        "title": "KeepingYouAwake alternative with closed-lid mode: Midnight Oil",
-        "description": "KeepingYouAwake is a well-maintained, open-source keep-awake app for Mac. It deliberately doesn't support a closed lid or app-based triggers. Midnight Oil is the free, source-available alternative that does.",
+        "title": "KeepingYouAwake alternative with closed-lid mode",
+        "description": "KeepingYouAwake is a solid open-source keep-awake app, but it won't keep a closed lid awake. Midnight Oil is the free alternative that does.",
         "eyebrow": "KeepingYouAwake alternative",
         "h1": "KeepingYouAwake stops at the lid.<br>Midnight Oil doesn't.",
         "lede": "KeepingYouAwake is the app most people recommend after Amphetamine: free, MIT-licensed, actively maintained, a Homebrew cask, one click. It also draws a line at closed-lid mode, on purpose, and its most-requested feature in 2026 is exactly that. Midnight Oil is the free, source-available alternative that crosses the line carefully.",
@@ -297,8 +297,8 @@ caffeinate -dimsu     # everything</code></pre>
     {
         "slug": "mouse-jiggler",
         "competitor": "Mouse jiggler",
-        "title": "Mouse jiggler for Mac? You probably need a keep-awake app instead",
-        "description": "Mouse jigglers fake input to look active. If your actual problem is a Mac that sleeps during a download, a build, or an AI-agent run, a keep-awake app does the job properly: no Accessibility permission, nothing for IT to detect, and it works with the lid closed.",
+        "title": "Mouse jiggler for Mac? You probably need a keep-awake app",
+        "description": "Mouse jigglers fake input. If your Mac sleeps during downloads, builds, or AI-agent runs, a keep-awake app does it properly, even with the lid closed.",
         "eyebrow": "Mouse jiggler alternative",
         "h1": "You don't need a mouse jiggler.<br>You need your Mac to stay awake.",
         "lede": "A mouse jiggler wiggles the cursor so the computer thinks you're there. That's the right tool for exactly one job: keeping a chat status green. If what you want is for your Mac to stay awake through a download, a render, a build, or an overnight agent run, a jiggler is the wrong tool, and a keep-awake app is the right one.",
@@ -364,8 +364,8 @@ caffeinate -dimsu     # everything</code></pre>
 ]
 
 HUB = {
-    "title": "Alternatives to Amphetamine, Caffeine, caffeinate, and mouse jigglers for Mac",
-    "description": "Honest comparisons of the ways people keep a Mac awake, and where Midnight Oil fits: the free, source-available keep-awake app built for overnight AI-agent runs and closed-lid work.",
+    "title": "Mac keep-awake apps compared: Amphetamine, Caffeine, more",
+    "description": "Honest comparisons of every way to keep a Mac awake, and where Midnight Oil fits: free, built for overnight AI-agent runs and closed-lid work.",
     "h1": "Every way to keep a Mac awake,<br>compared honestly.",
     "lede": "Five ways people do this, what each does well, and where it stops. Sometimes the other tool is the right one; we say so.",
     "glance": [

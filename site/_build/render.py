@@ -5,7 +5,9 @@
 """
 import html
 import json
+import datetime
 import os
+import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -90,7 +92,7 @@ def nav():
     return f'''  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="nav">
     <div class="wrap">
-      <a class="brand" href="/"><img src="/images/icon.png" alt=""> Midnight Oil</a>
+      <a class="brand" href="/"><img src="/images/icon-192.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
         <a href="/teams">Teams</a>
@@ -106,7 +108,7 @@ def nav():
 def footer_alternatives():
     """Every alternative page, linked from every footer for internal linking."""
     links = "".join(f'<a href="/alternatives/{p["slug"]}">{esc(p["competitor"])} alternative</a>' for p in PAGES)
-    return f'      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives/">Alternatives</a>{links}</nav>\n'
+    return f'      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives">Alternatives</a>{links}</nav>\n'
 
 
 def footer():
@@ -141,10 +143,11 @@ def head(title, description, path):
   <link rel="canonical" href="https://midnightoil.app{path}">
   <meta property="og:title" content="{esc(title)}">
   <meta property="og:description" content="{esc(description)}">
-  <meta property="og:image" content="https://midnightoil.app/images/icon.png">
+  <meta property="og:image" content="https://midnightoil.app/images/icon-512.png">
   <meta property="og:url" content="https://midnightoil.app{path}">
-  <link rel="icon" href="/images/icon.png">
-  <link rel="apple-touch-icon" href="/images/icon.png">
+  <meta name="twitter:card" content="summary">
+  <link rel="icon" href="/images/icon-192.png">
+  <link rel="apple-touch-icon" href="/images/icon-512.png">
   <link rel="stylesheet" href="/site.css">
   <style>{PAGE_CSS}  </style>
   <script async src="https://tracerkit.com/t.js" data-key="tk__vMOLefQSrM_pLCt"></script>
@@ -172,7 +175,7 @@ def cta(text):
     return f'''    <section class="cta">
       <div class="wrap">
         <div class="cta-card">
-          <img src="/images/icon.png" alt="" width="96" height="96">
+          <img src="/images/icon-192.png" alt="" width="96" height="96">
           <h2>{text}</h2>
           <p>Free. No account, no subscription.</p>
           <div class="actions">
@@ -226,7 +229,7 @@ def render_page(p):
 
 
 def render_hub():
-    path = "/alternatives/"
+    path = "/alternatives"
     cards = "".join(f'          <a href="/alternatives/{q["slug"]}"><b>{esc(q["card_title"])}</b><span>{esc(q["card_blurb"])}</span></a>\n' for q in PAGES)
     body = f'''{head(HUB["title"], HUB["description"], path)}{nav()}  <main>
     <div class="wrap sub-hero">
@@ -346,6 +349,47 @@ def render_doc(d, eyebrow=None):
     write(d["path"], body)
 
 
+def render_404():
+    page = head("Page not found · Midnight Oil", "This page doesn't exist.", "/404").replace(
+        "<head>\n", '<head>\n  <meta name="robots" content="noindex">\n', 1)
+    write("/404", page + nav() + f'''  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">404</div>
+      <h1>This page is asleep for good.</h1>
+      <p class="lede">The page you asked for doesn't exist. Midnight Oil itself is right here, and it's free.</p>
+      <div class="actions">
+        {CTAS}
+      </div>
+      <p class="lede" style="font-size:17px"><a href="/">Home</a> · <a href="/alternatives">Alternatives</a> · <a href="/teams">Teams</a></p>
+    </div>
+  </main>
+''' + footer() + "</body>\n</html>\n")
+
+
+def render_sitemap():
+    """Lists every page, with lastmod from the last commit that touched it."""
+    root = os.path.normpath(ROOT)
+    urls = []
+    for folder, _, files in os.walk(root):
+        if "_build" in os.path.relpath(folder, root).split(os.sep):
+            continue
+        for name in files:
+            if not name.endswith(".html") or name == "404.html":
+                continue
+            file = os.path.normpath(os.path.join(folder, name))
+            rel = os.path.relpath(file, root)[:-len(".html")]
+            path = "/" + (rel[:-len("index")].rstrip("/") if rel.endswith("index") else rel)
+            changed = subprocess.run(["git", "log", "-1", "--format=%cs", "--", file],
+                                     capture_output=True, text=True).stdout.strip()
+            urls.append((path, changed or datetime.date.today().isoformat()))
+    urls.sort(key=lambda u: (u[0] != "/", u[0]))
+    rows = "".join(f"  <url><loc>https://midnightoil.app{p}</loc><lastmod>{d}</lastmod></url>\n" for p, d in urls)
+    with open(os.path.join(ROOT, "sitemap.xml"), "w") as f:
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n'
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + rows + "</urlset>\n")
+    return len(urls)
+
+
 if __name__ == "__main__":
     for p in PAGES:
         render_page(p)
@@ -356,4 +400,7 @@ if __name__ == "__main__":
         render_doc(d, d["eyebrow"])
     for d in LEGAL:
         render_doc(d)
+    render_404()
+    pages = render_sitemap()
+    print(f"sitemap: {pages} pages")
     print(f"rendered {len(PAGES)} pages + hub + homepage footer + teams + {len(DOCS)} docs + {len(LEGAL)} legal")
