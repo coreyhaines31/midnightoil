@@ -349,6 +349,23 @@ def render_doc(d, eyebrow=None):
     write(d["path"], body)
 
 
+def render_404():
+    page = head("Page not found · Midnight Oil", "This page doesn't exist.", "/404").replace(
+        "<head>\n", '<head>\n  <meta name="robots" content="noindex">\n', 1)
+    write("/404", page + nav() + f'''  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">404</div>
+      <h1>This page is asleep for good.</h1>
+      <p class="lede">The page you asked for doesn't exist. Midnight Oil itself is right here, and it's free.</p>
+      <div class="actions">
+        {CTAS}
+      </div>
+      <p class="lede" style="font-size:17px"><a href="/">Home</a> · <a href="/alternatives">Alternatives</a> · <a href="/teams">Teams</a></p>
+    </div>
+  </main>
+''' + footer() + "</body>\n</html>\n")
+
+
 def render_sitemap():
     """Lists every page, with lastmod from the last commit that touched it."""
     root = os.path.normpath(ROOT)
@@ -383,6 +400,7 @@ if __name__ == "__main__":
         render_doc(d, d["eyebrow"])
     for d in LEGAL:
         render_doc(d)
+    render_404()
     pages = render_sitemap()
     print(f"sitemap: {pages} pages")
     print(f"rendered {len(PAGES)} pages + hub + homepage footer + teams + {len(DOCS)} docs + {len(LEGAL)} legal")
