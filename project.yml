@@ -46,6 +46,12 @@ targets:
         copy:
           destination: executables
         codeSignOnCopy: true
+    entitlements:
+      path: MidnightOil/MidnightOil.entitlements
+      properties:
+        # The hardened runtime blocks Location Services without this, and macOS only
+        # reveals the Wi-Fi network name to apps with Location access.
+        com.apple.security.personal-information.location: true
     info:
       path: MidnightOil/Info.plist
       properties:
