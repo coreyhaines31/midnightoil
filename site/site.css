@@ -81,7 +81,8 @@
     .badge b { color: var(--text); font-weight: 600; }
     .badge .dot { width: 8px; height: 8px; border-radius: 50%; background: #30d158; box-shadow: 0 0 0 3px rgba(48,209,88,0.18); }
     /* A soft field of color behind the top of the page, for the glass to blur. */
-    .aurora { position: absolute; left: 0; right: 0; top: 0; height: 1000px; overflow: hidden; z-index: -1; pointer-events: none;
+    body { position: relative; }
+    .aurora { position: absolute; left: 0; right: 0; top: 0; height: min(1000px, 100%); overflow: hidden; z-index: -1; pointer-events: none;
       -webkit-mask: linear-gradient(#000 50%, transparent); mask: linear-gradient(#000 50%, transparent); }
     .aurora i { position: absolute; border-radius: 50%; filter: blur(50px); opacity: 0.8; animation: drift 24s ease-in-out infinite alternate; }
     .aurora i:nth-child(1) { width: 620px; height: 620px; left: -6%; top: -80px; background: radial-gradient(circle, #ffa55c, transparent 66%); }
