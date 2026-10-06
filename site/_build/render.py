@@ -106,7 +106,7 @@ def nav():
 def footer_alternatives():
     """Every alternative page, linked from every footer for internal linking."""
     links = "".join(f'<a href="/alternatives/{p["slug"]}">{esc(p["competitor"])} alternative</a>' for p in PAGES)
-    return f'      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives/">Alternatives</a>{links}</nav>\n'
+    return f'      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives">Alternatives</a>{links}</nav>\n'
 
 
 def footer():
@@ -226,7 +226,7 @@ def render_page(p):
 
 
 def render_hub():
-    path = "/alternatives/"
+    path = "/alternatives"
     cards = "".join(f'          <a href="/alternatives/{q["slug"]}"><b>{esc(q["card_title"])}</b><span>{esc(q["card_blurb"])}</span></a>\n' for q in PAGES)
     body = f'''{head(HUB["title"], HUB["description"], path)}{nav()}  <main>
     <div class="wrap sub-hero">
