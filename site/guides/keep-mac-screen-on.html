@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mac keep-awake apps compared: Amphetamine, Caffeine, more</title>
-  <meta name="description" content="Honest comparisons of every way to keep a Mac awake, and where Midnight Oil fits: free, built for overnight AI-agent runs and closed-lid work.">
-  <link rel="canonical" href="https://midnightoil.app/alternatives">
-  <meta property="og:title" content="Mac keep-awake apps compared: Amphetamine, Caffeine, more">
-  <meta property="og:description" content="Honest comparisons of every way to keep a Mac awake, and where Midnight Oil fits: free, built for overnight AI-agent runs and closed-lid work.">
+  <title>How to keep your Mac screen on, and when not to</title>
+  <meta name="description" content="Keep a Mac or MacBook display from turning off with Lock Screen settings, caffeinate -d, or an app, and why an overnight job is better off with the screen dark.">
+  <link rel="canonical" href="https://midnightoil.app/guides/keep-mac-screen-on">
+  <meta property="og:title" content="How to keep your Mac screen on, and when not to">
+  <meta property="og:description" content="Keep a Mac or MacBook display from turning off with Lock Screen settings, caffeinate -d, or an app, and why an overnight job is better off with the screen dark.">
   <meta property="og:image" content="https://midnightoil.app/images/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:url" content="https://midnightoil.app/alternatives">
+  <meta property="og:url" content="https://midnightoil.app/guides/keep-mac-screen-on">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/images/icon-192.png">
   <link rel="apple-touch-icon" href="/images/icon-512.png">
@@ -84,39 +84,73 @@
   </div>
   <main>
     <div class="wrap sub-hero">
-      <div class="eyebrow">Alternatives</div>
-      <h1>Every way to keep a Mac awake,<br>compared honestly.</h1>
-      <p class="lede">Five ways people do this, what each does well, and where it stops. Sometimes the other tool is the right one; we say so.</p>
+      <div class="eyebrow">Guide · Updated 2026-10</div>
+      <h1>How to keep your Mac screen on</h1>
+      <p class="lede">Keeping the screen on and keeping the Mac awake are two different settings. Here's how to do the first, and why you often want only the second.</p>
+      <div class="tldr"><h2>The short answer</h2><p><strong>Always:</strong> System Settings › Lock Screen › set <em>Turn display off on power adapter when inactive</em> (and on battery, on a MacBook) to Never, and <em>Start Screen Saver when inactive</em> to Never. <strong>Just for now:</strong> run <code>caffeinate -d</code> in Terminal. <strong>For an overnight job:</strong> let the screen sleep and keep only the Mac awake.</p></div>
     </div>
-    <section class="tight">
-      <div class="wrap">
-        <div class="glance"><table class="compare">
-          <thead><tr><th>You want…</th><th class="us">Use</th></tr></thead>
-          <tbody><tr><td>One click, lid open, nothing else</td><td class="">Caffeine or KeepingYouAwake</td></tr><tr><td>A command in a script or CI job</td><td class="">caffeinate</td></tr><tr><td>Slack or Teams to show you as active</td><td class="">A mouse jiggler (and maybe a rethink)</td></tr><tr><td>Fifteen kinds of triggers and AppleScript, on an old macOS</td><td class="">Amphetamine, as long as it still runs</td></tr><tr><td>Awake 9 to 5 on weekdays, only while plugged in</td><td class="us y">Midnight Oil</td></tr><tr><td>An overnight agent run, the lid closed, sleep restored when it&#x27;s done</td><td class="us y">Midnight Oil</td></tr></tbody>
-        </table></div>
-        <div class="related">
-          <a href="/alternatives/amphetamine"><b>Amphetamine</b><span>Last update 2023. Closed-lid mode takes a script, a sudoers file, and a Terminal command.</span></a>
-          <a href="/alternatives/caffeine"><b>Caffeine</b><span>The 2006 original. One click, and that&#x27;s the whole app: no timers, triggers, or lid mode.</span></a>
-          <a href="/alternatives/caffeinate"><b>caffeinate command</b><span>Built in and free. Stops at a closed lid, and dies with the terminal.</span></a>
-          <a href="/alternatives/keepingyouawake"><b>KeepingYouAwake</b><span>Maintained, minimal, open source. Refuses closed-lid mode on principle.</span></a>
-          <a href="/alternatives/mouse-jiggler"><b>Mouse jigglers</b><span>Fake input to look busy. Detectable, and no help once the lid closes.</span></a>
-        </div>
-      </div>
-    </section>
-    <section class="tight gray">
+    <section class="tight" id="settings">
       <div class="wrap"><div class="prose">
 
-        <h2>How we compare</h2>
-        <p>Every page here was researched from the competitor's own App Store listing, GitHub repository, release history, and user reviews as of September 2026, and each states plainly what the other tool does better. If you spot something out of date, <a href="https://github.com/coreyhaines31/midnightoil/issues">open an issue</a> and we'll fix it.</p>
-        <p>The short version of the category: <strong>Amphetamine</strong> has the most features and hasn't shipped since 2023. <strong>KeepingYouAwake</strong> is maintained and minimal, and won't keep a closed lid awake on principle. <strong>Caffeine</strong> is the 2006 original, a cup you click. <strong>caffeinate</strong> is built in and lives in the terminal. <strong>Mouse jigglers</strong> solve a different problem than most people think. Midnight Oil is free, with its source on GitHub like the best of them, and built for the way Macs get kept awake now: overnight, unattended, sometimes closed.</p>
-    
+        <h2>Keep the screen on in System Settings</h2>
+        <ol class="steps">
+          <li><b>Open System Settings › Lock Screen.</b></li>
+          <li><b>Set “Turn display off on power adapter when inactive” to Never.</b> On a MacBook, set the battery option too if you want the screen on when unplugged.</li>
+          <li><b>Set “Start Screen Saver when inactive” to Never</b>, or the screen saver takes over instead.</li>
+        </ol>
+        <p>This stays in place until you change it back, for everything you do.</p>
+            
       </div></div>
+    </section>
+    <section class="tight gray" id="temporary">
+      <div class="wrap"><div class="prose">
+
+        <h2>Keep it on just for now</h2>
+        <p>For a presentation, a recipe, a dashboard on a wall, or watching a long job, use something you can switch off afterwards:</p>
+        <pre><code>caffeinate -d            # display on until Ctrl-C
+caffeinate -d -t 3600    # for an hour</code></pre>
+        <p>Or from the menu bar: start a <a href="/">Midnight Oil</a> session with <strong>Allow display sleep</strong> turned off. The screen stays on for that session only, then your normal timeout comes back.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight" id="when-not">
+      <div class="wrap"><div class="prose">
+
+        <h2>When to let the screen sleep</h2>
+        <p>Most people searching for this actually need the <em>Mac</em> awake, not the screen. A download, a render, an AI agent working overnight: none of them need the display on. Letting it turn off saves power, keeps a laptop cooler, and avoids lighting up a room all night.</p>
+        <p>The settings for that are different: keep the Lock Screen timeout short and stop the Mac itself from sleeping. That's covered in <a href="/guides/stop-mac-from-sleeping">how to stop your Mac from sleeping</a>. In Midnight Oil, it's one checkbox: <strong>Allow display sleep</strong> on, and the screen goes dark while the session keeps the Mac working.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight" id="faq">
+      <div class="wrap"><div class="prose">
+        <h2>Questions</h2>
+        <h3>How do I stop my Mac screen from turning off?</h3>
+        <p>Open System Settings › Lock Screen. Set Turn display off on power adapter when inactive to Never, and on a MacBook do the same for the battery setting. Set Start Screen Saver when inactive to Never so the screen saver doesn&#x27;t take over instead.</p>
+        <h3>How do I keep my MacBook screen on without changing settings?</h3>
+        <p>Run caffeinate -d in Terminal. The display stays on until you press Ctrl-C. A keep-awake app does the same from the menu bar: in Midnight Oil, start a session with Allow display sleep turned off.</p>
+        <h3>Does keeping the screen on keep the Mac awake?</h3>
+        <p>Yes. While the display is on, the Mac doesn&#x27;t idle-sleep. The reverse isn&#x27;t true: the Mac can stay awake with the screen off, which is the better setup for long jobs.</p>
+        <h3>Why does my Mac screen keep turning off?</h3>
+        <p>The Lock Screen timeout is probably short, or the screen saver starts and then the display turns off. On battery, MacBooks also use their own, usually shorter, timeout.</p>
+      </div></div>
+    </section>
+    <section class="tight gray">
+      <div class="wrap">
+        <div class="section-head"><h2>More guides</h2></div>
+        <div class="related">
+          <a href="/guides/stop-mac-from-sleeping"><b>Stop your Mac from sleeping</b><span>System Settings, caffeinate, pmset, or an app: which to use when.</span></a>
+          <a href="/guides/clamshell-mode"><b>Clamshell mode</b><span>Use a MacBook closed, with a monitor or without one.</span></a>
+          <a href="/guides/mac-sleep-settings"><b>Mac sleep settings</b><span>Where every sleep setting lives now, and what each one does.</span></a>
+          <a href="/guides/run-ai-agents-overnight"><b>Run AI agents overnight</b><span>Keep Claude Code, Codex, and Cursor working while you sleep.</span></a>
+        </div>
+      </div>
     </section>
     <section class="cta">
       <div class="wrap">
         <div class="cta-card">
           <img src="/images/icon-192.png" alt="" width="96" height="96">
-          <h2>Give your agents the night shift.</h2>
+          <h2>Screen off, Mac still working.</h2>
           <p>Free. No account, no subscription.</p>
           <div class="actions">
             <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Download free</a>
@@ -135,5 +169,7 @@
       <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
     </div>
   </footer>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How to keep your Mac screen on", "description": "Keep a Mac or MacBook display from turning off with Lock Screen settings, caffeinate -d, or an app, and why an overnight job is better off with the screen dark.", "url": "https://midnightoil.app/guides/keep-mac-screen-on", "dateModified": "2026-10-06", "image": "https://midnightoil.app/images/og.png", "author": {"@type": "Person", "name": "Corey Haines", "url": "https://corey.co"}, "publisher": {"@type": "Organization", "name": "Midnight Oil", "url": "https://midnightoil.app/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I stop my Mac screen from turning off?", "acceptedAnswer": {"@type": "Answer", "text": "Open System Settings \u203a Lock Screen. Set Turn display off on power adapter when inactive to Never, and on a MacBook do the same for the battery setting. Set Start Screen Saver when inactive to Never so the screen saver doesn't take over instead."}}, {"@type": "Question", "name": "How do I keep my MacBook screen on without changing settings?", "acceptedAnswer": {"@type": "Answer", "text": "Run caffeinate -d in Terminal. The display stays on until you press Ctrl-C. A keep-awake app does the same from the menu bar: in Midnight Oil, start a session with Allow display sleep turned off."}}, {"@type": "Question", "name": "Does keeping the screen on keep the Mac awake?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. While the display is on, the Mac doesn't idle-sleep. The reverse isn't true: the Mac can stay awake with the screen off, which is the better setup for long jobs."}}, {"@type": "Question", "name": "Why does my Mac screen keep turning off?", "acceptedAnswer": {"@type": "Answer", "text": "The Lock Screen timeout is probably short, or the screen saver starts and then the display turns off. On battery, MacBooks also use their own, usually shorter, timeout."}}]}</script>
 </body>
 </html>
