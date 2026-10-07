@@ -113,4 +113,70 @@ sudo pmset -a disablesleep 0      # undo that</code></pre>
             """},
         ],
     },
+    # ------------------------------------------------------------------ Clamshell mode
+    {
+        "slug": "clamshell-mode",
+        "title": "MacBook clamshell mode, with or without a monitor",
+        "description": "How to use a MacBook with the lid closed: what Apple's clamshell mode needs, how to set it up, and how to keep a closed MacBook running with no monitor.",
+        "eyebrow": "Guide",
+        "h1": "MacBook clamshell mode, with or without a monitor",
+        "lede": "Clamshell mode is Apple's name for using a MacBook with the lid closed. Apple supports it with a monitor attached. Running closed with no monitor, for an overnight job or a laptop in a bag, takes one more step.",
+        "tldr": "<strong>With a monitor:</strong> plug in power, an external display, and a keyboard and mouse or trackpad, then close the lid. The MacBook keeps running on the external display. <strong>Without a monitor:</strong> macOS sleeps the moment the lid closes. To keep it running, either disable sleep with <code>sudo pmset -a disablesleep 1</code> (and undo it later), or use an app with a closed-lid mode that restores sleep for you.",
+        "card_title": "Clamshell mode",
+        "card_blurb": "Use a MacBook closed, with a monitor or without one.",
+        "cta": "Close the lid. Keep working.",
+        "faqs": [
+            ("What is clamshell mode on a MacBook?", "Clamshell mode, also called closed-display mode, is using a MacBook with its lid closed while it drives an external display. Apple supports it when the Mac is connected to power, an external display, and an external keyboard and mouse or trackpad."),
+            ("Can I use clamshell mode without an external monitor?", "Not with Apple's settings alone: without a display attached, closing the lid puts the Mac to sleep. You can keep it running with sudo pmset -a disablesleep 1, or with an app like Midnight Oil whose closed-lid mode keeps the Mac awake for a session and restores normal sleep afterwards."),
+            ("Does clamshell mode work on battery?", "Apple's clamshell mode expects the power adapter. With sleep disabled or Midnight Oil's closed-lid mode, a closed MacBook can keep running on battery, but plan for the drain: Midnight Oil can end the session below a battery level you choose, and sounds an alarm if the lid closes on battery."),
+            ("Is it bad to run a MacBook with the lid closed?", "No, Apple supports it. Heat is the thing to watch. On a desk with the vents clear it's fine. In a bag or sleeve under heavy load, airflow is limited, so keep long, heavy jobs to an open space or a lighter workload."),
+            ("Why does my external display go black when I close the lid?", "Usually the Mac isn't on power, or no external keyboard or mouse is connected, so it sleeps instead of switching to clamshell mode. Connect power, press a key on the external keyboard to wake it, and reconnect the display if it stays dark."),
+        ],
+        "sections": [
+            {"id": "what", "html": """
+        <h2>What clamshell mode is</h2>
+        <p>When you close a MacBook's lid, macOS treats it as a request to sleep. Clamshell mode is the exception Apple builds in: if the Mac has power, an external display, and an external keyboard and pointer, closing the lid moves everything to the external display and the Mac keeps running.</p>
+        <p>It's how many people use a MacBook at a desk: one big monitor, the laptop closed off to the side. Some models depend on it. A MacBook Air with M3, for example, can only drive a second external display with its lid closed.</p>
+            """},
+            {"id": "setup", "gray": True, "html": """
+        <h2>Set up clamshell mode with a monitor</h2>
+        <ol class="steps">
+          <li><b>Connect power.</b> Use the MacBook's power adapter, or a dock or monitor that charges over USB-C or Thunderbolt.</li>
+          <li><b>Connect a keyboard and a mouse or trackpad.</b> Wired, or Bluetooth paired while the lid is still open.</li>
+          <li><b>Connect the external display</b> and wait for the desktop to appear on it.</li>
+          <li><b>Close the lid.</b> The built-in screen turns off and the external display becomes the only one.</li>
+        </ol>
+        <p>To leave clamshell mode, open the lid. To set which display is the main one, use System Settings › Displays.</p>
+            """},
+            {"id": "without", "html": """
+        <h2>Running closed without a monitor</h2>
+        <p>This is the case Apple doesn't cover, and the one most people searching for clamshell mode actually want: start a long job, close the laptop, and leave. An AI agent working through the night. A large download or upload. A build or a render on the train.</p>
+        <p>With no display attached, closing the lid always sleeps the Mac. A keep-awake setting or <code>caffeinate</code> doesn't help, because they prevent <em>idle</em> sleep, and closing the lid is an explicit request. There are two ways around it.</p>
+        <h3>Option 1: pmset</h3>
+        <pre><code>sudo pmset -a disablesleep 1   # stop all sleep, lid included
+sudo pmset -a disablesleep 0   # put it back</code></pre>
+        <p>It works, but it applies to the whole Mac and stays on until you turn it off. Forget, and the MacBook never sleeps again: in a bag, on battery, until it runs flat or gets hot.</p>
+        <h3>Option 2: a closed-lid mode that undoes itself</h3>
+        <p><a href="/">Midnight Oil</a> has a <strong>Stay awake with lid closed</strong> checkbox. It uses the same <code>pmset</code> setting through a small helper you approve once in System Settings, and turns sleep back on automatically when the session ends, when the app quits, and even if the app crashes. On battery, an alarm sounds when the lid closes, and you can end sessions below a battery level you choose.</p>
+            """},
+            {"id": "heat", "gray": True, "html": """
+        <h2>Heat and battery</h2>
+        <ul>
+          <li><strong>On a desk:</strong> closed is fine. Apple supports it, and Apple silicon MacBooks run cool under most loads.</li>
+          <li><strong>In a bag:</strong> airflow is limited. Fine for a download or a light agent run; avoid hours of heavy compiling or rendering.</li>
+          <li><strong>MacBook Air:</strong> it has no fan, so it slows itself down when warm instead of getting louder. A long job will take longer closed in a bag.</li>
+          <li><strong>On battery:</strong> set a floor so the Mac stops working before the battery empties.</li>
+        </ul>
+            """},
+            {"id": "trouble", "html": """
+        <h2>Troubleshooting</h2>
+        <h3>The external display goes black when I close the lid</h3>
+        <p>Check that the Mac is on power and that an external keyboard or mouse is connected. Press a key to wake it. If it stays dark, unplug and reconnect the display.</p>
+        <h3>The Mac sleeps when I close the lid, even with a monitor</h3>
+        <p>Same checks: power first, then an external keyboard or pointer. Without both, macOS sleeps instead of entering clamshell mode.</p>
+        <h3>I used pmset and now the Mac never sleeps</h3>
+        <p>Run <code>sudo pmset -a disablesleep 0</code>. Check with <code>pmset -g</code>: <code>SleepDisabled</code> should be <code>0</code>.</p>
+            """},
+        ],
+    },
 ]

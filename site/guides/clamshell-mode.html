@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MacBook clamshell mode, with or without a monitor</title>
+  <meta name="description" content="How to use a MacBook with the lid closed: what Apple&#x27;s clamshell mode needs, how to set it up, and how to keep a closed MacBook running with no monitor.">
+  <link rel="canonical" href="https://midnightoil.app/guides/clamshell-mode">
+  <meta property="og:title" content="MacBook clamshell mode, with or without a monitor">
+  <meta property="og:description" content="How to use a MacBook with the lid closed: what Apple&#x27;s clamshell mode needs, how to set it up, and how to keep a closed MacBook running with no monitor.">
+  <meta property="og:image" content="https://midnightoil.app/images/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://midnightoil.app/guides/clamshell-mode">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/images/icon-192.png">
+  <link rel="apple-touch-icon" href="/images/icon-512.png">
+  <link rel="stylesheet" href="/site.css">
+  <style>
+    .sub-hero { padding: 72px 22px 40px; }
+    .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
+    .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
+    .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
+    .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
+    .sub-hero .actions { display: flex; align-items: center; gap: 14px; margin-top: 28px; flex-wrap: wrap; }
+    .tldr { background: var(--glass); border-radius: 28px; padding: 26px 28px; margin: 44px 0 0; max-width: 900px; position: relative; box-shadow: var(--glass-shadow); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+    .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
+    .prose { max-width: 760px; }
+    .prose h2 { font-size: clamp(28px, 3.6vw, 40px); margin: 0 0 16px; }
+    .prose h3 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 8px; }
+    .prose p, .prose li { color: var(--muted); font-size: 17px; line-height: 1.6; }
+    .prose p strong { color: var(--text); font-weight: 600; }
+    .prose ul { padding-left: 20px; margin: 0 0 8px; }
+    .prose li { margin-bottom: 6px; }
+    .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
+    .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    .prose blockquote { margin: 18px 0; padding: 14px 20px; border-left: 3px solid var(--gold); background: var(--gray); border-radius: 0 12px 12px 0; }
+    .prose blockquote p { margin: 0; font-size: 16px; }
+    .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
+    .prose blockquote cite a { color: var(--faint); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+    .two > div { background: var(--glass); border-radius: 22px; padding: 22px; box-shadow: var(--glass-shadow); }
+    .two h3 { margin: 0 0 10px; font-size: 18px; }
+    .two ul { margin: 0; padding-left: 18px; }
+    .two li { font-size: 15px; margin-bottom: 6px; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
+    .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
+    .glance { max-width: 760px; margin: 0 0 44px; }
+    .glance .compare td:first-child { font-weight: 500; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+    .related a { display: block; background: var(--glass); border-radius: 22px; padding: 18px 20px; text-decoration: none; box-shadow: var(--glass-shadow); transition: transform .2s ease, background .2s ease; }
+    .related a:hover { background: var(--glass-strong); transform: translateY(-2px); }
+    .related b { display: block; margin-bottom: 4px; }
+    .related span { color: var(--muted); font-size: 14px; }
+    section.tight { padding: 64px 0; }
+    .tldr::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; background: var(--rim);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+    @media (max-width: 720px) {
+      .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; }
+      .sub-hero .actions:has(.glass) { flex-direction: column; align-items: stretch; max-width: 340px; }
+      .sub-hero .actions .pill { justify-content: center; }
+    }
+  </style>
+  <script async src="https://tracerkit.com/t.js" data-key="tk__vMOLefQSrM_pLCt"></script>
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="nav">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/images/icon-192.png" alt=""> Midnight Oil</a>
+      <nav>
+        <a href="/#features">Features</a>
+        <a href="/teams">Teams</a>
+        <a href="/#faq">FAQ</a>
+        <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
+        <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
+      </nav>
+    </div>
+  </div>
+  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">Guide · Updated 2026-10</div>
+      <h1>MacBook clamshell mode, with or without a monitor</h1>
+      <p class="lede">Clamshell mode is Apple's name for using a MacBook with the lid closed. Apple supports it with a monitor attached. Running closed with no monitor, for an overnight job or a laptop in a bag, takes one more step.</p>
+      <div class="tldr"><h2>The short answer</h2><p><strong>With a monitor:</strong> plug in power, an external display, and a keyboard and mouse or trackpad, then close the lid. The MacBook keeps running on the external display. <strong>Without a monitor:</strong> macOS sleeps the moment the lid closes. To keep it running, either disable sleep with <code>sudo pmset -a disablesleep 1</code> (and undo it later), or use an app with a closed-lid mode that restores sleep for you.</p></div>
+    </div>
+    <section class="tight" id="what">
+      <div class="wrap"><div class="prose">
+
+        <h2>What clamshell mode is</h2>
+        <p>When you close a MacBook's lid, macOS treats it as a request to sleep. Clamshell mode is the exception Apple builds in: if the Mac has power, an external display, and an external keyboard and pointer, closing the lid moves everything to the external display and the Mac keeps running.</p>
+        <p>It's how many people use a MacBook at a desk: one big monitor, the laptop closed off to the side. Some models depend on it. A MacBook Air with M3, for example, can only drive a second external display with its lid closed.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight gray" id="setup">
+      <div class="wrap"><div class="prose">
+
+        <h2>Set up clamshell mode with a monitor</h2>
+        <ol class="steps">
+          <li><b>Connect power.</b> Use the MacBook's power adapter, or a dock or monitor that charges over USB-C or Thunderbolt.</li>
+          <li><b>Connect a keyboard and a mouse or trackpad.</b> Wired, or Bluetooth paired while the lid is still open.</li>
+          <li><b>Connect the external display</b> and wait for the desktop to appear on it.</li>
+          <li><b>Close the lid.</b> The built-in screen turns off and the external display becomes the only one.</li>
+        </ol>
+        <p>To leave clamshell mode, open the lid. To set which display is the main one, use System Settings › Displays.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight" id="without">
+      <div class="wrap"><div class="prose">
+
+        <h2>Running closed without a monitor</h2>
+        <p>This is the case Apple doesn't cover, and the one most people searching for clamshell mode actually want: start a long job, close the laptop, and leave. An AI agent working through the night. A large download or upload. A build or a render on the train.</p>
+        <p>With no display attached, closing the lid always sleeps the Mac. A keep-awake setting or <code>caffeinate</code> doesn't help, because they prevent <em>idle</em> sleep, and closing the lid is an explicit request. There are two ways around it.</p>
+        <h3>Option 1: pmset</h3>
+        <pre><code>sudo pmset -a disablesleep 1   # stop all sleep, lid included
+sudo pmset -a disablesleep 0   # put it back</code></pre>
+        <p>It works, but it applies to the whole Mac and stays on until you turn it off. Forget, and the MacBook never sleeps again: in a bag, on battery, until it runs flat or gets hot.</p>
+        <h3>Option 2: a closed-lid mode that undoes itself</h3>
+        <p><a href="/">Midnight Oil</a> has a <strong>Stay awake with lid closed</strong> checkbox. It uses the same <code>pmset</code> setting through a small helper you approve once in System Settings, and turns sleep back on automatically when the session ends, when the app quits, and even if the app crashes. On battery, an alarm sounds when the lid closes, and you can end sessions below a battery level you choose.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight gray" id="heat">
+      <div class="wrap"><div class="prose">
+
+        <h2>Heat and battery</h2>
+        <ul>
+          <li><strong>On a desk:</strong> closed is fine. Apple supports it, and Apple silicon MacBooks run cool under most loads.</li>
+          <li><strong>In a bag:</strong> airflow is limited. Fine for a download or a light agent run; avoid hours of heavy compiling or rendering.</li>
+          <li><strong>MacBook Air:</strong> it has no fan, so it slows itself down when warm instead of getting louder. A long job will take longer closed in a bag.</li>
+          <li><strong>On battery:</strong> set a floor so the Mac stops working before the battery empties.</li>
+        </ul>
+            
+      </div></div>
+    </section>
+    <section class="tight" id="trouble">
+      <div class="wrap"><div class="prose">
+
+        <h2>Troubleshooting</h2>
+        <h3>The external display goes black when I close the lid</h3>
+        <p>Check that the Mac is on power and that an external keyboard or mouse is connected. Press a key to wake it. If it stays dark, unplug and reconnect the display.</p>
+        <h3>The Mac sleeps when I close the lid, even with a monitor</h3>
+        <p>Same checks: power first, then an external keyboard or pointer. Without both, macOS sleeps instead of entering clamshell mode.</p>
+        <h3>I used pmset and now the Mac never sleeps</h3>
+        <p>Run <code>sudo pmset -a disablesleep 0</code>. Check with <code>pmset -g</code>: <code>SleepDisabled</code> should be <code>0</code>.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight" id="faq">
+      <div class="wrap"><div class="prose">
+        <h2>Questions</h2>
+        <h3>What is clamshell mode on a MacBook?</h3>
+        <p>Clamshell mode, also called closed-display mode, is using a MacBook with its lid closed while it drives an external display. Apple supports it when the Mac is connected to power, an external display, and an external keyboard and mouse or trackpad.</p>
+        <h3>Can I use clamshell mode without an external monitor?</h3>
+        <p>Not with Apple&#x27;s settings alone: without a display attached, closing the lid puts the Mac to sleep. You can keep it running with sudo pmset -a disablesleep 1, or with an app like Midnight Oil whose closed-lid mode keeps the Mac awake for a session and restores normal sleep afterwards.</p>
+        <h3>Does clamshell mode work on battery?</h3>
+        <p>Apple&#x27;s clamshell mode expects the power adapter. With sleep disabled or Midnight Oil&#x27;s closed-lid mode, a closed MacBook can keep running on battery, but plan for the drain: Midnight Oil can end the session below a battery level you choose, and sounds an alarm if the lid closes on battery.</p>
+        <h3>Is it bad to run a MacBook with the lid closed?</h3>
+        <p>No, Apple supports it. Heat is the thing to watch. On a desk with the vents clear it&#x27;s fine. In a bag or sleeve under heavy load, airflow is limited, so keep long, heavy jobs to an open space or a lighter workload.</p>
+        <h3>Why does my external display go black when I close the lid?</h3>
+        <p>Usually the Mac isn&#x27;t on power, or no external keyboard or mouse is connected, so it sleeps instead of switching to clamshell mode. Connect power, press a key on the external keyboard to wake it, and reconnect the display if it stays dark.</p>
+      </div></div>
+    </section>
+    <section class="tight gray">
+      <div class="wrap">
+        <div class="section-head"><h2>More guides</h2></div>
+        <div class="related">
+          <a href="/guides/stop-mac-from-sleeping"><b>Stop your Mac from sleeping</b><span>System Settings, caffeinate, pmset, or an app: which to use when.</span></a>
+        </div>
+      </div>
+    </section>
+    <section class="cta">
+      <div class="wrap">
+        <div class="cta-card">
+          <img src="/images/icon-192.png" alt="" width="96" height="96">
+          <h2>Close the lid. Keep working.</h2>
+          <p>Free. No account, no subscription.</p>
+          <div class="actions">
+            <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Download free</a>
+        <a class="pill big glass" href="https://github.com/coreyhaines31/midnightoil"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>View source code</a>
+          </div>
+          <p class="fineprint">macOS 14 or later · Apple Silicon and Intel · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives">Alternatives</a><a href="/alternatives/amphetamine">Amphetamine alternative</a><a href="/alternatives/caffeine">Caffeine alternative</a><a href="/alternatives/caffeinate">caffeinate alternative</a><a href="/alternatives/keepingyouawake">KeepingYouAwake alternative</a><a href="/alternatives/mouse-jiggler">Mouse jiggler alternative</a></nav>
+      <span>© 2026 Corey Haines. <a href="https://github.com/coreyhaines31/midnightoil/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
+    </div>
+  </footer>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "MacBook clamshell mode, with or without a monitor", "description": "How to use a MacBook with the lid closed: what Apple's clamshell mode needs, how to set it up, and how to keep a closed MacBook running with no monitor.", "url": "https://midnightoil.app/guides/clamshell-mode", "dateModified": "2026-10-06", "image": "https://midnightoil.app/images/og.png", "author": {"@type": "Person", "name": "Corey Haines", "url": "https://corey.co"}, "publisher": {"@type": "Organization", "name": "Midnight Oil", "url": "https://midnightoil.app/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What is clamshell mode on a MacBook?", "acceptedAnswer": {"@type": "Answer", "text": "Clamshell mode, also called closed-display mode, is using a MacBook with its lid closed while it drives an external display. Apple supports it when the Mac is connected to power, an external display, and an external keyboard and mouse or trackpad."}}, {"@type": "Question", "name": "Can I use clamshell mode without an external monitor?", "acceptedAnswer": {"@type": "Answer", "text": "Not with Apple's settings alone: without a display attached, closing the lid puts the Mac to sleep. You can keep it running with sudo pmset -a disablesleep 1, or with an app like Midnight Oil whose closed-lid mode keeps the Mac awake for a session and restores normal sleep afterwards."}}, {"@type": "Question", "name": "Does clamshell mode work on battery?", "acceptedAnswer": {"@type": "Answer", "text": "Apple's clamshell mode expects the power adapter. With sleep disabled or Midnight Oil's closed-lid mode, a closed MacBook can keep running on battery, but plan for the drain: Midnight Oil can end the session below a battery level you choose, and sounds an alarm if the lid closes on battery."}}, {"@type": "Question", "name": "Is it bad to run a MacBook with the lid closed?", "acceptedAnswer": {"@type": "Answer", "text": "No, Apple supports it. Heat is the thing to watch. On a desk with the vents clear it's fine. In a bag or sleeve under heavy load, airflow is limited, so keep long, heavy jobs to an open space or a lighter workload."}}, {"@type": "Question", "name": "Why does my external display go black when I close the lid?", "acceptedAnswer": {"@type": "Answer", "text": "Usually the Mac isn't on power, or no external keyboard or mouse is connected, so it sleeps instead of switching to clamshell mode. Connect power, press a key on the external keyboard to wake it, and reconnect the display if it stays dark."}}]}</script>
+</body>
+</html>
