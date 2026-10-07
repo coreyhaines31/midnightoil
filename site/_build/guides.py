@@ -297,4 +297,65 @@ caffeinate -d -t 3600    # for an hour</code></pre>
             """},
         ],
     },
+    # ------------------------------------------------------------------ AI agents overnight
+    {
+        "slug": "run-ai-agents-overnight",
+        "title": "Run Claude Code, Codex, or Cursor agents overnight",
+        "description": "Why AI coding agents stop when your Mac sleeps, and a setup checklist for running Claude Code, Codex, or Cursor overnight or with the lid closed.",
+        "eyebrow": "Guide",
+        "h1": "Run Claude Code, Codex, or Cursor agents overnight",
+        "lede": "You start a long task at 11 PM, go to bed, and wake up to a Mac that fell asleep at 11:15 with the agent frozen mid-step. Here's why that happens and how to set things up so the run finishes.",
+        "tldr": "Plug in, keep the Mac awake for the length of the run, let the display sleep, and make sure the agent won't stop to ask for permission. The quickest version: <code>caffeinate -i</code> in a tmux session with the lid open, or a <a href=\"/\">Midnight Oil</a> session <em>while Terminal is running</em> or <em>until 7 AM</em>, with the lid closed if you like.",
+        "card_title": "Run AI agents overnight",
+        "card_blurb": "Keep Claude Code, Codex, and Cursor working while you sleep.",
+        "cta": "Give your agents the night shift.",
+        "faqs": [
+            ("Why does Claude Code stop when my Mac goes to sleep?", "Sleep suspends every process and drops network connections. The agent's connection to its model breaks mid-step, and nothing happens until the Mac wakes. Some tools retry when it does; many don't, and you come back to an error or a half-finished change."),
+            ("How do I keep my Mac awake while Claude Code runs?", "In Terminal, run the agent inside tmux with caffeinate, for example tmux new-session -d -s agent 'caffeinate -i claude'. Or use Midnight Oil: start a session While App Is Running › Terminal, so the Mac stays awake until the terminal quits, or Keep Awake Until 7:00 AM."),
+            ("Can I close my MacBook while an AI agent runs?", "Not by default: closing the lid sleeps the Mac, even with caffeinate running. Use an external display (clamshell mode), sudo pmset -a disablesleep 1 (and undo it after), or Midnight Oil's Stay awake with lid closed, which restores sleep on its own when the session ends."),
+            ("Does an overnight agent run need the screen on?", "No. The display can turn off while the Mac keeps working. It saves power and keeps a laptop cooler, which matters on long runs."),
+            ("Will my agent wait for me to approve things overnight?", "If it's set to ask before running commands or editing files, yes: it pauses at the first prompt and waits until morning. Before you leave, give the agent the permissions the task needs, in a project or branch where that's safe."),
+        ],
+        "sections": [
+            {"id": "why", "html": """
+        <h2>Why agents stop overnight</h2>
+        <p>macOS puts a Mac to sleep after a few idle minutes. An agent working in a terminal doesn't count as activity: there's no keyboard or mouse input, so the idle timer runs out on schedule. When the Mac sleeps, it suspends every process and drops network connections. The agent's request to its model breaks mid-step, an SSH session disconnects, and the run sits frozen until morning.</p>
+        <p>This catches people because the agent was clearly busy. To macOS, busy isn't the same as active.</p>
+            """},
+            {"id": "checklist", "gray": True, "html": """
+        <h2>Before you leave it running</h2>
+        <ol class="steps">
+          <li><b>Plug in.</b> A long run on battery can drain a laptop before morning. If you can't, set a battery floor.</li>
+          <li><b>Keep the Mac awake for the length of the run.</b> Not forever: a setting you forget to undo means a MacBook that never sleeps again. The options are below.</li>
+          <li><b>Let the display sleep.</b> The screen doesn't need to be on for the agent to work.</li>
+          <li><b>Decide about the lid.</b> Open is simplest. Closed needs <a href="/guides/clamshell-mode">clamshell mode or a closed-lid mode</a>.</li>
+          <li><b>Remove the approval prompts the task will hit.</b> An agent that stops to ask at 1 AM waits until you're up. Grant what the task needs before you go, on a branch or in a sandbox where that's safe.</li>
+          <li><b>Give it a clear finish line.</b> “Run the tests after each step and open a pull request when they pass” gives you something to review in the morning.</li>
+        </ol>
+            """},
+            {"id": "terminal", "html": """
+        <h2>The Terminal way: tmux and caffeinate</h2>
+        <pre><code>tmux new-session -d -s agent 'caffeinate -i claude'
+tmux attach -t agent       # check on it later</code></pre>
+        <p><code>caffeinate -i</code> holds off idle sleep for as long as the agent runs, and tmux keeps both alive if you close the Terminal window. Swap <code>claude</code> for <code>codex</code> or whatever starts your agent. It doesn't survive a closed lid, and nothing shows it's still running. More in <a href="/alternatives/caffeinate">the caffeinate guide</a>.</p>
+            """},
+            {"id": "app", "gray": True, "html": """
+        <h2>The menu bar way: Midnight Oil</h2>
+        <p><a href="/">Midnight Oil</a> is free and was built for this:</p>
+        <ul>
+          <li><strong>While App Is Running › Terminal</strong> (or Cursor, iTerm, Ghostty): the Mac stays awake until that app quits.</li>
+          <li><strong>Keep Awake Until › 7:00 AM</strong>: awake through the night, then back to normal.</li>
+          <li><strong>Stay awake with lid closed</strong>: close the laptop. Sleep comes back automatically when the session ends.</li>
+          <li><strong>Allow display sleep</strong>: the screen goes dark, the Mac keeps working.</li>
+          <li><strong>End sessions when the battery is low</strong>, and an alarm if the lid closes on battery.</li>
+          <li><strong>Schedules</strong>: an “Overnight agents” schedule from 11 PM to 7 AM, only while plugged in, so you don't have to remember at all.</li>
+        </ul>
+            """},
+            {"id": "remote", "html": """
+        <h2>Agents on a Mac you don't sit at</h2>
+        <p>If the agent runs on a Mac mini or a desk Mac you reach over SSH or screen sharing, the simplest fix is permanent: System Settings › Energy › <em>Prevent automatic sleeping when the display is off</em>. See <a href="/guides/stop-mac-from-sleeping">how to stop your Mac from sleeping</a>.</p>
+        <p>Running agents across several Macs for a team? <a href="/teams">Midnight Oil for Teams</a> deploys the app and its rules with your MDM, and shows which Macs are awake and working.</p>
+            """},
+        ],
+    },
 ]
