@@ -273,6 +273,27 @@ def render_guide(g):
     write(path, "".join(parts))
 
 
+def render_guides_hub():
+    path = "/guides"
+    cards = "".join(f'          <a href="/guides/{g["slug"]}"><b>{esc(g["card_title"])}</b><span>{esc(g["card_blurb"])}</span></a>\n' for g in GUIDES)
+    write(path, f'''{head("Mac sleep guides: keep a Mac awake, or let it sleep", "How macOS sleep works and how to control it: stop a Mac from sleeping, clamshell mode, sleep settings, keeping the screen on, and running AI agents overnight.", path)}{nav()}  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">Guides</div>
+      <h1>How Mac sleep works, and how to control it</h1>
+      <p class="lede">Straight answers to the questions people ask about keeping a Mac awake, using what macOS already has, and where an app helps.</p>
+    </div>
+    <section class="tight">
+      <div class="wrap">
+        <div class="related">
+{cards}        </div>
+      </div>
+    </section>
+{cta("Keep your Mac awake in one click.")}  </main>
+{footer()}</body>
+</html>
+''')
+
+
 def render_hub():
     path = "/alternatives"
     cards = "".join(f'          <a href="/alternatives/{q["slug"]}"><b>{esc(q["card_title"])}</b><span>{esc(q["card_blurb"])}</span></a>\n' for q in PAGES)
@@ -447,6 +468,7 @@ if __name__ == "__main__":
         render_doc(d)
     for g in GUIDES:
         render_guide(g)
+    render_guides_hub()
     render_404()
     pages = render_sitemap()
     print(f"sitemap: {pages} pages")
