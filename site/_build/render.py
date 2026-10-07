@@ -143,9 +143,11 @@ def head(title, description, path):
   <link rel="canonical" href="https://midnightoil.app{path}">
   <meta property="og:title" content="{esc(title)}">
   <meta property="og:description" content="{esc(description)}">
-  <meta property="og:image" content="https://midnightoil.app/images/icon-512.png">
+  <meta property="og:image" content="https://midnightoil.app/images/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://midnightoil.app{path}">
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/images/icon-192.png">
   <link rel="apple-touch-icon" href="/images/icon-512.png">
   <link rel="stylesheet" href="/site.css">
