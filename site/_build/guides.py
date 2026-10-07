@@ -183,7 +183,7 @@ sudo pmset -a disablesleep 0   # put it back</code></pre>
     {
         "slug": "mac-sleep-settings",
         "title": "Mac sleep settings explained, Ventura to Golden Gate",
-        "description": "Every Mac sleep setting in System Settings and what it does, plus how to schedule sleep and set a sleep timer with pmset and shutdown, which System Settings can't do.",
+        "description": "Every Mac sleep setting in System Settings and what it does, plus how to set a sleep timer and a sleep schedule from Terminal.",
         "eyebrow": "Guide",
         "h1": "Mac sleep settings, explained",
         "lede": "Apple split the old Energy Saver pane across Lock Screen, Battery, and Energy when System Settings arrived in macOS Ventura. Here's where every sleep setting lives now, what each one actually does, and the two things you can only do from Terminal.",
