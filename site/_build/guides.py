@@ -179,4 +179,80 @@ sudo pmset -a disablesleep 0   # put it back</code></pre>
             """},
         ],
     },
+    # ------------------------------------------------------------------ Sleep settings
+    {
+        "slug": "mac-sleep-settings",
+        "title": "Mac sleep settings explained, Ventura to Golden Gate",
+        "description": "Every Mac sleep setting in System Settings and what it does, plus how to schedule sleep and set a sleep timer with pmset and shutdown, which System Settings can't do.",
+        "eyebrow": "Guide",
+        "h1": "Mac sleep settings, explained",
+        "lede": "Apple split the old Energy Saver pane across Lock Screen, Battery, and Energy when System Settings arrived in macOS Ventura. Here's where every sleep setting lives now, what each one actually does, and the two things you can only do from Terminal.",
+        "tldr": "<strong>When the screen turns off:</strong> System Settings › Lock Screen. <strong>Whether the Mac sleeps after that:</strong> Battery › Options on a MacBook, Energy on a desktop. <strong>A sleep timer:</strong> <code>sudo shutdown -s +30</code> sleeps the Mac in 30 minutes. <strong>A sleep and wake schedule:</strong> <code>sudo pmset repeat</code>, since the Schedule button is gone.",
+        "card_title": "Mac sleep settings",
+        "card_blurb": "Where every sleep setting lives now, and what each one does.",
+        "cta": "Sleep on your terms.",
+        "faqs": [
+            ("Where are the sleep settings on a Mac?", "In System Settings. Lock Screen sets when the display turns off. On a MacBook, Battery › Options holds the switch that stops the Mac sleeping on the power adapter; on a desktop Mac, the same switch is in Energy."),
+            ("How do I set a sleep timer on a Mac?", "Open Terminal and run sudo shutdown -s +30 to put the Mac to sleep in 30 minutes. Use any number of minutes, or a clock time such as sudo shutdown -s 2330. Cancel it with sudo killall shutdown."),
+            ("How do I schedule my Mac to sleep and wake?", "Use pmset: sudo pmset repeat sleep MTWRFSU 23:00:00 wakeorpoweron MTWRF 07:30:00 sleeps every night at 11 PM and wakes on weekdays at 7:30. See the schedule with pmset -g sched, and remove it with sudo pmset repeat cancel."),
+            ("What's the difference between display sleep and sleep?", "Display sleep turns off the screen while the Mac keeps running: downloads continue, agents keep working. Sleep suspends the whole Mac, so apps and network connections pause until it wakes."),
+            ("What does Wake for network access do?", "It lets the Mac wake briefly when another device asks for something it shares, such as a file share, a printer, or remote access, then go back to sleep."),
+        ],
+        "sections": [
+            {"id": "map", "html": """
+        <h2>Where each setting lives</h2>
+        <div class="table-scroll"><table class="compare">
+          <thead><tr><th>Setting</th><th>Where</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td>Turn display off on battery when inactive</td><td>Lock Screen</td><td>Screen timeout on battery</td></tr>
+            <tr><td>Turn display off on power adapter when inactive</td><td>Lock Screen</td><td>Screen timeout when plugged in</td></tr>
+            <tr><td>Start Screen Saver when inactive</td><td>Lock Screen</td><td>Shows the screen saver before the display turns off</td></tr>
+            <tr><td>Require password after screen saver begins or display is turned off</td><td>Lock Screen</td><td>How quickly the Mac locks</td></tr>
+            <tr><td>Prevent automatic sleeping on power adapter when the display is off</td><td>Battery › Options (MacBook)</td><td>Keeps a plugged-in MacBook awake after the screen turns off</td></tr>
+            <tr><td>Prevent automatic sleeping when the display is off</td><td>Energy (desktop Macs)</td><td>The same, for Mac mini, iMac, Mac Studio, Mac Pro</td></tr>
+            <tr><td>Put hard disks to sleep when possible</td><td>Battery › Options or Energy</td><td>Spins down idle disks, including external drives</td></tr>
+            <tr><td>Wake for network access</td><td>Battery › Options or Energy</td><td>Wakes the Mac for file sharing and remote access</td></tr>
+            <tr><td>Low Power Mode</td><td>Battery (MacBook)</td><td>Trades speed for battery life</td></tr>
+          </tbody>
+        </table></div>
+            """},
+            {"id": "how", "gray": True, "html": """
+        <h2>How the pieces fit together</h2>
+        <p>macOS sleeps in two stages. First, after the Lock Screen timeout, the <strong>display</strong> turns off. Then, unless something stops it, the <strong>Mac</strong> sleeps too. The prevent-sleep switch in Battery › Options or Energy stops that second stage, but on a MacBook only while it's plugged in.</p>
+        <p>Apps can also hold the Mac awake with a power assertion. That's how a video call, a Time Machine backup, <code>caffeinate</code>, or <a href="/">Midnight Oil</a> keeps it up for as long as they need. To see who's holding it awake right now:</p>
+        <pre><code>pmset -g assertions</code></pre>
+        <p>A closed lid is different. It's an explicit sleep request, and assertions don't override it. See <a href="/guides/clamshell-mode">clamshell mode</a> for the ways around that.</p>
+            """},
+            {"id": "timer", "html": """
+        <h2>A sleep timer</h2>
+        <p>macOS has no sleep-timer setting, but Terminal has one:</p>
+        <pre><code>sudo shutdown -s +30      # sleep in 30 minutes
+sudo shutdown -s 2330     # sleep at 11:30 PM
+sudo killall shutdown     # cancel it
+pmset sleepnow            # sleep right now</code></pre>
+        <p>Despite the name, <code>shutdown -s</code> puts the Mac to sleep rather than shutting it down. You can also sleep it from the Apple menu › Sleep.</p>
+            """},
+            {"id": "schedule", "gray": True, "html": """
+        <h2>A sleep and wake schedule</h2>
+        <p>The old Energy Saver pane had a Schedule button; System Settings doesn't. <code>pmset</code> still does it:</p>
+        <pre><code># Sleep every night at 11 PM, wake weekdays at 7:30 AM
+sudo pmset repeat sleep MTWRFSU 23:00:00 wakeorpoweron MTWRF 07:30:00
+
+pmset -g sched             # show the schedule
+sudo pmset repeat cancel   # remove it</code></pre>
+        <p>Days are written M T W R F S U, where R is Thursday and U is Sunday.</p>
+        <p>The opposite, keeping the Mac <em>awake</em> on a schedule such as weekdays 9 to 5, isn't something macOS offers at all. Midnight Oil's Schedules do it, with conditions like “only while plugged in.”</p>
+            """},
+            {"id": "defaults", "html": """
+        <h2>See every setting at once</h2>
+        <p><code>pmset -g</code> prints the current values, including some System Settings doesn't show. A few worth knowing:</p>
+        <ul>
+          <li><code>displaysleep</code>: minutes before the display turns off.</li>
+          <li><code>sleep</code>: minutes before the Mac sleeps; <code>0</code> means never.</li>
+          <li><code>disksleep</code>: minutes before idle disks spin down.</li>
+          <li><code>SleepDisabled</code>: <code>1</code> if someone ran <code>pmset -a disablesleep 1</code>. If your MacBook never sleeps, check this first.</li>
+        </ul>
+            """},
+        ],
+    },
 ]
