@@ -255,4 +255,46 @@ sudo pmset repeat cancel   # remove it</code></pre>
             """},
         ],
     },
+    # ------------------------------------------------------------------ Screen on
+    {
+        "slug": "keep-mac-screen-on",
+        "title": "How to keep your Mac screen on, and when not to",
+        "description": "Keep a Mac or MacBook display from turning off with Lock Screen settings, caffeinate -d, or an app, and why an overnight job is better off with the screen dark.",
+        "eyebrow": "Guide",
+        "h1": "How to keep your Mac screen on",
+        "lede": "Keeping the screen on and keeping the Mac awake are two different settings. Here's how to do the first, and why you often want only the second.",
+        "tldr": "<strong>Always:</strong> System Settings › Lock Screen › set <em>Turn display off on power adapter when inactive</em> (and on battery, on a MacBook) to Never, and <em>Start Screen Saver when inactive</em> to Never. <strong>Just for now:</strong> run <code>caffeinate -d</code> in Terminal. <strong>For an overnight job:</strong> let the screen sleep and keep only the Mac awake.",
+        "card_title": "Keep your Mac screen on",
+        "card_blurb": "Stop the display turning off, and when to let it.",
+        "cta": "Screen off, Mac still working.",
+        "faqs": [
+            ("How do I stop my Mac screen from turning off?", "Open System Settings › Lock Screen. Set Turn display off on power adapter when inactive to Never, and on a MacBook do the same for the battery setting. Set Start Screen Saver when inactive to Never so the screen saver doesn't take over instead."),
+            ("How do I keep my MacBook screen on without changing settings?", "Run caffeinate -d in Terminal. The display stays on until you press Ctrl-C. A keep-awake app does the same from the menu bar: in Midnight Oil, start a session with Allow display sleep turned off."),
+            ("Does keeping the screen on keep the Mac awake?", "Yes. While the display is on, the Mac doesn't idle-sleep. The reverse isn't true: the Mac can stay awake with the screen off, which is the better setup for long jobs."),
+            ("Why does my Mac screen keep turning off?", "The Lock Screen timeout is probably short, or the screen saver starts and then the display turns off. On battery, MacBooks also use their own, usually shorter, timeout."),
+        ],
+        "sections": [
+            {"id": "settings", "html": """
+        <h2>Keep the screen on in System Settings</h2>
+        <ol class="steps">
+          <li><b>Open System Settings › Lock Screen.</b></li>
+          <li><b>Set “Turn display off on power adapter when inactive” to Never.</b> On a MacBook, set the battery option too if you want the screen on when unplugged.</li>
+          <li><b>Set “Start Screen Saver when inactive” to Never</b>, or the screen saver takes over instead.</li>
+        </ol>
+        <p>This stays in place until you change it back, for everything you do.</p>
+            """},
+            {"id": "temporary", "gray": True, "html": """
+        <h2>Keep it on just for now</h2>
+        <p>For a presentation, a recipe, a dashboard on a wall, or watching a long job, use something you can switch off afterwards:</p>
+        <pre><code>caffeinate -d            # display on until Ctrl-C
+caffeinate -d -t 3600    # for an hour</code></pre>
+        <p>Or from the menu bar: start a <a href="/">Midnight Oil</a> session with <strong>Allow display sleep</strong> turned off. The screen stays on for that session only, then your normal timeout comes back.</p>
+            """},
+            {"id": "when-not", "html": """
+        <h2>When to let the screen sleep</h2>
+        <p>Most people searching for this actually need the <em>Mac</em> awake, not the screen. A download, a render, an AI agent working overnight: none of them need the display on. Letting it turn off saves power, keeps a laptop cooler, and avoids lighting up a room all night.</p>
+        <p>The settings for that are different: keep the Lock Screen timeout short and stop the Mac itself from sleeping. That's covered in <a href="/guides/stop-mac-from-sleeping">how to stop your Mac from sleeping</a>. In Midnight Oil, it's one checkbox: <strong>Allow display sleep</strong> on, and the screen goes dark while the session keeps the Mac working.</p>
+            """},
+        ],
+    },
 ]
