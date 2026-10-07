@@ -12,6 +12,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from pages import PAGES, HUB  # noqa: E402
+from guides import GUIDES, UPDATED  # noqa: E402
 from teams import CHECKOUT, DOCS, LEGAL, SALES_OPEN, TEAMS  # noqa: E402
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
@@ -95,6 +96,7 @@ def nav():
       <a class="brand" href="/"><img src="/images/icon-192.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
+        <a href="/guides">Guides</a>
         <a href="/teams">Teams</a>
         <a href="/#faq">FAQ</a>
         <a href="{REPO}">GitHub</a>
@@ -111,10 +113,16 @@ def footer_alternatives():
     return f'      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives">Alternatives</a>{links}</nav>\n'
 
 
+def footer_guides():
+    """Every guide, linked from every footer like the alternatives."""
+    links = "".join(f'<a href="/guides/{g["slug"]}">{esc(g["card_title"])}</a>' for g in GUIDES)
+    return f'      <nav class="footer-alts" aria-label="Guides"><a class="label" href="/guides">Guides</a>{links}</nav>\n'
+
+
 def footer():
     return f'''  <footer>
     <div class="wrap">
-{footer_alternatives()}      <span>© 2026 Corey Haines. <a href="{REPO}/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+{footer_guides()}{footer_alternatives()}      <span>© 2026 Corey Haines. <a href="{REPO}/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
       <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="{REPO}/issues">Issues</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
     </div>
   </footer>
@@ -129,7 +137,7 @@ def render_homepage_footer():
     start, end = "<!-- alternatives -->\n", "<!-- /alternatives -->"
     i, j = page.index(start) + len(start), page.index(end)
     with open(path, "w") as f:
-        f.write(page[:i] + footer_alternatives() + "      " + page[j:])
+        f.write(page[:i] + footer_guides() + footer_alternatives() + "      " + page[j:])
 
 
 def head(title, description, path):
@@ -143,9 +151,11 @@ def head(title, description, path):
   <link rel="canonical" href="https://midnightoil.app{path}">
   <meta property="og:title" content="{esc(title)}">
   <meta property="og:description" content="{esc(description)}">
-  <meta property="og:image" content="https://midnightoil.app/images/icon-512.png">
+  <meta property="og:image" content="https://midnightoil.app/images/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://midnightoil.app{path}">
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/images/icon-192.png">
   <link rel="apple-touch-icon" href="/images/icon-512.png">
   <link rel="stylesheet" href="/site.css">
@@ -226,6 +236,69 @@ def render_page(p):
     os.makedirs(os.path.join(ROOT, "alternatives"), exist_ok=True)
     with open(os.path.join(ROOT, "alternatives", f"{p['slug']}.html"), "w") as f:
         f.write("".join(parts))
+
+
+def article_schema(g, path):
+    data = {"@context": "https://schema.org", "@type": "TechArticle", "headline": g["h1"],
+            "description": g["description"], "url": f"https://midnightoil.app{path}",
+            "dateModified": UPDATED, "image": "https://midnightoil.app/images/og.png",
+            "author": {"@type": "Person", "name": "Corey Haines", "url": "https://corey.co"},
+            "publisher": {"@type": "Organization", "name": "Midnight Oil", "url": "https://midnightoil.app/"}}
+    return f'<script type="application/ld+json">{json.dumps(data)}</script>'
+
+
+def render_guide(g):
+    path = f"/guides/{g['slug']}"
+    parts = [head(g["title"], g["description"], path), nav(), "  <main>\n"]
+    parts.append(f'''    <div class="wrap sub-hero">
+      <div class="eyebrow">{esc(g["eyebrow"])} · Updated {UPDATED[:7]}</div>
+      <h1>{g["h1"]}</h1>
+      <p class="lede">{g["lede"]}</p>
+      <div class="tldr"><h2>The short answer</h2><p>{g["tldr"]}</p></div>
+    </div>
+''')
+    for sec in g["sections"]:
+        cls = "tight" + (" gray" if sec.get("gray") else "")
+        parts.append(f'    <section class="{cls}" id="{sec["id"]}">\n      <div class="wrap"><div class="prose">\n{sec["html"]}\n      </div></div>\n    </section>\n')
+    faq = "".join(f"        <h3>{esc(q)}</h3>\n        <p>{esc(a)}</p>\n" for q, a in g["faqs"])
+    parts.append(f'    <section class="tight" id="faq">\n      <div class="wrap"><div class="prose">\n        <h2>Questions</h2>\n{faq}      </div></div>\n    </section>\n')
+    others = [o for o in GUIDES if o["slug"] != g["slug"]]
+    rel = "".join(f'          <a href="/guides/{o["slug"]}"><b>{esc(o["card_title"])}</b><span>{esc(o["card_blurb"])}</span></a>\n' for o in others)
+    if rel:
+        parts.append(f'''    <section class="tight gray">
+      <div class="wrap">
+        <div class="section-head"><h2>More guides</h2></div>
+        <div class="related">
+{rel}        </div>
+      </div>
+    </section>
+''')
+    parts.append(cta(g["cta"]))
+    parts.append("  </main>\n")
+    parts.append(footer())
+    parts.append(article_schema(g, path) + "\n" + faq_schema(g["faqs"]) + "\n</body>\n</html>\n")
+    write(path, "".join(parts))
+
+
+def render_guides_hub():
+    path = "/guides"
+    cards = "".join(f'          <a href="/guides/{g["slug"]}"><b>{esc(g["card_title"])}</b><span>{esc(g["card_blurb"])}</span></a>\n' for g in GUIDES)
+    write(path, f'''{head("Mac sleep guides: keep a Mac awake, or let it sleep", "How macOS sleep works and how to control it: stop a Mac from sleeping, clamshell mode, sleep settings, keeping the screen on, and running AI agents overnight.", path)}{nav()}  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">Guides</div>
+      <h1>How Mac sleep works, and how to control it</h1>
+      <p class="lede">Straight answers to the questions people ask about keeping a Mac awake, using what macOS already has, and where an app helps.</p>
+    </div>
+    <section class="tight">
+      <div class="wrap">
+        <div class="related">
+{cards}        </div>
+      </div>
+    </section>
+{cta("Keep your Mac awake in one click.")}  </main>
+{footer()}</body>
+</html>
+''')
 
 
 def render_hub():
@@ -400,6 +473,9 @@ if __name__ == "__main__":
         render_doc(d, d["eyebrow"])
     for d in LEGAL:
         render_doc(d)
+    for g in GUIDES:
+        render_guide(g)
+    render_guides_hub()
     render_404()
     pages = render_sitemap()
     print(f"sitemap: {pages} pages")
