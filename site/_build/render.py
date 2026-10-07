@@ -12,6 +12,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from pages import PAGES, HUB  # noqa: E402
+from guides import GUIDES, UPDATED  # noqa: E402
 from teams import CHECKOUT, DOCS, LEGAL, SALES_OPEN, TEAMS  # noqa: E402
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
@@ -230,6 +231,48 @@ def render_page(p):
         f.write("".join(parts))
 
 
+def article_schema(g, path):
+    data = {"@context": "https://schema.org", "@type": "TechArticle", "headline": g["h1"],
+            "description": g["description"], "url": f"https://midnightoil.app{path}",
+            "dateModified": UPDATED, "image": "https://midnightoil.app/images/og.png",
+            "author": {"@type": "Person", "name": "Corey Haines", "url": "https://corey.co"},
+            "publisher": {"@type": "Organization", "name": "Midnight Oil", "url": "https://midnightoil.app/"}}
+    return f'<script type="application/ld+json">{json.dumps(data)}</script>'
+
+
+def render_guide(g):
+    path = f"/guides/{g['slug']}"
+    parts = [head(g["title"], g["description"], path), nav(), "  <main>\n"]
+    parts.append(f'''    <div class="wrap sub-hero">
+      <div class="eyebrow">{esc(g["eyebrow"])} · Updated {UPDATED[:7]}</div>
+      <h1>{g["h1"]}</h1>
+      <p class="lede">{g["lede"]}</p>
+      <div class="tldr"><h2>The short answer</h2><p>{g["tldr"]}</p></div>
+    </div>
+''')
+    for sec in g["sections"]:
+        cls = "tight" + (" gray" if sec.get("gray") else "")
+        parts.append(f'    <section class="{cls}" id="{sec["id"]}">\n      <div class="wrap"><div class="prose">\n{sec["html"]}\n      </div></div>\n    </section>\n')
+    faq = "".join(f"        <h3>{esc(q)}</h3>\n        <p>{esc(a)}</p>\n" for q, a in g["faqs"])
+    parts.append(f'    <section class="tight" id="faq">\n      <div class="wrap"><div class="prose">\n        <h2>Questions</h2>\n{faq}      </div></div>\n    </section>\n')
+    others = [o for o in GUIDES if o["slug"] != g["slug"]]
+    rel = "".join(f'          <a href="/guides/{o["slug"]}"><b>{esc(o["card_title"])}</b><span>{esc(o["card_blurb"])}</span></a>\n' for o in others)
+    if rel:
+        parts.append(f'''    <section class="tight gray">
+      <div class="wrap">
+        <div class="section-head"><h2>More guides</h2></div>
+        <div class="related">
+{rel}        </div>
+      </div>
+    </section>
+''')
+    parts.append(cta(g["cta"]))
+    parts.append("  </main>\n")
+    parts.append(footer())
+    parts.append(article_schema(g, path) + "\n" + faq_schema(g["faqs"]) + "\n</body>\n</html>\n")
+    write(path, "".join(parts))
+
+
 def render_hub():
     path = "/alternatives"
     cards = "".join(f'          <a href="/alternatives/{q["slug"]}"><b>{esc(q["card_title"])}</b><span>{esc(q["card_blurb"])}</span></a>\n' for q in PAGES)
@@ -402,6 +445,8 @@ if __name__ == "__main__":
         render_doc(d, d["eyebrow"])
     for d in LEGAL:
         render_doc(d)
+    for g in GUIDES:
+        render_guide(g)
     render_404()
     pages = render_sitemap()
     print(f"sitemap: {pages} pages")

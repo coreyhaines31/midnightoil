@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How to stop your Mac from sleeping: 4 ways that work</title>
+  <meta name="description" content="Stop a Mac or MacBook from sleeping with System Settings, the caffeinate command, pmset, or a free app. Steps for macOS Ventura through Golden Gate.">
+  <link rel="canonical" href="https://midnightoil.app/guides/stop-mac-from-sleeping">
+  <meta property="og:title" content="How to stop your Mac from sleeping: 4 ways that work">
+  <meta property="og:description" content="Stop a Mac or MacBook from sleeping with System Settings, the caffeinate command, pmset, or a free app. Steps for macOS Ventura through Golden Gate.">
+  <meta property="og:image" content="https://midnightoil.app/images/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://midnightoil.app/guides/stop-mac-from-sleeping">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/images/icon-192.png">
+  <link rel="apple-touch-icon" href="/images/icon-512.png">
+  <link rel="stylesheet" href="/site.css">
+  <style>
+    .sub-hero { padding: 72px 22px 40px; }
+    .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
+    .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
+    .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
+    .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
+    .sub-hero .actions { display: flex; align-items: center; gap: 14px; margin-top: 28px; flex-wrap: wrap; }
+    .tldr { background: var(--glass); border-radius: 28px; padding: 26px 28px; margin: 44px 0 0; max-width: 900px; position: relative; box-shadow: var(--glass-shadow); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+    .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
+    .prose { max-width: 760px; }
+    .prose h2 { font-size: clamp(28px, 3.6vw, 40px); margin: 0 0 16px; }
+    .prose h3 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 8px; }
+    .prose p, .prose li { color: var(--muted); font-size: 17px; line-height: 1.6; }
+    .prose p strong { color: var(--text); font-weight: 600; }
+    .prose ul { padding-left: 20px; margin: 0 0 8px; }
+    .prose li { margin-bottom: 6px; }
+    .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
+    .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    .prose blockquote { margin: 18px 0; padding: 14px 20px; border-left: 3px solid var(--gold); background: var(--gray); border-radius: 0 12px 12px 0; }
+    .prose blockquote p { margin: 0; font-size: 16px; }
+    .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
+    .prose blockquote cite a { color: var(--faint); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+    .two > div { background: var(--glass); border-radius: 22px; padding: 22px; box-shadow: var(--glass-shadow); }
+    .two h3 { margin: 0 0 10px; font-size: 18px; }
+    .two ul { margin: 0; padding-left: 18px; }
+    .two li { font-size: 15px; margin-bottom: 6px; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
+    .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
+    .glance { max-width: 760px; margin: 0 0 44px; }
+    .glance .compare td:first-child { font-weight: 500; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+    .related a { display: block; background: var(--glass); border-radius: 22px; padding: 18px 20px; text-decoration: none; box-shadow: var(--glass-shadow); transition: transform .2s ease, background .2s ease; }
+    .related a:hover { background: var(--glass-strong); transform: translateY(-2px); }
+    .related b { display: block; margin-bottom: 4px; }
+    .related span { color: var(--muted); font-size: 14px; }
+    section.tight { padding: 64px 0; }
+    .tldr::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; background: var(--rim);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+    @media (max-width: 720px) {
+      .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; }
+      .sub-hero .actions:has(.glass) { flex-direction: column; align-items: stretch; max-width: 340px; }
+      .sub-hero .actions .pill { justify-content: center; }
+    }
+  </style>
+  <script async src="https://tracerkit.com/t.js" data-key="tk__vMOLefQSrM_pLCt"></script>
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="nav">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/images/icon-192.png" alt=""> Midnight Oil</a>
+      <nav>
+        <a href="/#features">Features</a>
+        <a href="/teams">Teams</a>
+        <a href="/#faq">FAQ</a>
+        <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
+        <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
+      </nav>
+    </div>
+  </div>
+  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">Guide · Updated 2026-10</div>
+      <h1>How to stop your Mac from sleeping</h1>
+      <p class="lede">Four ways, from a switch in System Settings to a command in Terminal. Which one you want depends on how long the Mac needs to stay awake, whether it's plugged in, and whether the lid will be closed.</p>
+      <div class="tldr"><h2>The short answer</h2><p><strong>Plugged-in MacBook:</strong> System Settings › Battery › Options › turn on <em>Prevent automatic sleeping on power adapter when the display is off</em>. <strong>Mac mini, iMac, Mac Studio, Mac Pro:</strong> System Settings › Energy › turn on <em>Prevent automatic sleeping when the display is off</em>. <strong>Just for one job:</strong> run <code>caffeinate -i</code> in Terminal. <strong>On battery, with the lid closed, or until a set time:</strong> System Settings can't do it; use <code>pmset</code> or an app.</p></div>
+    </div>
+    <section class="tight" id="pick">
+      <div class="wrap"><div class="prose">
+
+        <h2>Which method to use</h2>
+        <div class="table-scroll"><table class="compare">
+          <thead><tr><th>Your situation</th><th>Use</th></tr></thead>
+          <tbody>
+            <tr><td>MacBook, plugged in, every day</td><td>System Settings › Battery › Options</td></tr>
+            <tr><td>Mac mini, iMac, Mac Studio, Mac Pro</td><td>System Settings › Energy</td></tr>
+            <tr><td>One download, build, or command</td><td><code>caffeinate</code> in Terminal</td></tr>
+            <tr><td>MacBook on battery</td><td><code>caffeinate</code>, or an app with a battery floor</td></tr>
+            <tr><td>Lid closed</td><td>An external display (<a href="/guides/clamshell-mode">clamshell mode</a>), <code>pmset</code>, or an app with closed-lid mode</td></tr>
+            <tr><td>Until 7 AM, while an app runs, or every weekday 9 to 5</td><td>An app</td></tr>
+          </tbody>
+        </table></div>
+            
+      </div></div>
+    </section>
+    <section class="tight" id="settings">
+      <div class="wrap"><div class="prose">
+
+        <h2>1. System Settings</h2>
+        <p>Since macOS Ventura, sleep settings live in System Settings. The names below are the same in Ventura, Sonoma, Sequoia, Tahoe, and Golden Gate.</p>
+        <h3>On a MacBook</h3>
+        <ol class="steps">
+          <li><b>Open System Settings › Battery.</b></li>
+          <li><b>Click Options…</b> at the bottom of the pane.</li>
+          <li><b>Turn on “Prevent automatic sleeping on power adapter when the display is off.”</b> The Mac now stays awake whenever it's plugged in, even after the screen goes dark.</li>
+        </ol>
+        <p>The screen still turns off on its own schedule. That's set separately in System Settings › Lock Screen › <em>Turn display off on power adapter when inactive</em>. Leaving the display free to sleep is usually what you want: the Mac keeps working and saves power. To keep the screen on too, see <a href="/guides/keep-mac-screen-on">how to keep your Mac screen on</a>.</p>
+        <h3>On a Mac mini, iMac, Mac Studio, or Mac Pro</h3>
+        <ol class="steps">
+          <li><b>Open System Settings › Energy.</b></li>
+          <li><b>Turn on “Prevent automatic sleeping when the display is off.”</b></li>
+        </ol>
+        <h3>What this can't do</h3>
+        <p>The switch only works on the power adapter, so a MacBook on battery still sleeps. Closing the lid still sleeps it. And it's all or nothing: there's no “until the download finishes” or “until 7 AM,” so you have to remember to turn it back off.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight gray" id="caffeinate">
+      <div class="wrap"><div class="prose">
+
+        <h2>2. The caffeinate command</h2>
+        <p>Every Mac includes <code>caffeinate</code>, a Terminal command that holds the Mac awake until you stop it. It works on battery and needs no admin password.</p>
+        <pre><code>caffeinate -i              # stay awake until you press Ctrl-C
+caffeinate -i -t 7200      # for two hours
+caffeinate -d              # keep the display on too
+caffeinate -i ./build.sh   # for as long as this command runs</code></pre>
+        <p>It stops when you press Ctrl-C or close the Terminal window, and it doesn't keep a closed lid awake. There's more on the flags and the catches in <a href="/alternatives/caffeinate">the caffeinate guide</a>.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight" id="pmset">
+      <div class="wrap"><div class="prose">
+
+        <h2>3. pmset, for full control</h2>
+        <p><code>pmset</code> changes the power settings directly. It needs an admin password, and its changes stay until you change them back.</p>
+        <pre><code>pmset -g                          # see the current settings
+sudo pmset -c sleep 0             # never sleep on the charger
+sudo pmset -b sleep 0             # never sleep on battery
+sudo pmset -a disablesleep 1      # never sleep at all, even with the lid closed
+sudo pmset -a disablesleep 0      # undo that</code></pre>
+        <p><code>-c</code> means on the charger, <code>-b</code> on battery, and <code>-a</code> both. Before changing <code>sleep</code>, note the value <code>pmset -g</code> shows so you can put it back.</p>
+        <p><strong>Be careful with <code>disablesleep 1</code> on a laptop.</strong> It applies to the whole Mac and doesn't turn itself off. Forget about it and a MacBook in a bag keeps running, with nowhere for its heat to go.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight gray" id="app">
+      <div class="wrap"><div class="prose">
+
+        <h2>4. A keep-awake app</h2>
+        <p>An app makes sense when you want the Mac awake for a reason and then back to normal, without remembering to undo anything. <a href="/">Midnight Oil</a> is free and lives in the menu bar:</p>
+        <ul>
+          <li><strong>Keep Awake For</strong> a set time, or <strong>Keep Awake Until</strong> a clock time like 7:00 AM.</li>
+          <li><strong>While App Is Running</strong>: stays awake until Terminal, Cursor, or Final Cut quits.</li>
+          <li><strong>While File Is Downloading</strong>: stops when the download finishes.</li>
+          <li><strong>Stay awake with lid closed</strong>, with sleep restored automatically when the session ends, the app quits, or anything crashes.</li>
+          <li><strong>Schedules</strong> like weekdays 9 to 5, and <strong>battery safety</strong> that ends sessions when you unplug or drop below a level you choose.</li>
+        </ul>
+        <p>Other options: <a href="/alternatives/keepingyouawake">KeepingYouAwake</a> is a good minimal on/off switch, and <a href="/alternatives/amphetamine">Amphetamine</a> still works but hasn't been updated since 2023.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight" id="models">
+      <div class="wrap"><div class="prose">
+
+        <h2>By Mac model</h2>
+        <h3>MacBook Air</h3>
+        <p>Use Battery › Options when plugged in. The Air has no fan, so if you keep it awake with the lid closed, leave it somewhere open rather than in a sleeve.</p>
+        <h3>MacBook Pro</h3>
+        <p>Same settings as the Air. For long jobs on battery, set a battery floor so a session ends before the battery runs out.</p>
+        <h3>Mac mini, Mac Studio, iMac</h3>
+        <p>System Settings › Energy is usually all you need, since there's no battery or lid. A Mac mini used as a home server is the classic case for leaving <em>Prevent automatic sleeping when the display is off</em> on permanently.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight gray" id="still">
+      <div class="wrap"><div class="prose">
+
+        <h2>If your Mac still falls asleep</h2>
+        <ul>
+          <li><strong>It's on battery.</strong> The System Settings switch only applies on the power adapter.</li>
+          <li><strong>The lid closed.</strong> A closed lid sleeps a MacBook unless it's in <a href="/guides/clamshell-mode">clamshell mode</a> or sleep is disabled.</li>
+          <li><strong>A scheduled sleep.</strong> Run <code>pmset -g sched</code>. Cancel a repeating one with <code>sudo pmset repeat cancel</code>.</li>
+          <li><strong>Something else is fighting it.</strong> <code>pmset -g assertions</code> lists every app holding the Mac awake, or not.</li>
+          <li><strong>It's the external drive that's sleeping.</strong> Turn off <em>Put hard disks to sleep when possible</em> in Battery › Options or Energy, or use Midnight Oil's Drive Alive to keep just the drives you pick awake.</li>
+        </ul>
+            
+      </div></div>
+    </section>
+    <section class="tight" id="faq">
+      <div class="wrap"><div class="prose">
+        <h2>Questions</h2>
+        <h3>How do I stop my Mac from going to sleep?</h3>
+        <p>On a MacBook, open System Settings › Battery › Options and turn on Prevent automatic sleeping on power adapter when the display is off. On a desktop Mac, open System Settings › Energy and turn on Prevent automatic sleeping when the display is off. For a one-off job, run caffeinate -i in Terminal and press Ctrl-C when you&#x27;re done.</p>
+        <h3>How do I keep my MacBook from sleeping on battery?</h3>
+        <p>System Settings only offers the prevent-sleep switch on the power adapter. On battery, run caffeinate -i in Terminal, or use a keep-awake app such as Midnight Oil, which can also end the session when the battery drops below a level you choose.</p>
+        <h3>How do I turn off sleep mode on a Mac completely?</h3>
+        <p>sudo pmset -a disablesleep 1 in Terminal turns off all sleep, including when the lid closes. It stays that way until you run sudo pmset -a disablesleep 0, so use it with care on a laptop: a MacBook that never sleeps can drain its battery or overheat in a bag.</p>
+        <h3>Why does my Mac still go to sleep?</h3>
+        <p>Check three things. The prevent-sleep switch only works on the power adapter, so a MacBook on battery still sleeps. Closing the lid always sleeps the Mac unless an external display, power, and keyboard are connected, or sleep is disabled with pmset. And a scheduled sleep can override everything: run pmset -g sched to see one.</p>
+        <h3>Does keeping a Mac awake damage it?</h3>
+        <p>No. Macs are built to run for days. Keep it ventilated, and let the display sleep when you don&#x27;t need it, which saves power and the screen. Midnight Oil&#x27;s Allow display sleep option does exactly that while the Mac keeps working.</p>
+      </div></div>
+    </section>
+    <section class="cta">
+      <div class="wrap">
+        <div class="cta-card">
+          <img src="/images/icon-192.png" alt="" width="96" height="96">
+          <h2>Keep your Mac awake in one click.</h2>
+          <p>Free. No account, no subscription.</p>
+          <div class="actions">
+            <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Download free</a>
+        <a class="pill big glass" href="https://github.com/coreyhaines31/midnightoil"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>View source code</a>
+          </div>
+          <p class="fineprint">macOS 14 or later · Apple Silicon and Intel · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives">Alternatives</a><a href="/alternatives/amphetamine">Amphetamine alternative</a><a href="/alternatives/caffeine">Caffeine alternative</a><a href="/alternatives/caffeinate">caffeinate alternative</a><a href="/alternatives/keepingyouawake">KeepingYouAwake alternative</a><a href="/alternatives/mouse-jiggler">Mouse jiggler alternative</a></nav>
+      <span>© 2026 Corey Haines. <a href="https://github.com/coreyhaines31/midnightoil/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
+    </div>
+  </footer>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "How to stop your Mac from sleeping", "description": "Stop a Mac or MacBook from sleeping with System Settings, the caffeinate command, pmset, or a free app. Steps for macOS Ventura through Golden Gate.", "url": "https://midnightoil.app/guides/stop-mac-from-sleeping", "dateModified": "2026-10-06", "image": "https://midnightoil.app/images/og.png", "author": {"@type": "Person", "name": "Corey Haines", "url": "https://corey.co"}, "publisher": {"@type": "Organization", "name": "Midnight Oil", "url": "https://midnightoil.app/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I stop my Mac from going to sleep?", "acceptedAnswer": {"@type": "Answer", "text": "On a MacBook, open System Settings \u203a Battery \u203a Options and turn on Prevent automatic sleeping on power adapter when the display is off. On a desktop Mac, open System Settings \u203a Energy and turn on Prevent automatic sleeping when the display is off. For a one-off job, run caffeinate -i in Terminal and press Ctrl-C when you're done."}}, {"@type": "Question", "name": "How do I keep my MacBook from sleeping on battery?", "acceptedAnswer": {"@type": "Answer", "text": "System Settings only offers the prevent-sleep switch on the power adapter. On battery, run caffeinate -i in Terminal, or use a keep-awake app such as Midnight Oil, which can also end the session when the battery drops below a level you choose."}}, {"@type": "Question", "name": "How do I turn off sleep mode on a Mac completely?", "acceptedAnswer": {"@type": "Answer", "text": "sudo pmset -a disablesleep 1 in Terminal turns off all sleep, including when the lid closes. It stays that way until you run sudo pmset -a disablesleep 0, so use it with care on a laptop: a MacBook that never sleeps can drain its battery or overheat in a bag."}}, {"@type": "Question", "name": "Why does my Mac still go to sleep?", "acceptedAnswer": {"@type": "Answer", "text": "Check three things. The prevent-sleep switch only works on the power adapter, so a MacBook on battery still sleeps. Closing the lid always sleeps the Mac unless an external display, power, and keyboard are connected, or sleep is disabled with pmset. And a scheduled sleep can override everything: run pmset -g sched to see one."}}, {"@type": "Question", "name": "Does keeping a Mac awake damage it?", "acceptedAnswer": {"@type": "Answer", "text": "No. Macs are built to run for days. Keep it ventilated, and let the display sleep when you don't need it, which saves power and the screen. Midnight Oil's Allow display sleep option does exactly that while the Mac keeps working."}}]}</script>
+</body>
+</html>
