@@ -96,6 +96,7 @@ def nav():
       <a class="brand" href="/"><img src="/images/icon-192.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
+        <a href="/guides">Guides</a>
         <a href="/teams">Teams</a>
         <a href="/#faq">FAQ</a>
         <a href="{REPO}">GitHub</a>
@@ -112,10 +113,16 @@ def footer_alternatives():
     return f'      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives">Alternatives</a>{links}</nav>\n'
 
 
+def footer_guides():
+    """Every guide, linked from every footer like the alternatives."""
+    links = "".join(f'<a href="/guides/{g["slug"]}">{esc(g["card_title"])}</a>' for g in GUIDES)
+    return f'      <nav class="footer-alts" aria-label="Guides"><a class="label" href="/guides">Guides</a>{links}</nav>\n'
+
+
 def footer():
     return f'''  <footer>
     <div class="wrap">
-{footer_alternatives()}      <span>© 2026 Corey Haines. <a href="{REPO}/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+{footer_guides()}{footer_alternatives()}      <span>© 2026 Corey Haines. <a href="{REPO}/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
       <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="{REPO}/issues">Issues</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
     </div>
   </footer>
@@ -130,7 +137,7 @@ def render_homepage_footer():
     start, end = "<!-- alternatives -->\n", "<!-- /alternatives -->"
     i, j = page.index(start) + len(start), page.index(end)
     with open(path, "w") as f:
-        f.write(page[:i] + footer_alternatives() + "      " + page[j:])
+        f.write(page[:i] + footer_guides() + footer_alternatives() + "      " + page[j:])
 
 
 def head(title, description, path):
