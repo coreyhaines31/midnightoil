@@ -42,12 +42,25 @@ struct ConditionList: View {
 /// The value controls for one criterion.
 struct CriterionEditor: View {
     @Binding var criterion: Criterion
+    @State private var locationDenied = false
 
     var body: some View {
         switch criterion {
         case .wifiNetwork:
-            listEditor(placeholder: "Network names", suggestions: WifiAccess.currentNetwork().map { [$0] } ?? [])
-                .onAppear { WifiAccess.requestIfNeeded() }
+            VStack(alignment: .leading, spacing: 6) {
+                listEditor(placeholder: "Network names", suggestions: WifiAccess.currentNetwork().map { [$0] } ?? [])
+                if locationDenied {
+                    locationNotice
+                }
+            }
+            .onAppear {
+                WifiAccess.requestIfNeeded()
+                locationDenied = WifiAccess.isDenied
+            }
+            // Coming back from System Settings is when the answer is likely to have changed.
+            .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+                locationDenied = WifiAccess.isDenied
+            }
         case .usbDevice:
             listEditor(placeholder: "Device names", suggestions: SystemStateReader.usbDeviceNames().sorted())
         case .bluetoothDevice:
@@ -108,6 +121,19 @@ struct CriterionEditor: View {
         case .schedule(let schedule):
             ScheduleEditor(schedule: Binding(get: { schedule }, set: { criterion = .schedule($0) }))
         }
+    }
+
+    private var locationNotice: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 6) {
+            Image(systemName: "location.slash")
+                .foregroundStyle(.orange)
+            Text("Location access is off, so Midnight Oil can't read the Wi-Fi name and this condition won't match.")
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            Button("Turn On…") { WifiAccess.openLocationSettings() }
+                .buttonStyle(.link)
+        }
+        .font(.callout)
     }
 
     private func listEditor(placeholder: String, suggestions: [String]) -> some View {
