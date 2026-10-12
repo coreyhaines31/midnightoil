@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: How-to guides
+    url: https://midnightoil.app/guides
+    about: Stopping a Mac from sleeping, clamshell mode, sleep settings, and running AI agents overnight.
+  - name: Report a security vulnerability
+    url: https://github.com/coreyhaines31/midnightoil/security/advisories/new
+    about: Please report security issues privately, not as a public issue.

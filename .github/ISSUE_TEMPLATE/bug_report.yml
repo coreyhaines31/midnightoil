@@ -1,0 +1,43 @@
+name: Bug report
+description: Something in Midnight Oil isn't working the way you expected.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Midnight Oil version
+      description: From the menu › About Midnight Oil.
+      placeholder: "1.4.3"
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version and Mac model
+      placeholder: "macOS 27.0, MacBook Air M3"
+    validations:
+      required: true
+  - type: dropdown
+    id: power
+    attributes:
+      label: Power and lid
+      description: If the Mac slept when it shouldn't have, how was it set up?
+      options:
+        - Not relevant
+        - Plugged in, lid open
+        - Plugged in, lid closed
+        - On battery, lid open
+        - On battery, lid closed
+  - type: textarea
+    id: assertions
+    attributes:
+      label: Output of `pmset -g assertions`
+      description: Optional, but helpful for sleep problems. Run it in Terminal while a session is running.
+      render: text
