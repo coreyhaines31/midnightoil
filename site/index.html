@@ -51,6 +51,22 @@
         <span><span data-stars-count>0</span> <span data-stars-label>stars</span> on GitHub</span>
       </a>
       <p class="fineprint">macOS 14 or later · Apple Silicon and Intel · Notarized by Apple · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+      <div class="agent-install">
+        <div class="agent-head">
+          <div><b>Install with your AI agent</b><span>Paste this into Claude Code, Codex, or Cursor.</span></div>
+          <button class="pill glass" type="button" data-copy="agent-prompt">Copy prompt</button>
+        </div>
+        <pre id="agent-prompt">Install Midnight Oil, a free macOS menu bar app that keeps my Mac awake (https://github.com/coreyhaines31/midnightoil):
+1. Check this Mac runs macOS 14 or later with `sw_vers -productVersion`. Stop and tell me if it doesn't.
+2. If Homebrew is installed (`command -v brew`), run `brew install --cask coreyhaines31/tap/midnightoil`.
+3. Otherwise, download the latest release and copy it to Applications:
+   url=$(curl -fsSL https://api.github.com/repos/coreyhaines31/midnightoil/releases/latest | grep -o 'https://[^"]*\.dmg' | head -1)
+   curl -fsSL -o /tmp/MidnightOil.dmg "$url"
+   mnt=$(hdiutil attach -nobrowse -readonly /tmp/MidnightOil.dmg | grep -o '/Volumes/.*' | tail -1)
+   cp -R "$mnt/Midnight Oil.app" /Applications/ &amp;&amp; hdiutil detach -quiet "$mnt" &amp;&amp; rm /tmp/MidnightOil.dmg
+4. Run `open -a "Midnight Oil"`, then confirm it's running with `pgrep -x "Midnight Oil"`.
+5. Tell me to look for the flame icon in my menu bar, and that closed-lid mode needs a one-time approval in Settings › Closed Lid.</pre>
+      </div>
     </div>
 
     <section class="showcase" id="showcase" aria-label="Midnight Oil in action">
@@ -403,6 +419,21 @@
       }));
     const tint = () => nav.classList.toggle("on-dark", darkZones().some(r => r.top <= 40 && r.bottom >= 40));
     tint(); window.addEventListener("scroll", tint, { passive: true }); window.addEventListener("resize", tint);
+
+    // Copy buttons. Falls back to selecting the text where the clipboard isn't available.
+    document.querySelectorAll("[data-copy]").forEach(button => {
+      button.addEventListener("click", async () => {
+        const source = document.getElementById(button.dataset.copy);
+        try {
+          await navigator.clipboard.writeText(source.textContent);
+          button.textContent = "Copied";
+        } catch (_) {
+          getSelection().selectAllChildren(source);
+          button.textContent = "Press ⌘C to copy";
+        }
+        setTimeout(() => { button.textContent = "Copy prompt"; }, 2500);
+      });
+    });
 
     // Live GitHub star count. Fails quietly: the page never depends on it.
     (async () => {
