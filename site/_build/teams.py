@@ -53,7 +53,7 @@ LOCK_MOCK = f"""<div class="mk-win short" role="img" aria-label="Midnight Oil's 
 <div class="mk-row" style="opacity:.5"><div class="mk-text"><div class="mk-title">Below 20%</div></div></div>
 </div>
 </div>
-<div class="mk-menu">{FLAME}<div><b>Keeping your Mac awake</b><span>Ends by 7:00 PM</span><small>Limit set by your organization</small></div></div>
+<div class="mk-menu"><div><b>Keeping your Mac awake</b><span>Ends by 7:00 PM</span><small>Limit set by your organization</small></div></div>
 </div>"""
 
 WEBHOOK_MOCK = f"""<div role="img" aria-label="Session events from Midnight Oil posted to Slack, and the signed JSON body.">
