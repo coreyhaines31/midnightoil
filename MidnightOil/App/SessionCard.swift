@@ -84,47 +84,39 @@ struct SessionCardView: View {
     let onStayAwakeWithLidClosed: @MainActor (Bool) -> Void
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            Image(nsImage: FlameIcon.menuBarImage(lit: true, size: 24))
-                .renderingMode(.template)
-                .foregroundStyle(.orange)
-                .frame(width: 24, height: 24)
-                .padding(.top, 1)
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Keeping your Mac awake")
-                    .font(.system(size: 13, weight: .semibold))
-                Text(model.detail)
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
-                    .monospacedDigit()
-                if let triggerLine = model.triggerLine {
-                    Text(triggerLine)
-                        .font(.system(size: 11))
-                        .foregroundStyle(.tertiary)
-                }
-
-                VStack(alignment: .leading, spacing: 3) {
-                    Toggle("Allow display sleep", isOn: Binding(
-                        get: { model.allowsDisplaySleep },
-                        set: { onAllowDisplaySleep($0) }
-                    ))
-                    .help(Help.Menu.allowDisplaySleepShort)
-                    .disabled(displaySleepLocked)
-                    if showsLidOption {
-                        Toggle("Stay awake with lid closed", isOn: Binding(
-                            get: { model.staysAwakeWithLidClosed },
-                            set: { onStayAwakeWithLidClosed($0) }
-                        ))
-                        .help(Help.Menu.staysAwakeWithLidClosed)
-                    }
-                }
-                .toggleStyle(.checkbox)
-                .controlSize(.small)
+        // No flame here: the lit icon in the menu bar right above already shows a session is running.
+        VStack(alignment: .leading, spacing: 2) {
+            Text("Keeping your Mac awake")
+                .font(.system(size: 13, weight: .semibold))
+            Text(model.detail)
                 .font(.system(size: 12))
-                .padding(.top, 6)
+                .foregroundStyle(.secondary)
+                .monospacedDigit()
+            if let triggerLine = model.triggerLine {
+                Text(triggerLine)
+                    .font(.system(size: 11))
+                    .foregroundStyle(.tertiary)
             }
-            Spacer(minLength: 0)
+
+            VStack(alignment: .leading, spacing: 3) {
+                Toggle("Allow display sleep", isOn: Binding(
+                    get: { model.allowsDisplaySleep },
+                    set: { onAllowDisplaySleep($0) }
+                ))
+                .help(Help.Menu.allowDisplaySleepShort)
+                .disabled(displaySleepLocked)
+                if showsLidOption {
+                    Toggle("Stay awake with lid closed", isOn: Binding(
+                        get: { model.staysAwakeWithLidClosed },
+                        set: { onStayAwakeWithLidClosed($0) }
+                    ))
+                    .help(Help.Menu.staysAwakeWithLidClosed)
+                }
+            }
+            .toggleStyle(.checkbox)
+            .controlSize(.small)
+            .font(.system(size: 12))
+            .padding(.top, 6)
         }
         .padding(.leading, 14)
         .padding(.trailing, 16)
