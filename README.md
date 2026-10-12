@@ -45,6 +45,34 @@ brew install --cask coreyhaines31/tap/midnightoil
 
 The app is signed and notarized by Apple, so it opens without warnings, and it updates itself.
 
+**Or ask your AI agent**
+
+Paste this into Claude Code, Codex, Cursor, or any agent with a terminal:
+
+```text
+Install Midnight Oil, a free macOS menu bar app that keeps my Mac awake (https://github.com/coreyhaines31/midnightoil):
+1. Check this Mac runs macOS 14 or later with `sw_vers -productVersion`. Stop and tell me if it doesn't.
+2. If Homebrew is installed (`command -v brew`), run `brew install --cask coreyhaines31/tap/midnightoil`.
+3. Otherwise, download the latest release and copy it to Applications:
+   url=$(curl -fsSL https://api.github.com/repos/coreyhaines31/midnightoil/releases/latest | grep -o 'https://[^"]*\.dmg' | head -1)
+   curl -fsSL -o /tmp/MidnightOil.dmg "$url"
+   mnt=$(hdiutil attach -nobrowse -readonly /tmp/MidnightOil.dmg | grep -o '/Volumes/.*' | tail -1)
+   cp -R "$mnt/Midnight Oil.app" /Applications/ && hdiutil detach -quiet "$mnt" && rm /tmp/MidnightOil.dmg
+4. Run `open -a "Midnight Oil"`, then confirm it's running with `pgrep -x "Midnight Oil"`.
+5. Tell me to look for the flame icon in my menu bar, and that closed-lid mode needs a one-time approval in Settings › Closed Lid.
+```
+
+**Without Homebrew, from Terminal**
+
+```sh
+url=$(curl -fsSL https://api.github.com/repos/coreyhaines31/midnightoil/releases/latest | grep -o 'https://[^"]*\.dmg' | head -1)
+curl -fsSL -o /tmp/MidnightOil.dmg "$url"
+mnt=$(hdiutil attach -nobrowse -readonly /tmp/MidnightOil.dmg | grep -o '/Volumes/.*' | tail -1)
+cp -R "$mnt/Midnight Oil.app" /Applications/
+hdiutil detach -quiet "$mnt" && rm /tmp/MidnightOil.dmg
+open -a "Midnight Oil"
+```
+
 ## Your first session
 
 Midnight Oil has no Dock icon and no window. After you open it, look for the **flame in the menu bar**, near the clock.
