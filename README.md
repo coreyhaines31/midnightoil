@@ -73,7 +73,7 @@ Midnight Oil asks for nothing up front. macOS asks for each permission only the 
 | Bluetooth device triggers | Bluetooth access | System Settings › Privacy & Security › Bluetooth |
 | Notifications | Permission to show notifications | System Settings › Notifications |
 
-**Setting up closed-lid mode:** open **Settings › Closed Lid** and click **Install…**. macOS opens Login Items; switch on **Midnight Oil** under *Allow in the Background*. That's the only time you'll need an admin password. You can remove the helper from the same settings pane.
+**Setting up closed-lid mode:** open **Settings › Closed Lid** and click **Install…**, and macOS opens Login Items. Switch on **Midnight Oil** under *Allow in the Background*. That's the only time you'll need an admin password. You can remove the helper from the same settings pane.
 
 ## Features
 
