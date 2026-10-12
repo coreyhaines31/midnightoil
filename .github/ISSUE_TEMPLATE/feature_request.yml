@@ -1,0 +1,16 @@
+name: Feature idea
+description: Suggest something Midnight Oil should do.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: The situation you're in, like "I run agents overnight on a Mac mini and want…". This matters more than the solution.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help?
+      description: Your idea for how Midnight Oil could handle it.
