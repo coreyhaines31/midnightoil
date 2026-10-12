@@ -139,22 +139,16 @@ struct LastSessionView: View {
     let record: SessionRecord
 
     var body: some View {
-        HStack(alignment: .top, spacing: 10) {
-            Image(nsImage: FlameIcon.menuBarImage(lit: false, size: 20))
-                .renderingMode(.template)
+        // No flame here: the menu bar icon right above already says what this is.
+        VStack(alignment: .leading, spacing: 2) {
+            Text("While you were away")
+                .font(.system(size: 13, weight: .semibold))
+            Text(summary)
+                .font(.system(size: 12))
                 .foregroundStyle(.secondary)
-                .frame(width: 24, height: 24)
-            VStack(alignment: .leading, spacing: 2) {
-                Text("While you were away")
-                    .font(.system(size: 13, weight: .semibold))
-                Text(summary)
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
-                Text(ending)
-                    .font(.system(size: 11))
-                    .foregroundStyle(.tertiary)
-            }
-            Spacer(minLength: 0)
+            Text(ending)
+                .font(.system(size: 11))
+                .foregroundStyle(.tertiary)
         }
         .padding(.leading, 14)
         .padding(.trailing, 16)
