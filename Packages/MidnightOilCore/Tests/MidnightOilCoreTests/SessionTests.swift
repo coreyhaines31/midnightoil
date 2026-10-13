@@ -51,7 +51,11 @@ struct SessionTests {
 
     @Test func eventBasedSessionsHaveNoEndTime() {
         let app = WatchedApp(bundleIdentifier: "com.apple.Safari", name: "Safari")
-        let ends: [SessionEnd] = [.whileAppRunning(app), .whileDownloading(URL(filePath: "/tmp/file.part"))]
+        let ends: [SessionEnd] = [
+            .whileAppRunning(app),
+            .whileDownloading(URL(filePath: "/tmp/file.part")),
+            .whileProcessesRunning([WatchedProcess(pid: 42, name: "claude")])
+        ]
         for end in ends {
             let session = Session(start: start, end: end, allowsDisplaySleep: false)
             #expect(session.endDate == nil)
@@ -68,5 +72,28 @@ struct SessionTests {
         let auto = Session(start: start, end: .indefinite, allowsDisplaySleep: false, source: source)
         #expect(auto.source == .trigger(id: id, name: "Home"))
         #expect(auto.extended(by: 60).source == auto.source)
+    }
+
+    @Test func aProcessJoinsAProcessSessionOnce() {
+        let first = WatchedProcess(pid: 1, name: "claude")
+        let second = WatchedProcess(pid: 2, name: "codex")
+        let session = Session(start: start, end: .whileProcessesRunning([first]), allowsDisplaySleep: false)
+        let joined = session.joining(second).joining(second)
+        #expect(joined.end == .whileProcessesRunning([first, second]))
+        #expect(joined.start == start)
+    }
+
+    @Test func onlyProcessSessionsTakeProcesses() {
+        let session = Session(start: start, end: .indefinite, allowsDisplaySleep: false)
+        #expect(session.joining(WatchedProcess(pid: 1, name: "claude")) == session)
+        #expect(session.keepingProcesses { _ in false } == session)
+    }
+
+    @Test func aProcessSessionLastsUntilEveryProcessExits() {
+        let processes = [WatchedProcess(pid: 1, name: "claude"), WatchedProcess(pid: 2, name: "codex")]
+        let session = Session(start: start, end: .whileProcessesRunning(processes), allowsDisplaySleep: false)
+        let kept = session.keepingProcesses { $0 == 2 }
+        #expect(kept?.end == .whileProcessesRunning([processes[1]]))
+        #expect(session.keepingProcesses { _ in false } == nil)
     }
 }

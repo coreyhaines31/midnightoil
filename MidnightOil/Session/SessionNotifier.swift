@@ -46,12 +46,15 @@ enum SessionNotifier {
         }
     }
 
+    // One sentence per reason; splitting the switch would only hide the mapping.
+    // swiftlint:disable:next cyclomatic_complexity
     private static func message(for reason: SessionEndReason) -> String? {
         switch reason {
         case .user, .replaced, .quit: nil
         case .timeUp: "Your Mac can sleep normally again."
         case .appQuit(let name): "\(name) quit, so your Mac can sleep again."
         case .downloadFinished(let name): "“\(name)” finished downloading, so your Mac can sleep again."
+        case .commandFinished(let name): "“\(name)” finished, so your Mac can sleep again."
         case .unplugged: "Your Mac was unplugged, so it can sleep again."
         case .triggerEnded(let name): "The “\(name)” trigger no longer applies, so your Mac can sleep again."
         case .scheduleEnded(let name): "Your “\(name)” schedule is over, so your Mac can sleep again."

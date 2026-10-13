@@ -229,6 +229,7 @@ private struct SessionRow: View {
         case .timeUp: "clock"
         case .appQuit: "xmark.app"
         case .downloadFinished: "arrow.down.circle"
+        case .commandFinished: "terminal"
         case .lowBattery: "battery.25percent"
         case .unplugged: "powerplug"
         case .triggerEnded: "bolt.slash"

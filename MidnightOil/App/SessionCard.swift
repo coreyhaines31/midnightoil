@@ -47,6 +47,9 @@ final class SessionCardModel {
             return "While \(app.name) is running"
         case .whileDownloading(let file):
             return "While “\(DownloadProgress.displayName(for: file))” downloads"
+        case .whileProcessesRunning(let processes):
+            let names = processes.map(\.name)
+            return names.count == 1 ? "While “\(names[0])” runs" : "While \(names.count) commands run"
         case .indefinite:
             return "Until you end it"
         case .after, .until:

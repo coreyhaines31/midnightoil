@@ -10,6 +10,17 @@ public struct WatchedApp: Equatable, Sendable {
     }
 }
 
+/// A process a session waits on, such as a command started with `midnightoil run`.
+public struct WatchedProcess: Equatable, Sendable {
+    public let pid: Int32
+    public let name: String
+
+    public init(pid: Int32, name: String) {
+        self.pid = pid
+        self.name = name
+    }
+}
+
 /// When a keep-awake session should stop on its own.
 public enum SessionEnd: Equatable, Sendable {
     case indefinite
@@ -17,11 +28,13 @@ public enum SessionEnd: Equatable, Sendable {
     case until(Date)
     case whileAppRunning(WatchedApp)
     case whileDownloading(URL)
+    /// Ends once every one of these processes has exited.
+    case whileProcessesRunning([WatchedProcess])
 
     /// Nil when the session ends on an event rather than at a time.
     public func endDate(from start: Date) -> Date? {
         switch self {
-        case .indefinite, .whileAppRunning, .whileDownloading: nil
+        case .indefinite, .whileAppRunning, .whileDownloading, .whileProcessesRunning: nil
         case .after(let interval): start.addingTimeInterval(interval)
         case .until(let date): date
         }
@@ -75,13 +88,32 @@ public struct Session: Equatable, Sendable {
     public func extended(by interval: TimeInterval) -> Session {
         let newEnd: SessionEnd
         switch end {
-        case .indefinite, .whileAppRunning, .whileDownloading: return self
+        case .indefinite, .whileAppRunning, .whileDownloading, .whileProcessesRunning: return self
         case .after(let duration): newEnd = .after(duration + interval)
         case .until(let date): newEnd = .until(date.addingTimeInterval(interval))
         }
         var extended = self
         extended.end = newEnd
         return extended
+    }
+
+    /// Adds a process to a session that waits on processes, so it lasts until both are done.
+    /// Other sessions are unchanged.
+    public func joining(_ process: WatchedProcess) -> Session {
+        guard case .whileProcessesRunning(let processes) = end else { return self }
+        var joined = self
+        joined.end = .whileProcessesRunning(processes.filter { $0.pid != process.pid } + [process])
+        return joined
+    }
+
+    /// Drops processes that have exited. Returns nil once none are left.
+    public func keepingProcesses(where isRunning: (Int32) -> Bool) -> Session? {
+        guard case .whileProcessesRunning(let processes) = end else { return self }
+        let running = processes.filter { isRunning($0.pid) }
+        guard !running.isEmpty else { return nil }
+        var kept = self
+        kept.end = .whileProcessesRunning(running)
+        return kept
     }
 
     public func isFinished(at now: Date) -> Bool {
