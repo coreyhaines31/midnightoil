@@ -58,7 +58,8 @@ final class CLICommands {
                 notes.append("Your Mac was already staying awake until you end it, so that session keeps running.")
                 return
             default:
-                break
+                notes.append("Replaced the session that was running. "
+                    + "Your Mac now stays awake until the command finishes.")
             }
         }
         sessions.start(end, allowsDisplaySleep: request.allowsDisplaySleep, staysAwakeWithLidClosed: wantsLid)
@@ -78,12 +79,19 @@ final class CLICommands {
         if case .whileProcessesRunning(let watched) = session.end {
             processes = watched.map(\.name)
         }
+        let ends = expectedEnd(session)
+        // The menu counts seconds; a terminal reads better rounded, like "2h left".
+        var detail = card.detail
+        if let ends {
+            let left = RemainingTime.short(ends.timeIntervalSinceNow)
+            detail = "\(left) left · until \(SessionCardModel.clockTime(ends))"
+        }
         return CLIStatus(
             awake: true,
-            detail: card.detail,
+            detail: detail,
             startedBy: startedBy,
             started: session.start,
-            ends: expectedEnd(session),
+            ends: ends,
             staysAwakeWithLidClosed: session.staysAwakeWithLidClosed,
             allowsDisplaySleep: session.allowsDisplaySleep,
             processes: processes
