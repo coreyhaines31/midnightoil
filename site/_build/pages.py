@@ -364,13 +364,72 @@ midnightoil start --until 7am                # instead of caffeinate -t, minus t
             """},
         ],
     },
+    # ------------------------------------------------------------------ InsomniaX
+    {
+        "slug": "insomniax",
+        "competitor": "InsomniaX",
+        "title": "InsomniaX for Mac: discontinued, and what to use now",
+        "description": "InsomniaX kept MacBooks awake with the lid closed using a kernel extension. It's unsupported and Intel-only. Midnight Oil is the free, modern replacement.",
+        "eyebrow": "InsomniaX alternative",
+        "h1": "InsomniaX is gone.<br>Closed-lid mode isn't.",
+        "lede": "For years InsomniaX was the answer to “how do I keep my MacBook awake with the lid closed.” It hasn't been updated since 2014, its author stopped supporting it in 2017, and it never ran natively on Apple Silicon. Midnight Oil does the same job on a current Mac, without a kernel extension.",
+        "tldr": "Don't install InsomniaX on a modern Mac: it's Intel-only, unsupported, and its loader had a published security flaw. Midnight Oil is free, keeps a MacBook awake with the lid closed through a signed helper, and puts normal sleep back the moment a session ends.",
+        "card_title": "InsomniaX",
+        "card_blurb": "The old lid-closed classic. Unsupported since 2017, Intel only.",
+        "cta": "Lid closed. Mac still working.",
+        "faqs": [
+            ("Does InsomniaX still work?", "Not on a current Mac. The last version, 2.1.8, shipped in October 2014 for Intel Macs, and its author announced in 2017 that it was no longer supported. It relied on a kernel extension, which modern macOS blocks by default and Apple Silicon Macs only allow at reduced security."),
+            ("Is InsomniaX safe?", "A 2017 security advisory showed its bundled loader could be used to load arbitrary kernel extensions, and no fix was released. On any Mac you care about, use something maintained instead."),
+            ("What replaced InsomniaX for closed-lid mode?", "Midnight Oil keeps a MacBook awake with the lid shut using a small signed helper you approve once, with no kernel extension. The built-in alternative is sudo pmset -a disablesleep 1, which works but stays on until you turn it off."),
+            ("Can I keep my MacBook awake with the lid closed without an app?", "Yes: sudo pmset -a disablesleep 1 in Terminal, and sudo pmset -a disablesleep 0 to undo it. Remember to undo it, or a MacBook in a bag keeps running until the battery dies."),
+        ],
+        "sections": [
+            {"id": "what", "html": """
+        <h2>What InsomniaX did</h2>
+        <p>InsomniaX was a free menu bar app by semaja2. Its headline feature was <strong>Disable Lid Sleep</strong>: close the MacBook and it kept running, at a time when Apple only allowed that with an external display attached. It also offered Disable Idle Sleep, timers, and later a hot key to sleep the display.</p>
+        <p>The lid trick worked by loading a kernel extension, Insomnia, into macOS itself. That was the norm for Mac utilities in 2010. It isn't any more.</p>
+        <h2>Why it stopped working</h2>
+        <h3>No updates since 2014</h3>
+        <p>Version 2.1.8, released in October 2014, was the last. In 2017 a security advisory showed that the loader InsomniaX shipped with could be used to load any kernel extension, and the author announced the app was no longer supported.</p>
+        <h3>Intel only, kernel extension required</h3>
+        <p>InsomniaX was built for Intel Macs. Since macOS Big Sur, third-party kernel extensions need explicit approval and a restart, and on Apple Silicon they need the Mac's security lowered in Recovery. That's a lot to give up for a keep-awake switch.</p>
+            """},
+            {"id": "compare", "gray": True, "html": """
+        <h2>Midnight Oil vs InsomniaX</h2>
+        {{TABLE}}
+        <h3>How Midnight Oil keeps a closed lid awake</h3>
+        <p>A small helper, signed and notarized, that you approve once in System Settings › Login Items. It turns lid sleep off only while a closed-lid session runs, and turns it back on when the session ends, when the app quits, or if the app crashes. On battery, an alarm sounds when the lid closes, and sessions can end below a battery level you choose.</p>
+            """, "table": [
+                ("Price", "Free", "Free"),
+                ("Last updated", "2026, actively maintained", "October 2014"),
+                ("Apple Silicon", "Yes, native", "No"),
+                ("Closed-lid mode", "Yes, through a signed helper", "Yes, through a kernel extension"),
+                ("Sleep restored automatically", "Yes, when the session ends", "No, until you switch it back"),
+                ("Battery safety", "Ends on low battery or unplug, lid alarm", "No"),
+                ("Timed and until-a-time sessions", "Yes", "Timers only"),
+                ("Triggers and schedules", "Yes", "No"),
+                ("A command for scripts and AI agents", "Yes, <code>midnightoil</code>", "No"),
+                ("Source code public", "Yes", "Partly, the kernel extension"),
+            ]},
+            {"id": "switch", "html": """
+        <h2>Switching</h2>
+        <ol class="steps">
+          <li><b>Remove InsomniaX if it's still there.</b> Quit it, drag it to the Trash, and check System Settings › General › Login Items for leftovers.</li>
+          <li><b>Install Midnight Oil.</b> <code>brew install --cask coreyhaines31/tap/midnightoil</code>, or the DMG from GitHub.</li>
+          <li><b>Approve the closed-lid helper once.</b> Settings › Closed Lid › Install, then allow it in Login Items.</li>
+          <li><b>Start a session with “Stay awake with lid closed” checked.</b> Close the lid. When the session ends, your MacBook sleeps normally again.</li>
+        </ol>
+        <p>More on the options, with and without an app, in the <a href="/guides/clamshell-mode">clamshell mode guide</a>.</p>
+            """},
+        ],
+    },
 ]
 
 HUB = {
     "title": "Mac keep-awake apps compared: Amphetamine, Caffeine, more",
     "description": "Honest comparisons of every way to keep a Mac awake, and where Midnight Oil fits: free, built for overnight AI-agent runs and closed-lid work.",
     "h1": "Every way to keep a Mac awake,<br>compared honestly.",
-    "lede": "Five ways people do this, what each does well, and where it stops. Sometimes the other tool is the right one; we say so.",
+    "lede": "Six ways people do this, what each does well, and where it stops. Sometimes the other tool is the right one; we say so.",
     "glance": [
         ("You want…", "Use"),
         ("One click, lid open, nothing else", "Caffeine or KeepingYouAwake"),
@@ -384,6 +443,6 @@ HUB = {
     "html": """
         <h2>How we compare</h2>
         <p>Every page here was researched from the competitor's own App Store listing, GitHub repository, release history, and user reviews as of September 2026, and each states plainly what the other tool does better. If you spot something out of date, <a href="https://github.com/coreyhaines31/midnightoil/issues">open an issue</a> and we'll fix it.</p>
-        <p>The short version of the category: <strong>Amphetamine</strong> has the most features and hasn't shipped since 2023. <strong>KeepingYouAwake</strong> is maintained and minimal, and won't keep a closed lid awake on principle. <strong>Caffeine</strong> is the 2006 original, a cup you click. <strong>caffeinate</strong> is built in and lives in the terminal. <strong>Mouse jigglers</strong> solve a different problem than most people think. Midnight Oil is free, with its source on GitHub like the best of them, and built for the way Macs get kept awake now: overnight, unattended, sometimes closed.</p>
+        <p>The short version of the category: <strong>Amphetamine</strong> has the most features and hasn't shipped since 2023. <strong>KeepingYouAwake</strong> is maintained and minimal, and won't keep a closed lid awake on principle. <strong>Caffeine</strong> is the 2006 original, a cup you click. <strong>caffeinate</strong> is built in and lives in the terminal. <strong>Mouse jigglers</strong> solve a different problem than most people think. <strong>InsomniaX</strong>, the old closed-lid favorite, hasn't run on a current Mac in years. Midnight Oil is free, with its source on GitHub like the best of them, and built for the way Macs get kept awake now: overnight, unattended, sometimes closed.</p>
     """,
 }
