@@ -139,7 +139,7 @@
         <p>The session shows up in the menu bar like one you started yourself, so you can see it, extend it, or end it with a click.</p>
       </div></div>
     </section>
-    <section class="tight" id="automatic">
+    <section class="tight gray" id="automatic">
       <div class="wrap"><div class="prose">
         <h2>Make it automatic</h2>
         <p>Add this line to <code>AGENTS.md or a Cursor rule</code> and Cursor keeps the Mac awake for every long command without being asked:</p>
@@ -152,7 +152,7 @@
         </div>
       </div></div>
     </section>
-    <section class="tight gray" id="unattended">
+    <section class="tight" id="unattended">
       <div class="wrap"><div class="prose">
         <h2>Running Cursor unattended</h2>
 
@@ -165,14 +165,14 @@
         <pre><code>midnightoil run --lid-closed -- agent -p --force &quot;upgrade the project to React 19&quot;</code></pre>
       </div></div>
     </section>
-    <section class="tight" id="lid">
+    <section class="tight gray" id="lid">
       <div class="wrap"><div class="prose">
         <h2>Lid closed, battery safe</h2>
         <p>Add <code>--lid-closed</code> and Cursor keeps working with the laptop shut. It needs a one-time approval in Midnight Oil's Settings › Closed Lid, and normal sleep comes back the moment the session ends, even if the app quits or crashes.</p>
         <p>On battery, sessions can end when you unplug or drop below a level you pick, and an alarm sounds if the lid closes during a closed-lid session. Add <code>--allow-display-sleep</code> to let the screen go dark while the Mac keeps working. The full setup is in <a href="/guides/run-ai-agents-overnight">how to run AI agents overnight</a>.</p>
       </div></div>
     </section>
-    <section class="tight gray" id="faq">
+    <section class="tight" id="faq">
       <div class="wrap"><div class="prose">
         <h2>Questions</h2>
         <h3>Does Cursor&#x27;s agent keep running when my Mac sleeps?</h3>
@@ -183,7 +183,7 @@
         <p>In a rule under .cursor/rules, or in AGENTS.md at the project root, which Cursor&#x27;s CLI also reads. The line: For commands that take more than a few minutes, run them through `midnightoil run -- &lt;command&gt;` so the Mac stays awake until they finish.</p>
       </div></div>
     </section>
-    <section class="tight">
+    <section class="tight gray">
       <div class="wrap">
         <div class="section-head"><h2>Using another agent?</h2></div>
         <div class="related">

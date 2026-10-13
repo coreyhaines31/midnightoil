@@ -126,7 +126,7 @@
         
       </div></div>
     </section>
-    <section class="tight gray" id="unattended">
+    <section class="tight" id="unattended">
       <div class="wrap"><div class="prose">
         <h2>Running Ollama unattended</h2>
 
@@ -140,14 +140,14 @@
         <pre><code>midnightoil run -- ollama pull llama3.3</code></pre>
       </div></div>
     </section>
-    <section class="tight" id="lid">
+    <section class="tight gray" id="lid">
       <div class="wrap"><div class="prose">
         <h2>Lid closed, battery safe</h2>
         <p>Add <code>--lid-closed</code> and Ollama keeps working with the laptop shut. It needs a one-time approval in Midnight Oil's Settings › Closed Lid, and normal sleep comes back the moment the session ends, even if the app quits or crashes.</p>
         <p>On battery, sessions can end when you unplug or drop below a level you pick, and an alarm sounds if the lid closes during a closed-lid session. Add <code>--allow-display-sleep</code> to let the screen go dark while the Mac keeps working. The full setup is in <a href="/guides/run-ai-agents-overnight">how to run AI agents overnight</a>.</p>
       </div></div>
     </section>
-    <section class="tight gray" id="faq">
+    <section class="tight" id="faq">
       <div class="wrap"><div class="prose">
         <h2>Questions</h2>
         <h3>Does Ollama keep running when my Mac sleeps?</h3>
@@ -158,7 +158,7 @@
         <p>Yes, for as long as you want. Run midnightoil run -- ollama serve, or a trigger for the Ollama app, and set sessions to end on battery if it&#x27;s a laptop.</p>
       </div></div>
     </section>
-    <section class="tight">
+    <section class="tight gray">
       <div class="wrap">
         <div class="section-head"><h2>Using another agent?</h2></div>
         <div class="related">

@@ -181,7 +181,7 @@ AGENTS = [
         ],
         "launch": "midnightoil run -- aider",
         "headless": 'midnightoil run --lid-closed -- aider --message "add type hints to utils.py" --yes-always utils.py',
-        "file": "CONVENTIONS.md",
+        "file": None,
         "asks": [],
         "sleep_html": """
         <p>Aider waits on the model and edits files as replies stream in. If the Mac sleeps mid-reply, the stream is cut and the edit stops where it was; you come back to a half-finished change and a failed request.</p>

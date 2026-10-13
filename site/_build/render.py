@@ -579,8 +579,9 @@ def agent_cards(skip=None):
 def render_agent(a):
     path = f"/agents/{a['slug']}"
     name = a["name"]
+    shade = iter(["", " gray"] * 6)  # alternate section backgrounds whatever sections a page has
     glance = "".join(f"            <tr><td>{k}</td><td>{v}</td></tr>\n" for k, v in a["glance"])
-    parts = [f'''    <section class="tight" id="glance">
+    parts = [f'''    <section class="tight{next(shade)}" id="glance">
       <div class="wrap"><div class="prose">
         <h2>{esc(name)} at a glance</h2>
         <div class="table-scroll"><table class="compare cmds">
@@ -588,7 +589,7 @@ def render_agent(a):
 {glance}          </tbody></table></div>
       </div></div>
     </section>
-    <section class="tight gray" id="sleep">
+    <section class="tight{next(shade)}" id="sleep">
       <div class="wrap"><div class="prose">
         <h2>What happens when your Mac sleeps mid-run</h2>
 {a["sleep_html"]}
@@ -597,7 +598,7 @@ def render_agent(a):
 ''']
     if a["asks"]:
         asks = "".join(f'            <tr><td>“{esc(said)}”</td><td><code>{esc(cmd)}</code></td></tr>\n' for said, cmd in a["asks"])
-        parts.append(f'''    <section class="tight" id="ask">
+        parts.append(f'''    <section class="tight{next(shade)}" id="ask">
       <div class="wrap"><div class="prose">
         <h2>Just ask {esc(name)}</h2>
         <p>With Midnight Oil installed, {esc(name)} can run the <code>midnightoil</code> command for you. Say it in your own words:</p>
@@ -609,7 +610,7 @@ def render_agent(a):
     </section>
 ''')
     if a["file"]:
-        parts.append(f'''    <section class="tight{"" if a["asks"] else " gray"}" id="automatic">
+        parts.append(f'''    <section class="tight{next(shade)}" id="automatic">
       <div class="wrap"><div class="prose">
         <h2>Make it automatic</h2>
         <p>Add this line to <code>{esc(a["file"])}</code> and {esc(name)} keeps the Mac awake for every long command without being asked:</p>
@@ -628,13 +629,13 @@ def render_agent(a):
         runs += f"        <h3>Keep the Mac awake for the whole session</h3>\n        <pre><code>{esc(a['launch'])}</code></pre>\n"
     if a["headless"]:
         runs += f"        <h3>Or for one unattended run</h3>\n        <pre><code>{esc(a['headless'])}</code></pre>\n"
-    parts.append(f'''    <section class="tight gray" id="unattended">
+    parts.append(f'''    <section class="tight{next(shade)}" id="unattended">
       <div class="wrap"><div class="prose">
         <h2>Running {esc(name)} unattended</h2>
 {a["unattended_html"]}
 {runs}      </div></div>
     </section>
-    <section class="tight" id="lid">
+    <section class="tight{next(shade)}" id="lid">
       <div class="wrap"><div class="prose">
         <h2>Lid closed, battery safe</h2>
         <p>Add <code>--lid-closed</code> and {esc(name)} keeps working with the laptop shut. It needs a one-time approval in Midnight Oil's Settings › Closed Lid, and normal sleep comes back the moment the session ends, even if the app quits or crashes.</p>
@@ -643,12 +644,12 @@ def render_agent(a):
     </section>
 ''')
     faq = "".join(f"        <h3>{esc(q)}</h3>\n        <p>{esc(ans)}</p>\n" for q, ans in a["faqs"])
-    parts.append(f'''    <section class="tight gray" id="faq">
+    parts.append(f'''    <section class="tight{next(shade)}" id="faq">
       <div class="wrap"><div class="prose">
         <h2>Questions</h2>
 {faq}      </div></div>
     </section>
-    <section class="tight">
+    <section class="tight{next(shade)}">
       <div class="wrap">
         <div class="section-head"><h2>Using another agent?</h2></div>
         <div class="related">

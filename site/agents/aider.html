@@ -126,20 +126,7 @@
         
       </div></div>
     </section>
-    <section class="tight gray" id="automatic">
-      <div class="wrap"><div class="prose">
-        <h2>Make it automatic</h2>
-        <p>Add this line to <code>CONVENTIONS.md</code> and Aider keeps the Mac awake for every long command without being asked:</p>
-        <div class="agent-install" style="margin:20px 0 0">
-          <div class="agent-head">
-            <div><b>For CONVENTIONS.md</b><span>Aider reads <code>midnightoil --help</code> for the rest.</span></div>
-            <button class="pill glass" type="button" data-copy="agent-line">Copy line</button>
-          </div>
-          <pre id="agent-line">For commands that take more than a few minutes, run them through `midnightoil run -- &lt;command&gt;` so the Mac stays awake until they finish.</pre>
-        </div>
-      </div></div>
-    </section>
-    <section class="tight gray" id="unattended">
+    <section class="tight" id="unattended">
       <div class="wrap"><div class="prose">
         <h2>Running Aider unattended</h2>
 
@@ -152,14 +139,14 @@
         <pre><code>midnightoil run --lid-closed -- aider --message &quot;add type hints to utils.py&quot; --yes-always utils.py</code></pre>
       </div></div>
     </section>
-    <section class="tight" id="lid">
+    <section class="tight gray" id="lid">
       <div class="wrap"><div class="prose">
         <h2>Lid closed, battery safe</h2>
         <p>Add <code>--lid-closed</code> and Aider keeps working with the laptop shut. It needs a one-time approval in Midnight Oil's Settings › Closed Lid, and normal sleep comes back the moment the session ends, even if the app quits or crashes.</p>
         <p>On battery, sessions can end when you unplug or drop below a level you pick, and an alarm sounds if the lid closes during a closed-lid session. Add <code>--allow-display-sleep</code> to let the screen go dark while the Mac keeps working. The full setup is in <a href="/guides/run-ai-agents-overnight">how to run AI agents overnight</a>.</p>
       </div></div>
     </section>
-    <section class="tight gray" id="faq">
+    <section class="tight" id="faq">
       <div class="wrap"><div class="prose">
         <h2>Questions</h2>
         <h3>Does Aider keep running when the Mac sleeps?</h3>
@@ -170,7 +157,7 @@
         <p>Aider is a pair programmer more than a command runner, so it&#x27;s more reliable to start it through midnightoil run than to ask it mid-chat.</p>
       </div></div>
     </section>
-    <section class="tight">
+    <section class="tight gray">
       <div class="wrap">
         <div class="section-head"><h2>Using another agent?</h2></div>
         <div class="related">
