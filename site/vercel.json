@@ -4,8 +4,18 @@
   "redirects": [
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.midnightoil.app" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "www.midnightoil.app"
+        }
+      ],
       "destination": "https://midnightoil.app/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/agents",
+      "destination": "/cli",
       "permanent": true
     }
   ]

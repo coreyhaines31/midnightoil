@@ -28,7 +28,7 @@ AGENT_LINE = "For commands that take more than a few minutes, run them through `
 CLI = {
     "path": "/cli",
     "title": "Tell your AI agent to keep your Mac awake · Midnight Oil",
-    "description": "Ask Claude Code, Codex, or Cursor to keep your Mac awake in plain words. It runs the midnightoil command: until a job finishes, until 7am, or with the lid closed. Free.",
+    "description": "Ask Claude Code, Codex, or Cursor to keep your Mac awake in plain words. It runs the free midnightoil command: until a job ends, until 7am, or lid closed.",
     "eyebrow": "For AI agents",
     "h1": "Just tell your agent<br>to keep your Mac awake.",
     "lede": "Midnight Oil comes with a <code>midnightoil</code> command, so Claude Code, Codex, and Cursor can run it for you. Say what you want in plain words. Your agent turns it into a command, and your Mac stays awake for exactly as long as the work takes, even with the lid closed.",

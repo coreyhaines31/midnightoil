@@ -259,7 +259,7 @@ LEGAL = [
     {
         "path": "/terms",
         "title": "Midnight Oil for Teams terms",
-        "description": "The terms for buying and using Midnight Oil for Teams.",
+        "description": "The terms for buying and using Midnight Oil for Teams, the managed edition of the free Mac keep-awake app: licenses, billing, and renewals.",
         "h1": "Terms of service",
         "html": """
         <p><strong>Last updated October 2026.</strong> These terms cover Midnight Oil for Teams: the subscription, license keys, the Teams dashboard at app.midnightoil.app, and the commercial code in the app's <code>ee/</code> directory. The free Midnight Oil app is licensed separately under FSL-1.1-MIT.</p>
