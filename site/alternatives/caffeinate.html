@@ -81,7 +81,7 @@
   <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="nav">
     <div class="wrap">
-      <a class="brand" href="/"><img src="/images/icon-192.png" alt=""> Midnight Oil</a>
+      <a class="brand" href="/"><img src="/images/icon-192.png" alt="" width="28" height="28"> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
         <a href="/cli">For agents</a>
@@ -215,5 +215,6 @@ midnightoil start --until 7am                # instead of caffeinate -t, minus t
     </div>
   </footer>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What does caffeinate do on a Mac?", "acceptedAnswer": {"@type": "Answer", "text": "caffeinate creates a power-management assertion that stops macOS from sleeping. With no flags it prevents idle sleep until you stop it. You can scope it to a command (caffeinate -i make), a duration (caffeinate -t 3600), or a process (caffeinate -w PID)."}}, {"@type": "Question", "name": "Does caffeinate keep a MacBook awake with the lid closed?", "acceptedAnswer": {"@type": "Answer", "text": "No. Closing the lid is an explicit sleep request that a power assertion can't override. The workaround, sudo pmset -a disablesleep 1, needs an admin password and must be reverted by hand. Midnight Oil's closed-lid mode does this through a helper that restores sleep automatically."}}, {"@type": "Question", "name": "How do I keep my Mac awake while Claude Code runs overnight?", "acceptedAnswer": {"@type": "Answer", "text": "The command-line way is tmux new-session -d 'caffeinate -i claude', which keeps the assertion alive even if the terminal closes. The simpler way is Midnight Oil: start a session while Terminal is running, or until 7 AM, and check Stay Awake with Lid Closed if you're closing the laptop. From the terminal, midnightoil run --lid-closed -- claude does the same and ends when the agent exits."}}, {"@type": "Question", "name": "How do I stop caffeinate?", "acceptedAnswer": {"@type": "Answer", "text": "Press Ctrl-C in the terminal that started it, or run killall caffeinate. Check what's holding your Mac awake with pmset -g assertions."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Midnight Oil", "item": "https://midnightoil.app/"}, {"@type": "ListItem", "position": 2, "name": "Alternatives", "item": "https://midnightoil.app/alternatives"}, {"@type": "ListItem", "position": 3, "name": "caffeinate command", "item": "https://midnightoil.app/alternatives/caffeinate"}]}</script>
 </body>
 </html>

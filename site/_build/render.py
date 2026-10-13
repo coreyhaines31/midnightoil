@@ -104,7 +104,7 @@ def nav():
     return f'''  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="nav">
     <div class="wrap">
-      <a class="brand" href="/"><img src="/images/icon-192.png" alt=""> Midnight Oil</a>
+      <a class="brand" href="/"><img src="/images/icon-192.png" alt="" width="28" height="28"> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
         <a href="/cli">For agents</a>
@@ -193,6 +193,15 @@ def faq_schema(faqs):
     return f'<script type="application/ld+json">{json.dumps(data)}</script>'
 
 
+def breadcrumb_schema(trail):
+    """trail: (name, path) pairs after Home."""
+    items = [("Midnight Oil", "/")] + list(trail)
+    data = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": i, "name": name, "item": f"https://midnightoil.app{path}"}
+        for i, (name, path) in enumerate(items, 1)]}
+    return f'<script type="application/ld+json">{json.dumps(data)}</script>'
+
+
 def cta(text):
     return f'''    <section class="cta">
       <div class="wrap">
@@ -244,7 +253,8 @@ def render_page(p):
     parts.append(cta(p["cta"]))
     parts.append("  </main>\n")
     parts.append(footer())
-    parts.append(faq_schema(p["faqs"]) + "\n</body>\n</html>\n")
+    parts.append(faq_schema(p["faqs"]) + "\n"
+                 + breadcrumb_schema([("Alternatives", "/alternatives"), (p["card_title"], path)]) + "\n</body>\n</html>\n")
     os.makedirs(os.path.join(ROOT, "alternatives"), exist_ok=True)
     with open(os.path.join(ROOT, "alternatives", f"{p['slug']}.html"), "w") as f:
         f.write("".join(parts))
@@ -253,7 +263,7 @@ def render_page(p):
 def article_schema(g, path):
     data = {"@context": "https://schema.org", "@type": "TechArticle", "headline": g["h1"],
             "description": g["description"], "url": f"https://midnightoil.app{path}",
-            "dateModified": UPDATED, "image": "https://midnightoil.app/images/og.png",
+            "dateModified": g.get("updated", UPDATED), "image": "https://midnightoil.app/images/og.png",
             "author": {"@type": "Person", "name": "Corey Haines", "url": "https://corey.co"},
             "publisher": {"@type": "Organization", "name": "Midnight Oil", "url": "https://midnightoil.app/"}}
     return f'<script type="application/ld+json">{json.dumps(data)}</script>'
@@ -263,7 +273,7 @@ def render_guide(g):
     path = f"/guides/{g['slug']}"
     parts = [head(g["title"], g["description"], path), nav(), "  <main>\n"]
     parts.append(f'''    <div class="wrap sub-hero">
-      <div class="eyebrow">{esc(g["eyebrow"])} · Updated {UPDATED[:7]}</div>
+      <div class="eyebrow">{esc(g["eyebrow"])} · Updated {g.get("updated", UPDATED)[:7]}</div>
       <h1>{g["h1"]}</h1>
       <p class="lede">{g["lede"]}</p>
       <div class="tldr"><h2>The short answer</h2><p>{g["tldr"]}</p></div>
@@ -288,7 +298,8 @@ def render_guide(g):
     parts.append(cta(g["cta"]))
     parts.append("  </main>\n")
     parts.append(footer())
-    parts.append(article_schema(g, path) + "\n" + faq_schema(g["faqs"]) + "\n</body>\n</html>\n")
+    parts.append(article_schema(g, path) + "\n" + faq_schema(g["faqs"]) + "\n"
+                 + breadcrumb_schema([("Guides", "/guides"), (g["card_title"], path)]) + "\n</body>\n</html>\n")
     write(path, "".join(parts))
 
 
@@ -308,7 +319,8 @@ def render_guides_hub():
       </div>
     </section>
 {cta("Keep your Mac awake in one click.")}  </main>
-{footer()}</body>
+{footer()}{breadcrumb_schema([("Guides", path)])}
+</body>
 </html>
 ''')
 
@@ -338,7 +350,8 @@ def render_hub():
       </div></div>
     </section>
 {cta(HUB["cta"])}  </main>
-{footer()}</body>
+{footer()}{breadcrumb_schema([("Alternatives", path)])}
+</body>
 </html>
 '''
     with open(os.path.join(ROOT, "alternatives", "index.html"), "w") as f:
@@ -428,7 +441,8 @@ def render_doc(d, eyebrow=None):
       </div></div>
     </section>
   </main>
-{footer()}</body>
+{footer()}{breadcrumb_schema([("Teams", "/teams"), (d["h1"], d["path"])]) if eyebrow else ""}
+</body>
 </html>
 '''
     write(d["path"], body)
@@ -536,6 +550,7 @@ sudo ln -sf "/Applications/Midnight Oil.app/Contents/MacOS/midnightoil" /usr/loc
     </section>
 {cta("Let your agent handle the night shift.")}  </main>
 {footer()}{faq_schema(c["faqs"])}
+{breadcrumb_schema([("For agents", c["path"])])}
 {COPY_SCRIPT}</body>
 </html>
 '''

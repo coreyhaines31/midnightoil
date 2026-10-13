@@ -300,6 +300,7 @@ caffeinate -d -t 3600    # for an hour</code></pre>
     # ------------------------------------------------------------------ AI agents overnight
     {
         "slug": "run-ai-agents-overnight",
+        "updated": "2026-10-13",
         "title": "Run Claude Code, Codex, or Cursor agents overnight",
         "description": "Why AI coding agents stop when your Mac sleeps, and a setup checklist for running Claude Code, Codex, or Cursor overnight or with the lid closed.",
         "eyebrow": "Guide",

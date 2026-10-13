@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Tell your AI agent to keep your Mac awake · Midnight Oil</title>
-  <meta name="description" content="Ask Claude Code, Codex, or Cursor to keep your Mac awake in plain words. It runs the midnightoil command: until a job finishes, until 7am, or with the lid closed. Free.">
+  <meta name="description" content="Ask Claude Code, Codex, or Cursor to keep your Mac awake in plain words. It runs the free midnightoil command: until a job ends, until 7am, or lid closed.">
   <link rel="canonical" href="https://midnightoil.app/cli">
   <meta property="og:title" content="Tell your AI agent to keep your Mac awake · Midnight Oil">
-  <meta property="og:description" content="Ask Claude Code, Codex, or Cursor to keep your Mac awake in plain words. It runs the midnightoil command: until a job finishes, until 7am, or with the lid closed. Free.">
+  <meta property="og:description" content="Ask Claude Code, Codex, or Cursor to keep your Mac awake in plain words. It runs the free midnightoil command: until a job ends, until 7am, or lid closed.">
   <meta property="og:image" content="https://midnightoil.app/images/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -81,7 +81,7 @@
   <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="nav">
     <div class="wrap">
-      <a class="brand" href="/"><img src="/images/icon-192.png" alt=""> Midnight Oil</a>
+      <a class="brand" href="/"><img src="/images/icon-192.png" alt="" width="28" height="28"> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
         <a href="/cli">For agents</a>
@@ -237,6 +237,7 @@ sudo ln -sf "/Applications/Midnight Oil.app/Contents/MacOS/midnightoil" /usr/loc
     </div>
   </footer>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Can I ask Claude Code to keep my Mac awake?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. With Midnight Oil installed, ask in plain words, like \u201ckeep my Mac awake until the migration is done, I'm closing the lid.\u201d Claude Code runs the midnightoil command, and the Mac stays awake until the job finishes, lid closed included."}}, {"@type": "Question", "name": "Do I have to teach my agent the commands?", "acceptedAnswer": {"@type": "Answer", "text": "No. Agents read midnightoil --help like any other command. To make it automatic, add one line to CLAUDE.md or AGENTS.md telling them to run long commands through midnightoil run."}}, {"@type": "Question", "name": "Which agents work with it?", "acceptedAnswer": {"@type": "Answer", "text": "Any agent that can run terminal commands: Claude Code, Codex, Cursor, Gemini CLI, and the rest. You can also use the command yourself or in scripts."}}, {"@type": "Question", "name": "How is midnightoil different from caffeinate?", "acceptedAnswer": {"@type": "Answer", "text": "Both hold the same macOS power assertion. midnightoil adds closed-lid mode, your battery safety settings, clock times like --until 6am, a countdown in the menu bar, and one shared session for agents running in parallel."}}, {"@type": "Question", "name": "What happens if two agents keep the Mac awake at once?", "acceptedAnswer": {"@type": "Answer", "text": "They share one session, which lasts until the last command finishes. One agent finishing never lets the Mac sleep under the other."}}, {"@type": "Question", "name": "How do I get the midnightoil command?", "acceptedAnswer": {"@type": "Answer", "text": "Install Midnight Oil with Homebrew (brew install --cask coreyhaines31/tap/midnightoil) and it's on your PATH. If you installed the app from the DMG, link it once with sudo ln -sf \"/Applications/Midnight Oil.app/Contents/MacOS/midnightoil\" /usr/local/bin/midnightoil."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Midnight Oil", "item": "https://midnightoil.app/"}, {"@type": "ListItem", "position": 2, "name": "For agents", "item": "https://midnightoil.app/cli"}]}</script>
   <script>
     document.querySelectorAll("[data-copy]").forEach(button => {
       const label = button.textContent;
