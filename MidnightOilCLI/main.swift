@@ -47,6 +47,10 @@ func send(_ request: CLIRequest) -> CLIResponse? {
     guard socket >= 0 else { return nil }
     defer { close(socket) }
     setsockopt(socket, SOL_SOCKET, SO_NOSIGPIPE, [Int32(1)], socklen_t(MemoryLayout<Int32>.size))
+    // Never let a stuck app hold up the command, or a run that's already started.
+    var timeout = timeval(tv_sec: 10, tv_usec: 0)
+    setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, &timeout, socklen_t(MemoryLayout<timeval>.size))
+    setsockopt(socket, SOL_SOCKET, SO_SNDTIMEO, &timeout, socklen_t(MemoryLayout<timeval>.size))
     guard var address = socketAddress() else { fail("The path to Midnight Oil's socket is too long.") }
     let size = socklen_t(MemoryLayout<sockaddr_un>.size)
     let connected = withUnsafePointer(to: &address) {
@@ -78,7 +82,8 @@ func socketAddress() -> sockaddr_un? {
 
 /// The app this command ships inside, or nil when it was built on its own.
 func enclosingApp() -> URL? {
-    let executable = URL(filePath: CommandLine.arguments[0]).resolvingSymlinksInPath()
+    // argv[0] is just "midnightoil" when found on the PATH, so ask for the real path.
+    guard let executable = Bundle.main.executableURL?.resolvingSymlinksInPath() else { return nil }
     let app = executable.deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
     return app.pathExtension == "app" ? app : nil
 }
