@@ -3,6 +3,17 @@
   "trailingSlash": false,
   "redirects": [
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.midnightoil.app"
+        }
+      ],
+      "destination": "https://midnightoil.app/",
+      "permanent": true
+    },
+    {
       "source": "/:path*",
       "has": [
         {
