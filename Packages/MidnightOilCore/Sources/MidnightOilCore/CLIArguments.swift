@@ -122,6 +122,8 @@ public enum CLIArguments {
         return value
     }
 
+    public static let maxDuration: TimeInterval = 30 * 86_400
+
     /// "8h", "90m", "1h30m", "45s", "2d". A unit is required, since a bare number is ambiguous.
     public static func duration(_ text: String) throws(CLIUsageError) -> TimeInterval {
         let units: [Character: TimeInterval] = ["d": 86_400, "h": 3_600, "m": 60, "s": 1]
@@ -139,6 +141,9 @@ public enum CLIArguments {
         }
         guard number.isEmpty, total > 0 else {
             throw CLIUsageError("Couldn't read “\(text)” as a duration. Try 90m, 2h, or 1h30m.")
+        }
+        guard total <= maxDuration else {
+            throw CLIUsageError("That's longer than 30 days. For no end at all, leave out --for.")
         }
         return total
     }

@@ -25,7 +25,7 @@ struct CLIArgumentsTests {
         #expect(try CLIArguments.duration(text) == seconds)
     }
 
-    @Test(arguments: ["90", "h", "8x", "", "0m", "1h30"])
+    @Test(arguments: ["90", "h", "8x", "", "0m", "1h30", "31d", "999999999999999999999h"])
     func rejectsUnclearDurations(text: String) {
         #expect(throws: CLIUsageError.self) { try CLIArguments.duration(text) }
     }
