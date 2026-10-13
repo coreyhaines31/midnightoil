@@ -87,12 +87,13 @@ final class SessionController {
 
     var isActive: Bool { session != nil }
 
-    func start(_ end: SessionEnd) {
+    /// Options left nil follow the user's defaults from Settings.
+    func start(_ end: SessionEnd, allowsDisplaySleep: Bool? = nil, staysAwakeWithLidClosed: Bool? = nil) {
         begin(Session(
             start: .now,
             end: end,
-            allowsDisplaySleep: Preferences.allowsDisplaySleep,
-            staysAwakeWithLidClosed: Preferences.staysAwakeWithLidClosed && canUseLidMode
+            allowsDisplaySleep: displaySleep(allowsDisplaySleep ?? Preferences.allowsDisplaySleep),
+            staysAwakeWithLidClosed: (staysAwakeWithLidClosed ?? Preferences.staysAwakeWithLidClosed) && canUseLidMode
         ))
     }
 
@@ -329,6 +330,12 @@ final class SessionController {
 }
 
 extension SessionController {
+    /// Adds a process to a running session that waits on processes.
+    func join(_ process: WatchedProcess) {
+        session = session?.joining(process)
+        onChange?()
+    }
+
     /// Whether a process exists. EPERM means it does but belongs to someone else.
     fileprivate static func isRunning(_ pid: Int32) -> Bool {
         kill(pid, 0) == 0 || errno == EPERM
