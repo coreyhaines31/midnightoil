@@ -13,6 +13,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 from pages import PAGES, HUB  # noqa: E402
 from guides import GUIDES, UPDATED  # noqa: E402
+from agents import AGENTS, UPDATED as AGENTS_UPDATED  # noqa: E402
 from cli import AGENT_LINE, ASKS, CLI, COMMANDS, COMPARE, OPTIONS, TERMINAL  # noqa: E402
 from teams import CHECKOUT, DOCS, LEGAL, SALES_OPEN, TEAMS  # noqa: E402
 
@@ -131,10 +132,16 @@ def footer_guides():
     return f'      <nav class="footer-alts" aria-label="Guides"><a class="label" href="/guides">Guides</a>{links}</nav>\n'
 
 
+def footer_agents():
+    """Every per-agent page, linked from every footer like the guides."""
+    links = "".join(f'<a href="/agents/{a["slug"]}">{esc(a["name"])}</a>' for a in AGENTS)
+    return f'      <nav class="footer-alts" aria-label="For agents"><a class="label" href="/cli">For agents</a>{links}</nav>\n'
+
+
 def footer():
     return f'''  <footer>
     <div class="wrap">
-{footer_guides()}{footer_alternatives()}      <span>© 2026 Corey Haines. <a href="{REPO}/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+{footer_agents()}{footer_guides()}{footer_alternatives()}      <span>© 2026 Corey Haines. <a href="{REPO}/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
       <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="{REPO}/issues">Issues</a> &nbsp;·&nbsp; <a href="/cli">For agents</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
     </div>
   </footer>
@@ -149,7 +156,7 @@ def render_homepage_footer():
     start, end = "<!-- alternatives -->\n", "<!-- /alternatives -->"
     i, j = page.index(start) + len(start), page.index(end)
     with open(path, "w") as f:
-        f.write(page[:i] + footer_guides() + footer_alternatives() + "      " + page[j:])
+        f.write(page[:i] + footer_agents() + footer_guides() + footer_alternatives() + "      " + page[j:])
 
 
 def head(title, description, path):
@@ -543,7 +550,14 @@ sudo ln -sf "/Applications/Midnight Oil.app/Contents/MacOS/midnightoil" /usr/loc
         <p>Closed-lid mode needs a one-time approval: open Midnight Oil's Settings › Closed Lid and click Install. The full reference is in the <a href="{REPO}#command-line">README</a>.</p>
       </div></div>
     </section>
-    <section class="tight gray" id="faq">
+    <section class="tight gray" id="agents">
+      <div class="wrap">
+        <div class="section-head"><h2>Set up for your agent</h2></div>
+        <div class="related">
+{agent_cards()}        </div>
+      </div>
+    </section>
+    <section class="tight" id="faq">
       <div class="wrap"><div class="prose">
         <h2>Questions</h2>
 {faq}      </div></div>
@@ -555,6 +569,114 @@ sudo ln -sf "/Applications/Midnight Oil.app/Contents/MacOS/midnightoil" /usr/loc
 </html>
 '''
     write(c["path"], body)
+
+
+def agent_cards(skip=None):
+    return "".join(f'          <a href="/agents/{a["slug"]}"><b>{esc(a["name"])}</b><span>{esc(a["blurb"])}</span></a>\n'
+                   for a in AGENTS if a["slug"] != skip)
+
+
+def render_agent(a):
+    path = f"/agents/{a['slug']}"
+    name = a["name"]
+    glance = "".join(f"            <tr><td>{k}</td><td>{v}</td></tr>\n" for k, v in a["glance"])
+    parts = [f'''    <section class="tight" id="glance">
+      <div class="wrap"><div class="prose">
+        <h2>{esc(name)} at a glance</h2>
+        <div class="table-scroll"><table class="compare cmds">
+          <tbody>
+{glance}          </tbody></table></div>
+      </div></div>
+    </section>
+    <section class="tight gray" id="sleep">
+      <div class="wrap"><div class="prose">
+        <h2>What happens when your Mac sleeps mid-run</h2>
+{a["sleep_html"]}
+      </div></div>
+    </section>
+''']
+    if a["asks"]:
+        asks = "".join(f'            <tr><td>“{esc(said)}”</td><td><code>{esc(cmd)}</code></td></tr>\n' for said, cmd in a["asks"])
+        parts.append(f'''    <section class="tight" id="ask">
+      <div class="wrap"><div class="prose">
+        <h2>Just ask {esc(name)}</h2>
+        <p>With Midnight Oil installed, {esc(name)} can run the <code>midnightoil</code> command for you. Say it in your own words:</p>
+        <div class="table-scroll"><table class="compare cmds asks">
+          <thead><tr><th>You say</th><th>{esc(name)} runs</th></tr></thead><tbody>
+{asks}          </tbody></table></div>
+        <p>The session shows up in the menu bar like one you started yourself, so you can see it, extend it, or end it with a click.</p>
+      </div></div>
+    </section>
+''')
+    if a["file"]:
+        parts.append(f'''    <section class="tight{"" if a["asks"] else " gray"}" id="automatic">
+      <div class="wrap"><div class="prose">
+        <h2>Make it automatic</h2>
+        <p>Add this line to <code>{esc(a["file"])}</code> and {esc(name)} keeps the Mac awake for every long command without being asked:</p>
+        <div class="agent-install" style="margin:20px 0 0">
+          <div class="agent-head">
+            <div><b>For {esc(a["file"])}</b><span>{esc(name)} reads <code>midnightoil --help</code> for the rest.</span></div>
+            <button class="pill glass" type="button" data-copy="agent-line">Copy line</button>
+          </div>
+          <pre id="agent-line">{esc(AGENT_LINE)}</pre>
+        </div>
+      </div></div>
+    </section>
+''')
+    runs = ""
+    if a["launch"]:
+        runs += f"        <h3>Keep the Mac awake for the whole session</h3>\n        <pre><code>{esc(a['launch'])}</code></pre>\n"
+    if a["headless"]:
+        runs += f"        <h3>Or for one unattended run</h3>\n        <pre><code>{esc(a['headless'])}</code></pre>\n"
+    parts.append(f'''    <section class="tight gray" id="unattended">
+      <div class="wrap"><div class="prose">
+        <h2>Running {esc(name)} unattended</h2>
+{a["unattended_html"]}
+{runs}      </div></div>
+    </section>
+    <section class="tight" id="lid">
+      <div class="wrap"><div class="prose">
+        <h2>Lid closed, battery safe</h2>
+        <p>Add <code>--lid-closed</code> and {esc(name)} keeps working with the laptop shut. It needs a one-time approval in Midnight Oil's Settings › Closed Lid, and normal sleep comes back the moment the session ends, even if the app quits or crashes.</p>
+        <p>On battery, sessions can end when you unplug or drop below a level you pick, and an alarm sounds if the lid closes during a closed-lid session. Add <code>--allow-display-sleep</code> to let the screen go dark while the Mac keeps working. The full setup is in <a href="/guides/run-ai-agents-overnight">how to run AI agents overnight</a>.</p>
+      </div></div>
+    </section>
+''')
+    faq = "".join(f"        <h3>{esc(q)}</h3>\n        <p>{esc(ans)}</p>\n" for q, ans in a["faqs"])
+    parts.append(f'''    <section class="tight gray" id="faq">
+      <div class="wrap"><div class="prose">
+        <h2>Questions</h2>
+{faq}      </div></div>
+    </section>
+    <section class="tight">
+      <div class="wrap">
+        <div class="section-head"><h2>Using another agent?</h2></div>
+        <div class="related">
+{agent_cards(a["slug"])}        </div>
+        <p style="margin-top:22px"><a href="/cli">Every command, and how it compares with caffeinate →</a></p>
+      </div>
+    </section>
+''')
+    title = f"Keep your Mac awake while {name} works"
+    article = {"h1": title, "description": a["description"], "updated": AGENTS_UPDATED}
+    body = f'''{head(title + " · Midnight Oil", a["description"], path)}{nav()}  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">For agents · {esc(name)}</div>
+      <h1>Keep your Mac awake<br>while {esc(name)} works.</h1>
+      <p class="lede">{a["lede"]}</p>
+      <div class="actions">
+        {CTAS}
+      </div>
+      <div class="tldr"><h2>The short answer</h2><p>{a["tldr"]}</p></div>
+    </div>
+{"".join(parts)}{cta(f"Let {esc(name)} work the night shift.")}  </main>
+{footer()}{article_schema(article, path)}
+{faq_schema(a["faqs"])}
+{breadcrumb_schema([("For agents", "/cli"), (name, path)])}
+{COPY_SCRIPT}</body>
+</html>
+'''
+    write(path, body)
 
 
 def render_404():
@@ -613,6 +735,8 @@ if __name__ == "__main__":
     render_guides_hub()
     render_404()
     render_cli()
+    for a in AGENTS:
+        render_agent(a)
     pages = render_sitemap()
     print(f"sitemap: {pages} pages")
     print(f"rendered {len(PAGES)} pages + hub + homepage footer + teams + {len(DOCS)} docs + {len(LEGAL)} legal")

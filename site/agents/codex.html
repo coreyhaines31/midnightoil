@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Keep your Mac awake while Codex CLI works · Midnight Oil</title>
+  <meta name="description" content="Codex CLI stops when your Mac sleeps. Keep the Mac awake for a codex exec run or a whole session, lid closed included, with one line in AGENTS.md.">
+  <link rel="canonical" href="https://midnightoil.app/agents/codex">
+  <meta property="og:title" content="Keep your Mac awake while Codex CLI works · Midnight Oil">
+  <meta property="og:description" content="Codex CLI stops when your Mac sleeps. Keep the Mac awake for a codex exec run or a whole session, lid closed included, with one line in AGENTS.md.">
+  <meta property="og:image" content="https://midnightoil.app/images/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://midnightoil.app/agents/codex">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/images/icon-192.png">
+  <link rel="apple-touch-icon" href="/images/icon-512.png">
+  <link rel="stylesheet" href="/site.css">
+  <style>
+    .sub-hero { padding: 72px 22px 40px; }
+    .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
+    .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
+    .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
+    .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
+    .sub-hero .actions { display: flex; align-items: center; gap: 14px; margin-top: 28px; flex-wrap: wrap; }
+    .tldr { background: var(--glass); border-radius: 28px; padding: 26px 28px; margin: 44px 0 0; max-width: 900px; position: relative; box-shadow: var(--glass-shadow); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+    .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
+    .prose { max-width: 760px; }
+    .prose h2 { font-size: clamp(28px, 3.6vw, 40px); margin: 0 0 16px; }
+    .prose h3 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 8px; }
+    .prose p, .prose li { color: var(--muted); font-size: 17px; line-height: 1.6; }
+    .prose p strong { color: var(--text); font-weight: 600; }
+    .prose ul { padding-left: 20px; margin: 0 0 8px; }
+    .prose li { margin-bottom: 6px; }
+    .prose h2 code { font-size: 0.86em; background: none; padding: 0; }
+    .compare.cmds:not(.asks) td:first-child { white-space: nowrap; }
+    .compare.cmds td:last-child code { white-space: nowrap; }
+    .agent-head code { font-size: 12px; padding: 1px 5px; }
+    .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
+    .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    .prose blockquote { margin: 18px 0; padding: 14px 20px; border-left: 3px solid var(--gold); background: var(--gray); border-radius: 0 12px 12px 0; }
+    .prose blockquote p { margin: 0; font-size: 16px; }
+    .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
+    .prose blockquote cite a { color: var(--faint); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+    .two > div { background: var(--glass); border-radius: 22px; padding: 22px; box-shadow: var(--glass-shadow); }
+    .two h3 { margin: 0 0 10px; font-size: 18px; }
+    .two ul { margin: 0; padding-left: 18px; }
+    .two li { font-size: 15px; margin-bottom: 6px; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
+    .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
+    .glance { max-width: 760px; margin: 0 0 44px; }
+    .glance .compare td:first-child { font-weight: 500; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+    .related a { display: block; background: var(--glass); border-radius: 22px; padding: 18px 20px; text-decoration: none; box-shadow: var(--glass-shadow); transition: transform .2s ease, background .2s ease; }
+    .related a:hover { background: var(--glass-strong); transform: translateY(-2px); }
+    .related b { display: block; margin-bottom: 4px; }
+    .related span { color: var(--muted); font-size: 14px; }
+    section.tight { padding: 64px 0; }
+    .tldr::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; background: var(--rim);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+    @media (max-width: 720px) {
+      .compare.cmds, .compare.cmds tbody, .compare.cmds tr, .compare.cmds td { display: block; width: auto; min-width: 0; }
+      .compare.cmds thead { display: none; }
+      .compare.cmds td { padding: 0; border: 0; }
+      .compare.cmds tr { padding: 14px 0; border-bottom: 1px solid var(--line); }
+      .compare.cmds td:first-child { white-space: normal; margin-bottom: 6px; }
+      .compare.cmds code { font-size: 13.5px; }
+      .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; }
+      .sub-hero .actions:has(.glass) { flex-direction: column; align-items: stretch; max-width: 340px; }
+      .sub-hero .actions .pill { justify-content: center; }
+    }
+  </style>
+  <script async src="https://tracerkit.com/t.js" data-key="tk__vMOLefQSrM_pLCt"></script>
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="nav">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/images/icon-192.png" alt="" width="28" height="28"> Midnight Oil</a>
+      <nav>
+        <a href="/#features">Features</a>
+        <a href="/cli">For agents</a>
+        <a href="/guides">Guides</a>
+        <a href="/teams">Teams</a>
+        <a href="/#faq">FAQ</a>
+        <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
+        <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
+      </nav>
+    </div>
+  </div>
+  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">For agents · Codex CLI</div>
+      <h1>Keep your Mac awake<br>while Codex CLI works.</h1>
+      <p class="lede">OpenAI's Codex CLI runs on your Mac, so it stops when the Mac sleeps. Midnight Oil keeps the Mac awake while Codex works, lid open or closed, and lets it sleep the moment Codex is done.</p>
+      <div class="actions">
+        <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Download free</a>
+        <a class="pill big glass" href="https://github.com/coreyhaines31/midnightoil"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>View source code</a>
+      </div>
+      <div class="tldr"><h2>The short answer</h2><p>Wrap the run: <code>midnightoil run --lid-closed -- codex exec "…"</code>. For an interactive session, <code>midnightoil run -- codex</code>. Or add one line to <code>AGENTS.md</code> and Codex keeps the Mac awake for every long command on its own.</p></div>
+    </div>
+    <section class="tight" id="glance">
+      <div class="wrap"><div class="prose">
+        <h2>Codex CLI at a glance</h2>
+        <div class="table-scroll"><table class="compare cmds">
+          <tbody>
+            <tr><td>Runs where</td><td>In your terminal, on your Mac</td></tr>
+            <tr><td>Interactive</td><td><code>codex</code></td></tr>
+            <tr><td>Unattended</td><td><code>codex exec "…"</code> runs one task and exits</td></tr>
+            <tr><td>Instructions file</td><td><code>AGENTS.md</code> in the repo, or <code>~/.codex/AGENTS.md</code> for every project</td></tr>
+            <tr><td>Needs your Mac awake?</td><td>Yes for the CLI and IDE extension. Codex cloud tasks run on OpenAI's servers and don't.</td></tr>
+          </tbody></table></div>
+      </div></div>
+    </section>
+    <section class="tight gray" id="sleep">
+      <div class="wrap"><div class="prose">
+        <h2>What happens when your Mac sleeps mid-run</h2>
+
+        <p>When the Mac sleeps, Codex freezes with it: the model request in flight drops, the command it was running stops, and the task waits for you to come back. <code>codex exec</code> in a script or cron job is hit hardest, because nobody is watching when it stalls.</p>
+        <p>Codex doesn't ask macOS to stay awake. Idle sleep and a closed lid stop it like any other terminal program.</p>
+        
+      </div></div>
+    </section>
+    <section class="tight" id="ask">
+      <div class="wrap"><div class="prose">
+        <h2>Just ask Codex CLI</h2>
+        <p>With Midnight Oil installed, Codex CLI can run the <code>midnightoil</code> command for you. Say it in your own words:</p>
+        <div class="table-scroll"><table class="compare cmds asks">
+          <thead><tr><th>You say</th><th>Codex CLI runs</th></tr></thead><tbody>
+            <tr><td>“Keep the Mac awake while you work through this. I&#x27;m heading to bed.”</td><td><code>midnightoil start --allow-display-sleep</code></td></tr>
+            <tr><td>“Build the release and keep my Mac awake until it finishes.”</td><td><code>midnightoil run -- make release</code></td></tr>
+            <tr><td>“I&#x27;m closing the lid. Keep going.”</td><td><code>midnightoil start --lid-closed</code></td></tr>
+          </tbody></table></div>
+        <p>The session shows up in the menu bar like one you started yourself, so you can see it, extend it, or end it with a click.</p>
+      </div></div>
+    </section>
+    <section class="tight" id="automatic">
+      <div class="wrap"><div class="prose">
+        <h2>Make it automatic</h2>
+        <p>Add this line to <code>AGENTS.md</code> and Codex CLI keeps the Mac awake for every long command without being asked:</p>
+        <div class="agent-install" style="margin:20px 0 0">
+          <div class="agent-head">
+            <div><b>For AGENTS.md</b><span>Codex CLI reads <code>midnightoil --help</code> for the rest.</span></div>
+            <button class="pill glass" type="button" data-copy="agent-line">Copy line</button>
+          </div>
+          <pre id="agent-line">For commands that take more than a few minutes, run them through `midnightoil run -- &lt;command&gt;` so the Mac stays awake until they finish.</pre>
+        </div>
+      </div></div>
+    </section>
+    <section class="tight gray" id="unattended">
+      <div class="wrap"><div class="prose">
+        <h2>Running Codex CLI unattended</h2>
+
+        <p><code>codex exec</code> runs one task without the interactive UI, which is the cleanest thing to wrap: Midnight Oil holds the Mac awake from the first token to the last, exits with Codex's exit code, and prints its own messages on stderr, so Codex's output still pipes cleanly.</p>
+        <p>Several Codex runs at once share one session that lasts until the last one finishes, so one agent finishing never lets the Mac sleep under another.</p>
+        
+        <h3>Keep the Mac awake for the whole session</h3>
+        <pre><code>midnightoil run --lid-closed -- codex</code></pre>
+        <h3>Or for one unattended run</h3>
+        <pre><code>midnightoil run --lid-closed -- codex exec &quot;migrate the API client to v2&quot;</code></pre>
+      </div></div>
+    </section>
+    <section class="tight" id="lid">
+      <div class="wrap"><div class="prose">
+        <h2>Lid closed, battery safe</h2>
+        <p>Add <code>--lid-closed</code> and Codex CLI keeps working with the laptop shut. It needs a one-time approval in Midnight Oil's Settings › Closed Lid, and normal sleep comes back the moment the session ends, even if the app quits or crashes.</p>
+        <p>On battery, sessions can end when you unplug or drop below a level you pick, and an alarm sounds if the lid closes during a closed-lid session. Add <code>--allow-display-sleep</code> to let the screen go dark while the Mac keeps working. The full setup is in <a href="/guides/run-ai-agents-overnight">how to run AI agents overnight</a>.</p>
+      </div></div>
+    </section>
+    <section class="tight gray" id="faq">
+      <div class="wrap"><div class="prose">
+        <h2>Questions</h2>
+        <h3>Does Codex keep working when my Mac sleeps?</h3>
+        <p>Not the CLI or the IDE extension: sleep pauses them mid-task. Codex cloud tasks keep going because they run on OpenAI&#x27;s servers. For local runs, wrap them with midnightoil run -- codex exec &quot;…&quot;.</p>
+        <h3>What goes in AGENTS.md?</h3>
+        <p>One line: For commands that take more than a few minutes, run them through `midnightoil run -- &lt;command&gt;` so the Mac stays awake until they finish. ~/.codex/AGENTS.md applies it to every project.</p>
+        <h3>Can I run several Codex jobs overnight?</h3>
+        <p>Yes. Parallel midnightoil run sessions join one session that lasts until the last job finishes.</p>
+        <h3>Will it drain my battery?</h3>
+        <p>Only as long as Codex runs, and you can set sessions to end when you unplug or when the battery drops below a level you pick.</p>
+      </div></div>
+    </section>
+    <section class="tight">
+      <div class="wrap">
+        <div class="section-head"><h2>Using another agent?</h2></div>
+        <div class="related">
+          <a href="/agents/claude-code"><b>Claude Code</b><span>Terminal agent. Wrap the session, or add a line to CLAUDE.md.</span></a>
+          <a href="/agents/cursor"><b>Cursor</b><span>Editor agent and CLI. A trigger, a rule, or agent -p.</span></a>
+          <a href="/agents/gemini-cli"><b>Gemini CLI</b><span>Terminal agent. Wrap gemini -p, or add a line to GEMINI.md.</span></a>
+          <a href="/agents/aider"><b>Aider</b><span>Terminal pair programmer. Wrap the session or a --message run.</span></a>
+          <a href="/agents/copilot"><b>GitHub Copilot</b><span>VS Code agent mode and Copilot CLI. A trigger or an instruction.</span></a>
+          <a href="/agents/cline"><b>Cline</b><span>VS Code extension. A trigger for VS Code, or a .clinerules line.</span></a>
+          <a href="/agents/ollama"><b>Ollama</b><span>Local model server. Keep it serving while your agents call it.</span></a>
+        </div>
+        <p style="margin-top:22px"><a href="/cli">Every command, and how it compares with caffeinate →</a></p>
+      </div>
+    </section>
+    <section class="cta">
+      <div class="wrap">
+        <div class="cta-card">
+          <img src="/images/icon-192.png" alt="" width="96" height="96">
+          <h2>Let Codex CLI work the night shift.</h2>
+          <p>Free. No account, no subscription.</p>
+          <div class="actions">
+            <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Download free</a>
+        <a class="pill big glass" href="https://github.com/coreyhaines31/midnightoil"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>View source code</a>
+          </div>
+          <p class="fineprint">macOS 14 or later · Apple Silicon and Intel · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <nav class="footer-alts" aria-label="For agents"><a class="label" href="/cli">For agents</a><a href="/agents/claude-code">Claude Code</a><a href="/agents/codex">Codex CLI</a><a href="/agents/cursor">Cursor</a><a href="/agents/gemini-cli">Gemini CLI</a><a href="/agents/aider">Aider</a><a href="/agents/copilot">GitHub Copilot</a><a href="/agents/cline">Cline</a><a href="/agents/ollama">Ollama</a></nav>
+      <nav class="footer-alts" aria-label="Guides"><a class="label" href="/guides">Guides</a><a href="/guides/stop-mac-from-sleeping">Stop your Mac from sleeping</a><a href="/guides/clamshell-mode">Clamshell mode</a><a href="/guides/mac-sleep-settings">Mac sleep settings</a><a href="/guides/keep-mac-screen-on">Keep your Mac screen on</a><a href="/guides/run-ai-agents-overnight">Run AI agents overnight</a></nav>
+      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives">Alternatives</a><a href="/alternatives/amphetamine">Amphetamine alternative</a><a href="/alternatives/caffeine">Caffeine alternative</a><a href="/alternatives/caffeinate">caffeinate alternative</a><a href="/alternatives/keepingyouawake">KeepingYouAwake alternative</a><a href="/alternatives/mouse-jiggler">Mouse jiggler alternative</a></nav>
+      <span>© 2026 Corey Haines. <a href="https://github.com/coreyhaines31/midnightoil/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a> &nbsp;·&nbsp; <a href="/cli">For agents</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
+    </div>
+  </footer>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Keep your Mac awake while Codex CLI works", "description": "Codex CLI stops when your Mac sleeps. Keep the Mac awake for a codex exec run or a whole session, lid closed included, with one line in AGENTS.md.", "url": "https://midnightoil.app/agents/codex", "dateModified": "2026-10-13", "image": "https://midnightoil.app/images/og.png", "author": {"@type": "Person", "name": "Corey Haines", "url": "https://corey.co"}, "publisher": {"@type": "Organization", "name": "Midnight Oil", "url": "https://midnightoil.app/"}}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Does Codex keep working when my Mac sleeps?", "acceptedAnswer": {"@type": "Answer", "text": "Not the CLI or the IDE extension: sleep pauses them mid-task. Codex cloud tasks keep going because they run on OpenAI's servers. For local runs, wrap them with midnightoil run -- codex exec \"\u2026\"."}}, {"@type": "Question", "name": "What goes in AGENTS.md?", "acceptedAnswer": {"@type": "Answer", "text": "One line: For commands that take more than a few minutes, run them through `midnightoil run -- <command>` so the Mac stays awake until they finish. ~/.codex/AGENTS.md applies it to every project."}}, {"@type": "Question", "name": "Can I run several Codex jobs overnight?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Parallel midnightoil run sessions join one session that lasts until the last job finishes."}}, {"@type": "Question", "name": "Will it drain my battery?", "acceptedAnswer": {"@type": "Answer", "text": "Only as long as Codex runs, and you can set sessions to end when you unplug or when the battery drops below a level you pick."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Midnight Oil", "item": "https://midnightoil.app/"}, {"@type": "ListItem", "position": 2, "name": "For agents", "item": "https://midnightoil.app/cli"}, {"@type": "ListItem", "position": 3, "name": "Codex CLI", "item": "https://midnightoil.app/agents/codex"}]}</script>
+  <script>
+    document.querySelectorAll("[data-copy]").forEach(button => {
+      const label = button.textContent;
+      button.addEventListener("click", async () => {
+        const source = document.getElementById(button.dataset.copy);
+        try {
+          await navigator.clipboard.writeText(source.textContent);
+          button.textContent = "Copied";
+        } catch (_) {
+          getSelection().selectAllChildren(source);
+          button.textContent = "Press ⌘C to copy";
+        }
+        setTimeout(() => { button.textContent = label; }, 2500);
+      });
+    });
+  </script>
+</body>
+</html>
