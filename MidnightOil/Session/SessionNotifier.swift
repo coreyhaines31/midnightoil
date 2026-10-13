@@ -48,7 +48,8 @@ enum SessionNotifier {
 
     private static func message(for reason: SessionEndReason) -> String? {
         switch reason {
-        case .user, .replaced, .quit: nil
+        // A finished command already shows in its terminal; agents run many a day.
+        case .user, .replaced, .quit, .commandFinished: nil
         case .timeUp: "Your Mac can sleep normally again."
         case .appQuit(let name): "\(name) quit, so your Mac can sleep again."
         case .downloadFinished(let name): "“\(name)” finished downloading, so your Mac can sleep again."

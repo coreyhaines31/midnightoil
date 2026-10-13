@@ -1,0 +1,112 @@
+import Foundation
+import MidnightOilCore
+
+/// Carries out what the `midnightoil` command asks for, the same way the menu would.
+@MainActor
+final class CLICommands {
+    private let sessions: SessionController
+    private let schedules: ScheduleStore
+    private let expectedEnd: (Session) -> Date?
+
+    init(sessions: SessionController, schedules: ScheduleStore, expectedEnd: @escaping (Session) -> Date?) {
+        self.sessions = sessions
+        self.schedules = schedules
+        self.expectedEnd = expectedEnd
+    }
+
+    func handle(_ request: CLIRequest) -> CLIResponse {
+        var notes: [String] = []
+        switch request.action {
+        case .status:
+            break
+        case .stop:
+            if sessions.isActive {
+                sessions.end(reason: .user)
+            } else {
+                notes.append("Nothing to stop: Midnight Oil wasn't keeping your Mac awake.")
+            }
+        case .start:
+            if var end = request.sessionEnd {
+                if case .whileProcessesRunning(let processes) = end {
+                    end = .whileProcessesRunning(processes.map {
+                        WatchedProcess(pid: $0.pid, name: $0.name, started: ProcessInfoReader.startTime(of: $0.pid))
+                    })
+                }
+                start(end, request: request, notes: &notes)
+            }
+        }
+        return CLIResponse(notes: notes, status: status())
+    }
+
+    private func start(_ end: SessionEnd, request: CLIRequest, notes: inout [String]) {
+        let wantsLid = request.staysAwakeWithLidClosed ?? Preferences.staysAwakeWithLidClosed
+        if wantsLid, !sessions.canUseLidMode {
+            notes.append(sessions.policy().disallowsClosedLid
+                ? "Your organization turned off closed-lid mode, so your Mac will sleep if you close the lid."
+                : "Closed-lid mode isn't set up, so your Mac will sleep if you close the lid. "
+                    + "Set it up once in Midnight Oil's Settings › Closed Lid.")
+        }
+        // Runs share one session, so parallel agents keep the Mac awake until the last finishes.
+        if case .whileProcessesRunning(let processes) = end, let current = sessions.session {
+            switch current.end {
+            case .whileProcessesRunning:
+                processes.forEach(sessions.join)
+                apply(request, wantsLid: wantsLid, to: current)
+                return
+            case .indefinite where current.source == .manual:
+                // Already awake until you end it; a run shouldn't cut that short.
+                apply(request, wantsLid: wantsLid, to: current)
+                notes.append("Your Mac was already staying awake until you end it, so that session keeps running.")
+                return
+            default:
+                notes.append("Replaced the session that was running. "
+                    + "Your Mac now stays awake until the command finishes.")
+            }
+        }
+        sessions.start(end, allowsDisplaySleep: request.allowsDisplaySleep, staysAwakeWithLidClosed: wantsLid)
+    }
+
+    /// Options asked for when joining a running session: closed-lid mode only ever turns on,
+    /// so one run can't drop another's, and an explicit display choice applies.
+    private func apply(_ request: CLIRequest, wantsLid: Bool, to current: Session) {
+        if wantsLid, sessions.canUseLidMode, !current.staysAwakeWithLidClosed {
+            sessions.setStaysAwakeWithLidClosed(true)
+        }
+        if let allows = request.allowsDisplaySleep, allows != current.allowsDisplaySleep {
+            sessions.setAllowsDisplaySleep(allows)
+        }
+    }
+
+    private func status() -> CLIStatus {
+        guard let session = sessions.session else { return .asleep }
+        let card = SessionCardModel()
+        card.update(from: session, schedules: schedules.schedules, policy: sessions.policy())
+        var startedBy = "you"
+        switch session.source {
+        case .trigger(_, let name): startedBy = "the “\(name)” trigger"
+        case .schedule(_, let name): startedBy = "your “\(name)” schedule"
+        case .manual: break
+        }
+        var processes: [String]?
+        if case .whileProcessesRunning(let watched) = session.end {
+            processes = watched.map(\.name)
+        }
+        let ends = expectedEnd(session)
+        // The menu counts seconds; a terminal reads better rounded, like "2h left".
+        var detail = card.detail
+        if let ends {
+            let left = RemainingTime.short(ends.timeIntervalSinceNow)
+            detail = "\(left) left · until \(SessionCardModel.clockTime(ends))"
+        }
+        return CLIStatus(
+            awake: true,
+            detail: detail,
+            startedBy: startedBy,
+            started: session.start,
+            ends: ends,
+            staysAwakeWithLidClosed: session.staysAwakeWithLidClosed,
+            allowsDisplaySleep: session.allowsDisplaySleep,
+            processes: processes
+        )
+    }
+}

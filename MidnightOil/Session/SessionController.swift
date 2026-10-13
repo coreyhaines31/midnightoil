@@ -7,6 +7,7 @@ enum SessionEndReason {
     case lowBattery(floor: Int)
     case appQuit(String)
     case downloadFinished(String)
+    case commandFinished(String)
     case unplugged
     case triggerEnded(String)
     case scheduleEnded(String)
@@ -24,6 +25,7 @@ enum SessionEndReason {
         case .lowBattery: .lowBattery
         case .appQuit: .appQuit
         case .downloadFinished: .downloadFinished
+        case .commandFinished: .commandFinished
         case .unplugged: .unplugged
         case .triggerEnded: .triggerEnded
         case .scheduleEnded: .scheduleEnded
@@ -85,12 +87,13 @@ final class SessionController {
 
     var isActive: Bool { session != nil }
 
-    func start(_ end: SessionEnd) {
+    /// Options left nil follow the user's defaults from Settings.
+    func start(_ end: SessionEnd, allowsDisplaySleep: Bool? = nil, staysAwakeWithLidClosed: Bool? = nil) {
         begin(Session(
             start: .now,
             end: end,
-            allowsDisplaySleep: Preferences.allowsDisplaySleep,
-            staysAwakeWithLidClosed: Preferences.staysAwakeWithLidClosed && canUseLidMode
+            allowsDisplaySleep: displaySleep(allowsDisplaySleep ?? Preferences.allowsDisplaySleep),
+            staysAwakeWithLidClosed: (staysAwakeWithLidClosed ?? Preferences.staysAwakeWithLidClosed) && canUseLidMode
         ))
     }
 
@@ -187,6 +190,7 @@ final class SessionController {
         switch session.end {
         case .whileAppRunning(let app): subject = app.name
         case .whileDownloading(let file): subject = DownloadProgress.displayName(for: file)
+        case .whileProcessesRunning(let processes): subject = processes.map(\.name).joined(separator: ", ")
         case .indefinite, .after, .until: break
         }
         let record = SessionRecord(
@@ -303,6 +307,13 @@ final class SessionController {
            NSRunningApplication.runningApplications(withBundleIdentifier: app.bundleIdentifier).isEmpty {
             return .appQuit(app.name)
         }
+        if case .whileProcessesRunning(let processes) = session.end {
+            // Prune the live session, not the snapshot: this tick may have changed its options.
+            guard let running = self.session?.keepingProcesses(where: ProcessInfoReader.isRunning) else {
+                return .commandFinished(processes.map(\.name).joined(separator: ", "))
+            }
+            self.session = running
+        }
         if case .whileDownloading(let file) = session.end, !advanceDownload(file) {
             return .downloadFinished(DownloadProgress.displayName(for: file))
         }
@@ -317,9 +328,17 @@ final class SessionController {
         }
         return nil
     }
+}
+
+extension SessionController {
+    /// Adds a process to a running session that waits on processes.
+    func join(_ process: WatchedProcess) {
+        session = session?.joining(process)
+        onChange?()
+    }
 
     /// Returns whether the file is still downloading.
-    private func advanceDownload(_ file: URL) -> Bool {
+    fileprivate func advanceDownload(_ file: URL) -> Bool {
         guard var progress = download else { return false }
         // Browser partial files only need to exist; skip sizing Safari's package every second.
         let size = progress.isPartialFile
