@@ -230,7 +230,7 @@ sudo pmset -a disablesleep 0   # put it back</code></pre>
 sudo shutdown -s 2330     # sleep at 11:30 PM
 sudo killall shutdown     # cancel it
 pmset sleepnow            # sleep right now</code></pre>
-        <p>Despite the name, <code>shutdown -s</code> puts the Mac to sleep rather than shutting it down. You can also sleep it from the Apple menu › Sleep.</p>
+        <p>Despite the name, <code>shutdown -s</code> puts the Mac to sleep rather than shutting it down. More ways, including a Shortcut and sleeping when a job finishes, in <a href="/guides/mac-sleep-timer">how to set a sleep timer on a Mac</a>.</p>
             """},
             {"id": "schedule", "gray": True, "html": """
         <h2>A sleep and wake schedule</h2>
@@ -300,6 +300,7 @@ caffeinate -d -t 3600    # for an hour</code></pre>
     # ------------------------------------------------------------------ AI agents overnight
     {
         "slug": "run-ai-agents-overnight",
+        "updated": "2026-10-13",
         "title": "Run Claude Code, Codex, or Cursor agents overnight",
         "description": "Why AI coding agents stop when your Mac sleeps, and a setup checklist for running Claude Code, Codex, or Cursor overnight or with the lid closed.",
         "eyebrow": "Guide",
@@ -340,7 +341,7 @@ tmux attach -t agent       # check on it later</code></pre>
         <p><code>caffeinate -i</code> holds off idle sleep for as long as the agent runs, and tmux keeps both alive if you close the Terminal window. Swap <code>claude</code> for <code>codex</code> or whatever starts your agent. It doesn't survive a closed lid, and nothing shows it's still running. More in <a href="/alternatives/caffeinate">the caffeinate guide</a>.</p>
         <p>Midnight Oil's <code>midnightoil</code> command works the same way and covers the lid. It ends the session when the agent exits, and the menu bar shows it's still going:</p>
         <pre><code>tmux new-session -d -s agent 'midnightoil run --lid-closed -- claude'</code></pre>
-        <p>Agents can use it too. Add a line to your <code>CLAUDE.md</code> or <code>AGENTS.md</code>: “Run commands that take more than a few minutes through <code>midnightoil run -- &lt;command&gt;</code>.”</p>
+        <p>Agents can use it too. Add a line to your <code>CLAUDE.md</code> or <code>AGENTS.md</code>: “Run commands that take more than a few minutes through <code>midnightoil run -- &lt;command&gt;</code>.” Setup for each agent: <a href="/agents/claude-code">Claude Code</a>, <a href="/agents/codex">Codex</a>, <a href="/agents/cursor">Cursor</a>, <a href="/agents/gemini-cli">Gemini CLI</a>, and <a href="/cli#agents">more</a>.</p>
             """},
             {"id": "app", "gray": True, "html": """
         <h2>The menu bar way: Midnight Oil</h2>
@@ -358,6 +359,135 @@ tmux attach -t agent       # check on it later</code></pre>
         <h2>Agents on a Mac you don't sit at</h2>
         <p>If the agent runs on a Mac mini or a desk Mac you reach over SSH or screen sharing, the simplest fix is permanent: System Settings › Energy › <em>Prevent automatic sleeping when the display is off</em>. See <a href="/guides/stop-mac-from-sleeping">how to stop your Mac from sleeping</a>.</p>
         <p>Running agents across several Macs for a team? <a href="/teams">Midnight Oil for Teams</a> deploys the app and its rules with your MDM, and shows which Macs are awake and working.</p>
+            """},
+        ],
+    },
+    # ------------------------------------------------------------------ Won't sleep
+    {
+        "slug": "mac-wont-sleep",
+        "updated": "2026-10-13",
+        "title": "Mac won't sleep? Find what's keeping it awake",
+        "description": "Find exactly what's stopping your Mac from sleeping with pmset -g assertions, fix the usual culprits, and stop it waking right back up. macOS 13 and later.",
+        "eyebrow": "Guide",
+        "h1": "Mac won't sleep? Here's how to find out why",
+        "lede": "Something is holding your Mac awake, and macOS will tell you what if you ask. One Terminal command names the app, then the fix is usually a click.",
+        "tldr": "Run <code>pmset -g assertions</code> in Terminal. Any line with <code>PreventUserIdleSystemSleep</code> or <code>PreventSystemSleep</code> names the process keeping the Mac up: quit that app. Nothing listed? Check <code>pmset -g</code> for <code>SleepDisabled 1</code> (undo it with <code>sudo pmset -a disablesleep 0</code>) and for a <code>sleep 0</code> value. If the Mac sleeps but wakes again, <code>pmset -g log | grep \"due to\"</code> shows why.",
+        "card_title": "Mac won't sleep",
+        "card_blurb": "Find the app keeping it awake, and stop it waking back up.",
+        "cta": "Stay awake on purpose, not by accident.",
+        "faqs": [
+            ("Why won't my Mac go to sleep?", "Usually an app is holding a power assertion: music or video playing, a download, a backup, a screen share, or a keep-awake tool. Run pmset -g assertions in Terminal to see which, then quit it. If none is listed, check pmset -g for SleepDisabled 1 or sleep 0."),
+            ("What is coreaudiod and why is it keeping my Mac awake?", "coreaudiod is macOS's audio service. It holds the Mac awake while any app plays sound, including a muted browser tab or a paused stream that never released audio. Close the tab or quit the app that was playing."),
+            ("How do I see what woke my Mac?", "Run pmset -g log | grep \"due to\" in Terminal. Each wake lists a reason, such as the lid opening, a USB device, the network, or a scheduled wake."),
+            ("Can a keep-awake app stop my Mac from sleeping after I quit it?", "Not one that uses power assertions: macOS releases them when the app quits. The exception is anything that ran sudo pmset -a disablesleep 1, which stays on until it's turned off. Midnight Oil turns closed-lid mode off again when a session ends or the app quits."),
+            ("My MacBook doesn't sleep when I close the lid. Why?", "Either an external display, power, and keyboard are connected, which is Apple's clamshell mode, or sleep was disabled with pmset. Run pmset -g and look for SleepDisabled 1."),
+        ],
+        "sections": [
+            {"id": "assertions", "html": """
+        <h2>1. Ask macOS who's holding it awake</h2>
+        <p>Apps keep a Mac awake by holding a <em>power assertion</em>. List them:</p>
+        <pre><code>pmset -g assertions</code></pre>
+        <p>The top half counts each type. Any non-zero <code>PreventUserIdleSystemSleep</code> or <code>PreventSystemSleep</code> means something is stopping sleep. The bottom half, under “Listed by owning process,” names who:</p>
+        <pre><code>pid 63687(caffeinate): [0x...] 00:03:42 PreventUserIdleSystemSleep named: "caffeinate command-line tool"</code></pre>
+        <p>A <code>PreventUserIdleDisplaySleep</code> line keeps only the screen on, which also stops idle sleep while it lasts. Quick version, just the names:</p>
+        <pre><code>pmset -g | grep "prevented by"
+ sleep        1 (sleep prevented by coreaudiod, caffeinate)</code></pre>
+            """},
+            {"id": "culprits", "gray": True, "html": """
+        <h2>2. The usual suspects</h2>
+        <div class="table-scroll"><table class="compare">
+          <thead><tr><th>You see</th><th>What it means</th><th>Fix</th></tr></thead>
+          <tbody>
+            <tr><td><code>coreaudiod</code></td><td>Something is playing sound, even silently</td><td>Close the browser tab or app that played audio</td></tr>
+            <tr><td>A browser</td><td>A video, a call, or a page that asked to stay awake</td><td>Close the tab</td></tr>
+            <tr><td><code>caffeinate</code></td><td>A Terminal command or script is holding it</td><td><code>killall caffeinate</code></td></tr>
+            <tr><td><code>backupd</code></td><td>Time Machine is backing up</td><td>Let it finish</td></tr>
+            <tr><td><code>sharingd</code>, <code>screensharingd</code></td><td>AirDrop, file sharing, or a screen share</td><td>End the share, or turn sharing off in General › Sharing</td></tr>
+            <tr><td>A keep-awake app</td><td>Amphetamine, KeepingYouAwake, Midnight Oil, and so on</td><td>End its session from the menu bar</td></tr>
+          </tbody>
+        </table></div>
+        <p>With Midnight Oil, the flame in the menu bar shows when a session is running and what started it, and <code>midnightoil status</code> says the same in Terminal.</p>
+            """},
+            {"id": "settings", "html": """
+        <h2>3. Nothing listed? Check the settings</h2>
+        <pre><code>pmset -g</code></pre>
+        <ul>
+          <li><code>SleepDisabled 1</code>: someone ran <code>sudo pmset -a disablesleep 1</code>, and the Mac won't sleep at all, lid included. Undo it with <code>sudo pmset -a disablesleep 0</code>.</li>
+          <li><code>sleep 0</code>: system sleep is set to never. Restore a value, for example <code>sudo pmset -c sleep 10</code> on the charger.</li>
+          <li>On a MacBook, check System Settings › Battery › Options for <em>Prevent automatic sleeping on power adapter when the display is off</em>. On a desktop Mac it's in Energy.</li>
+        </ul>
+        <p>Every setting is explained in <a href="/guides/mac-sleep-settings">Mac sleep settings</a>.</p>
+            """},
+            {"id": "wakes", "gray": True, "html": """
+        <h2>4. It sleeps, then wakes right back up</h2>
+        <p>That's a different problem. Ask the power log what woke it:</p>
+        <pre><code>pmset -g log | grep "due to"</code></pre>
+        <p>Common reasons and what to do:</p>
+        <ul>
+          <li><strong>Network or a sharing service:</strong> turn off <em>Wake for network access</em> in Battery › Options or Energy.</li>
+          <li><strong>USB or Bluetooth:</strong> a mouse, keyboard, or dock nudged it. Unplug the device to confirm.</li>
+          <li><strong>A scheduled wake:</strong> <code>pmset -g sched</code> lists them; <code>sudo pmset repeat cancel</code> removes a repeating one.</li>
+          <li><strong>DarkWake</strong> lines are Power Nap and maintenance wakes. They're brief and normal.</li>
+        </ul>
+            """},
+            {"id": "flip", "html": """
+        <h2>The flip side: awake only when you mean it</h2>
+        <p>A Mac that stays awake by accident drains the battery and runs warm. One that stays awake on purpose is how downloads, builds, and AI agents finish overnight. The difference is ending it: a session that stops by itself when the job is done, at a set time, or when the battery gets low. That's what <a href="/">Midnight Oil</a> does, and when it ends, your Mac sleeps on its normal schedule again.</p>
+            """},
+        ],
+    },
+    # ------------------------------------------------------------------ Sleep timer
+    {
+        "slug": "mac-sleep-timer",
+        "updated": "2026-10-13",
+        "title": "How to set a sleep timer on a Mac or MacBook",
+        "description": "macOS has no sleep timer button, but you can sleep a Mac in 30 minutes or at a set time with one Terminal command or a Shortcut, even with music playing.",
+        "eyebrow": "Guide",
+        "h1": "How to set a sleep timer on your Mac",
+        "lede": "Falling asleep to a podcast, a movie, or a long render? macOS doesn't have a sleep timer in System Settings, but it has two ways to build one, and neither needs an app.",
+        "tldr": "Open Terminal and run <code>sleep 1800; pmset sleepnow</code> to sleep the Mac in 30 minutes; leave the window open. For a clock time, <code>sudo shutdown -s 2330</code> sleeps it at 11:30 PM. Both work even while music or video is playing, which is exactly when the normal idle sleep doesn't.",
+        "card_title": "Mac sleep timer",
+        "card_blurb": "Sleep the Mac in 30 minutes, or at a set time.",
+        "cta": "Awake exactly as long as you need.",
+        "faqs": [
+            ("Does a Mac have a sleep timer?", "Not in System Settings. Use Terminal: sleep 1800; pmset sleepnow sleeps the Mac in 30 minutes, and sudo shutdown -s 2330 sleeps it at 11:30 PM. A Shortcut with a Wait action and a Run Shell Script action does the same with a click."),
+            ("Why doesn't my Mac sleep while music is playing?", "Audio playback holds the Mac awake on purpose, so the normal idle timer never fires. pmset sleepnow is a direct sleep request, so a timer that ends with it works even with music or video playing."),
+            ("How do I cancel a sleep timer?", "For sleep 1800; pmset sleepnow, press Ctrl-C in that Terminal window. For sudo shutdown -s, run sudo killall shutdown."),
+            ("Does shutdown -s turn my Mac off?", "No. On macOS, shutdown -s means sleep. shutdown -h is the one that shuts down."),
+            ("Can I make the Mac sleep after a download or render finishes?", "Yes: put the command first and pmset sleepnow after it, like ./render.sh; pmset sleepnow. The Mac sleeps the moment the job ends."),
+        ],
+        "sections": [
+            {"id": "terminal", "html": """
+        <h2>1. In Terminal, in one line</h2>
+        <pre><code>sleep 1800; pmset sleepnow     # sleep in 30 minutes (1800 seconds)
+sleep 5400; pmset sleepnow     # in 90 minutes</code></pre>
+        <p>No admin password needed. Keep the Terminal window open until it fires; press Ctrl-C to cancel.</p>
+        <p>For a clock time, use <code>shutdown</code>, which on a Mac can sleep instead of shut down:</p>
+        <pre><code>sudo shutdown -s 2330          # sleep at 11:30 PM
+sudo shutdown -s +45           # sleep in 45 minutes
+sudo killall shutdown          # cancel</code></pre>
+        <p>This one runs in the background, so you can close Terminal.</p>
+            """},
+            {"id": "shortcut", "gray": True, "html": """
+        <h2>2. As a Shortcut you can click</h2>
+        <ol class="steps">
+          <li><b>Open Shortcuts and create a new shortcut.</b> Name it “Sleep timer.”</li>
+          <li><b>Add Ask for Input</b>, set to Number, with the prompt “Minutes?”</li>
+          <li><b>Add Calculate</b> to multiply the answer by 60, then <b>Wait</b> for that many seconds.</li>
+          <li><b>Add Run Shell Script</b> with <code>pmset sleepnow</code>. The first time, Shortcuts asks you to allow running scripts in Settings › Advanced.</li>
+          <li><b>Pin it to the menu bar</b> from the shortcut's details, or give it a keyboard shortcut.</li>
+        </ol>
+            """},
+            {"id": "after-job", "html": """
+        <h2>3. Sleep when a job finishes, not after a guess</h2>
+        <p>If you're waiting on a download, an export, or a script, don't guess at minutes. Chain the sleep after it:</p>
+        <pre><code>./export.sh; pmset sleepnow
+curl -O https://example.com/big.iso; pmset sleepnow</code></pre>
+        <p>The Mac stays awake for the job and sleeps the moment it's done. If the job might outlast your idle timer, keep the Mac up for it too: <code>caffeinate -i ./export.sh; pmset sleepnow</code>, or with <a href="/cli">Midnight Oil's command</a>, <code>midnightoil run -- ./export.sh; pmset sleepnow</code>.</p>
+            """},
+            {"id": "why", "gray": True, "html": """
+        <h2>Why the normal sleep setting doesn't help</h2>
+        <p>System Settings' timers count <em>idle</em> time. Playing audio or video holds the Mac awake on purpose, so the idle timer never runs out while your podcast plays. A sleep timer works because <code>pmset sleepnow</code> is a direct request, like choosing Apple menu › Sleep. Where the regular settings live, and what each does, is in <a href="/guides/mac-sleep-settings">Mac sleep settings</a>.</p>
             """},
         ],
     },

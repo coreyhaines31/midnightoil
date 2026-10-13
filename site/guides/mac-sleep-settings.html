@@ -81,7 +81,7 @@
   <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
   <div class="nav">
     <div class="wrap">
-      <a class="brand" href="/"><img src="/images/icon-192.png" alt=""> Midnight Oil</a>
+      <a class="brand" href="/"><img src="/images/icon-192.png" alt="" width="28" height="28"> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
         <a href="/cli">For agents</a>
@@ -141,7 +141,7 @@
 sudo shutdown -s 2330     # sleep at 11:30 PM
 sudo killall shutdown     # cancel it
 pmset sleepnow            # sleep right now</code></pre>
-        <p>Despite the name, <code>shutdown -s</code> puts the Mac to sleep rather than shutting it down. You can also sleep it from the Apple menu › Sleep.</p>
+        <p>Despite the name, <code>shutdown -s</code> puts the Mac to sleep rather than shutting it down. More ways, including a Shortcut and sleeping when a job finishes, in <a href="/guides/mac-sleep-timer">how to set a sleep timer on a Mac</a>.</p>
             
       </div></div>
     </section>
@@ -197,6 +197,8 @@ sudo pmset repeat cancel   # remove it</code></pre>
           <a href="/guides/clamshell-mode"><b>Clamshell mode</b><span>Use a MacBook closed, with a monitor or without one.</span></a>
           <a href="/guides/keep-mac-screen-on"><b>Keep your Mac screen on</b><span>Stop the display turning off, and when to let it.</span></a>
           <a href="/guides/run-ai-agents-overnight"><b>Run AI agents overnight</b><span>Keep Claude Code, Codex, and Cursor working while you sleep.</span></a>
+          <a href="/guides/mac-wont-sleep"><b>Mac won&#x27;t sleep</b><span>Find the app keeping it awake, and stop it waking back up.</span></a>
+          <a href="/guides/mac-sleep-timer"><b>Mac sleep timer</b><span>Sleep the Mac in 30 minutes, or at a set time.</span></a>
         </div>
       </div>
     </section>
@@ -217,13 +219,15 @@ sudo pmset repeat cancel   # remove it</code></pre>
   </main>
   <footer>
     <div class="wrap">
-      <nav class="footer-alts" aria-label="Guides"><a class="label" href="/guides">Guides</a><a href="/guides/stop-mac-from-sleeping">Stop your Mac from sleeping</a><a href="/guides/clamshell-mode">Clamshell mode</a><a href="/guides/mac-sleep-settings">Mac sleep settings</a><a href="/guides/keep-mac-screen-on">Keep your Mac screen on</a><a href="/guides/run-ai-agents-overnight">Run AI agents overnight</a></nav>
-      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives">Alternatives</a><a href="/alternatives/amphetamine">Amphetamine alternative</a><a href="/alternatives/caffeine">Caffeine alternative</a><a href="/alternatives/caffeinate">caffeinate alternative</a><a href="/alternatives/keepingyouawake">KeepingYouAwake alternative</a><a href="/alternatives/mouse-jiggler">Mouse jiggler alternative</a></nav>
+      <nav class="footer-alts" aria-label="For agents"><a class="label" href="/cli">For agents</a><a href="/agents/claude-code">Claude Code</a><a href="/agents/codex">Codex CLI</a><a href="/agents/cursor">Cursor</a><a href="/agents/gemini-cli">Gemini CLI</a><a href="/agents/aider">Aider</a><a href="/agents/copilot">GitHub Copilot</a><a href="/agents/cline">Cline</a><a href="/agents/ollama">Ollama</a></nav>
+      <nav class="footer-alts" aria-label="Guides"><a class="label" href="/guides">Guides</a><a href="/guides/stop-mac-from-sleeping">Stop your Mac from sleeping</a><a href="/guides/clamshell-mode">Clamshell mode</a><a href="/guides/mac-sleep-settings">Mac sleep settings</a><a href="/guides/keep-mac-screen-on">Keep your Mac screen on</a><a href="/guides/run-ai-agents-overnight">Run AI agents overnight</a><a href="/guides/mac-wont-sleep">Mac won&#x27;t sleep</a><a href="/guides/mac-sleep-timer">Mac sleep timer</a></nav>
+      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives">Alternatives</a><a href="/alternatives/amphetamine">Amphetamine alternative</a><a href="/alternatives/caffeine">Caffeine alternative</a><a href="/alternatives/caffeinate">caffeinate alternative</a><a href="/alternatives/keepingyouawake">KeepingYouAwake alternative</a><a href="/alternatives/mouse-jiggler">Mouse jiggler alternative</a><a href="/alternatives/insomniax">InsomniaX alternative</a></nav>
       <span>© 2026 Corey Haines. <a href="https://github.com/coreyhaines31/midnightoil/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
       <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a> &nbsp;·&nbsp; <a href="/cli">For agents</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
     </div>
   </footer>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Mac sleep settings, explained", "description": "Every Mac sleep setting in System Settings and what it does, plus how to set a sleep timer and a sleep schedule from Terminal.", "url": "https://midnightoil.app/guides/mac-sleep-settings", "dateModified": "2026-10-06", "image": "https://midnightoil.app/images/og.png", "author": {"@type": "Person", "name": "Corey Haines", "url": "https://corey.co"}, "publisher": {"@type": "Organization", "name": "Midnight Oil", "url": "https://midnightoil.app/"}}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Where are the sleep settings on a Mac?", "acceptedAnswer": {"@type": "Answer", "text": "In System Settings. Lock Screen sets when the display turns off. On a MacBook, Battery \u203a Options holds the switch that stops the Mac sleeping on the power adapter; on a desktop Mac, the same switch is in Energy."}}, {"@type": "Question", "name": "How do I set a sleep timer on a Mac?", "acceptedAnswer": {"@type": "Answer", "text": "Open Terminal and run sudo shutdown -s +30 to put the Mac to sleep in 30 minutes. Use any number of minutes, or a clock time such as sudo shutdown -s 2330. Cancel it with sudo killall shutdown."}}, {"@type": "Question", "name": "How do I schedule my Mac to sleep and wake?", "acceptedAnswer": {"@type": "Answer", "text": "Use pmset: sudo pmset repeat sleep MTWRFSU 23:00:00 wakeorpoweron MTWRF 07:30:00 sleeps every night at 11 PM and wakes on weekdays at 7:30. See the schedule with pmset -g sched, and remove it with sudo pmset repeat cancel."}}, {"@type": "Question", "name": "What's the difference between display sleep and sleep?", "acceptedAnswer": {"@type": "Answer", "text": "Display sleep turns off the screen while the Mac keeps running: downloads continue, agents keep working. Sleep suspends the whole Mac, so apps and network connections pause until it wakes."}}, {"@type": "Question", "name": "What does Wake for network access do?", "acceptedAnswer": {"@type": "Answer", "text": "It lets the Mac wake briefly when another device asks for something it shares, such as a file share, a printer, or remote access, then go back to sleep."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Midnight Oil", "item": "https://midnightoil.app/"}, {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://midnightoil.app/guides"}, {"@type": "ListItem", "position": 3, "name": "Mac sleep settings", "item": "https://midnightoil.app/guides/mac-sleep-settings"}]}</script>
 </body>
 </html>
