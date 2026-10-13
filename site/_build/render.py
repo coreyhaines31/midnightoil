@@ -13,6 +13,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 from pages import PAGES, HUB  # noqa: E402
 from guides import GUIDES, UPDATED  # noqa: E402
+from cli import AGENT_LINE, ASKS, CLI, COMMANDS, COMPARE, OPTIONS, TERMINAL  # noqa: E402
 from teams import CHECKOUT, DOCS, LEGAL, SALES_OPEN, TEAMS  # noqa: E402
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
@@ -51,6 +52,10 @@ PAGE_CSS = """
     .prose p strong { color: var(--text); font-weight: 600; }
     .prose ul { padding-left: 20px; margin: 0 0 8px; }
     .prose li { margin-bottom: 6px; }
+    .prose h2 code { font-size: 0.86em; background: none; padding: 0; }
+    .compare.cmds:not(.asks) td:first-child { white-space: nowrap; }
+    .compare.cmds td:last-child code { white-space: nowrap; }
+    .agent-head code { font-size: 12px; padding: 1px 5px; }
     .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
     .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
     .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
@@ -78,6 +83,12 @@ PAGE_CSS = """
     .tldr::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; background: var(--rim);
       -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
     @media (max-width: 720px) {
+      .compare.cmds, .compare.cmds tbody, .compare.cmds tr, .compare.cmds td { display: block; width: auto; min-width: 0; }
+      .compare.cmds thead { display: none; }
+      .compare.cmds td { padding: 0; border: 0; }
+      .compare.cmds tr { padding: 14px 0; border-bottom: 1px solid var(--line); }
+      .compare.cmds td:first-child { white-space: normal; margin-bottom: 6px; }
+      .compare.cmds code { font-size: 13.5px; }
       .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; }
       .sub-hero .actions:has(.glass) { flex-direction: column; align-items: stretch; max-width: 340px; }
       .sub-hero .actions .pill { justify-content: center; }
@@ -96,6 +107,7 @@ def nav():
       <a class="brand" href="/"><img src="/images/icon-192.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
+        <a href="/cli">For agents</a>
         <a href="/guides">Guides</a>
         <a href="/teams">Teams</a>
         <a href="/#faq">FAQ</a>
@@ -123,7 +135,7 @@ def footer():
     return f'''  <footer>
     <div class="wrap">
 {footer_guides()}{footer_alternatives()}      <span>© 2026 Corey Haines. <a href="{REPO}/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
-      <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="{REPO}/issues">Issues</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
+      <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="{REPO}/issues">Issues</a> &nbsp;·&nbsp; <a href="/cli">For agents</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
     </div>
   </footer>
 '''
@@ -422,6 +434,114 @@ def render_doc(d, eyebrow=None):
     write(d["path"], body)
 
 
+# Copy buttons: falls back to selecting the text where the clipboard isn't available.
+COPY_SCRIPT = """  <script>
+    document.querySelectorAll("[data-copy]").forEach(button => {
+      const label = button.textContent;
+      button.addEventListener("click", async () => {
+        const source = document.getElementById(button.dataset.copy);
+        try {
+          await navigator.clipboard.writeText(source.textContent);
+          button.textContent = "Copied";
+        } catch (_) {
+          getSelection().selectAllChildren(source);
+          button.textContent = "Press ⌘C to copy";
+        }
+        setTimeout(() => { button.textContent = label; }, 2500);
+      });
+    });
+  </script>
+"""
+
+
+def render_cli():
+    c = CLI
+    asks = "".join(f'            <tr><td>“{esc(said)}”</td><td><code>{esc(cmd)}</code></td></tr>\n' for said, cmd in ASKS)
+    commands = "".join(f'            <tr><td><code>{cmd}</code></td><td>{desc}</td></tr>\n' for cmd, desc in COMMANDS)
+    options = "".join(f'            <tr><td><code>{opt}</code></td><td>{desc}</td></tr>\n' for opt, desc in OPTIONS)
+    faq = "".join(f"        <h3>{esc(q)}</h3>\n        <p>{esc(a)}</p>\n" for q, a in c["faqs"])
+    body = f'''{head(c["title"], c["description"], c["path"])}{nav()}  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">{esc(c["eyebrow"])}</div>
+      <h1>{c["h1"]}</h1>
+      <p class="lede">{c["lede"]}</p>
+      <div class="actions">
+        {CTAS}
+      </div>
+    </div>
+    <section class="tight" style="padding-top:8px">
+      <div class="wrap" style="max-width:860px">
+        {TERMINAL}
+      </div>
+    </section>
+    <section class="tight" id="ask">
+      <div class="wrap"><div class="prose">
+        <h2>Say it however you like</h2>
+        <p>Your agent works out the command. A few ways to put it:</p>
+        <div class="table-scroll"><table class="compare cmds asks">
+          <thead><tr><th>You say</th><th>Your agent runs</th></tr></thead><tbody>
+{asks}          </tbody></table></div>
+        <p>Every session shows up in the menu bar like one you started yourself, so you can see what's keeping the Mac awake, extend it, or end it with a click.</p>
+      </div></div>
+    </section>
+    <section class="tight gray" id="automatic">
+      <div class="wrap"><div class="prose">
+        <h2>Or make it automatic</h2>
+        <p>Add one line to your <code>CLAUDE.md</code>, <code>AGENTS.md</code>, or Cursor rules, and your agent keeps the Mac awake for every long job without being asked:</p>
+        <div class="agent-install" style="margin:20px 0 0">
+          <div class="agent-head">
+            <div><b>For CLAUDE.md or AGENTS.md</b><span>Your agent reads <code>midnightoil --help</code> for the rest.</span></div>
+            <button class="pill glass" type="button" data-copy="agent-line">Copy line</button>
+          </div>
+          <pre id="agent-line">{esc(AGENT_LINE)}</pre>
+        </div>
+      </div></div>
+    </section>
+    <section class="tight" id="commands">
+      <div class="wrap"><div class="prose">
+        <h2>The commands</h2>
+        <p>For your agent, your scripts, or you.</p>
+        <div class="table-scroll"><table class="compare cmds">
+          <tbody>
+{commands}          </tbody></table></div>
+        <h3>Options</h3>
+        <div class="table-scroll"><table class="compare cmds">
+          <tbody>
+{options}          </tbody></table></div>
+        <p>Leave an option out and your defaults from Midnight Oil's settings apply. If the app isn't running, <code>start</code> and <code>run</code> open it in the background. When two agents keep the Mac awake at once, they share one session that lasts until the last one finishes.</p>
+      </div></div>
+    </section>
+    <section class="tight gray" id="caffeinate">
+      <div class="wrap"><div class="prose">
+        <h2>Why not just <code>caffeinate</code>?</h2>
+        <p>It's built in, and for a quick job on an open laptop it's fine. It stops short where agents need it most: a closed lid, a battery running low, and several jobs at once. More in <a href="/alternatives/caffeinate">the caffeinate guide</a>.</p>
+{table(COMPARE, "caffeinate")}
+      </div></div>
+    </section>
+    <section class="tight" id="install">
+      <div class="wrap"><div class="prose">
+        <h2>Get the command</h2>
+        <p>It comes with Midnight Oil. Install with Homebrew and it's on your PATH:</p>
+        <pre><code>brew install --cask coreyhaines31/tap/midnightoil</code></pre>
+        <p>Installed the app from the <a href="{DOWNLOAD}">DMG</a>? Link the command once:</p>
+        <pre><code>sudo mkdir -p /usr/local/bin
+sudo ln -sf "/Applications/Midnight Oil.app/Contents/MacOS/midnightoil" /usr/local/bin/midnightoil</code></pre>
+        <p>Closed-lid mode needs a one-time approval: open Midnight Oil's Settings › Closed Lid and click Install. The full reference is in the <a href="{REPO}#command-line">README</a>.</p>
+      </div></div>
+    </section>
+    <section class="tight gray" id="faq">
+      <div class="wrap"><div class="prose">
+        <h2>Questions</h2>
+{faq}      </div></div>
+    </section>
+{cta("Let your agent handle the night shift.")}  </main>
+{footer()}{faq_schema(c["faqs"])}
+{COPY_SCRIPT}</body>
+</html>
+'''
+    write(c["path"], body)
+
+
 def render_404():
     page = head("Page not found · Midnight Oil", "This page doesn't exist.", "/404").replace(
         "<head>\n", '<head>\n  <meta name="robots" content="noindex">\n', 1)
@@ -477,6 +597,7 @@ if __name__ == "__main__":
         render_guide(g)
     render_guides_hub()
     render_404()
+    render_cli()
     pages = render_sitemap()
     print(f"sitemap: {pages} pages")
     print(f"rendered {len(PAGES)} pages + hub + homepage footer + teams + {len(DOCS)} docs + {len(LEGAL)} legal")

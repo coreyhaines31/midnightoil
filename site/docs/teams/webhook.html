@@ -33,6 +33,10 @@
     .prose p strong { color: var(--text); font-weight: 600; }
     .prose ul { padding-left: 20px; margin: 0 0 8px; }
     .prose li { margin-bottom: 6px; }
+    .prose h2 code { font-size: 0.86em; background: none; padding: 0; }
+    .compare.cmds:not(.asks) td:first-child { white-space: nowrap; }
+    .compare.cmds td:last-child code { white-space: nowrap; }
+    .agent-head code { font-size: 12px; padding: 1px 5px; }
     .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
     .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
     .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
@@ -60,6 +64,12 @@
     .tldr::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; background: var(--rim);
       -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
     @media (max-width: 720px) {
+      .compare.cmds, .compare.cmds tbody, .compare.cmds tr, .compare.cmds td { display: block; width: auto; min-width: 0; }
+      .compare.cmds thead { display: none; }
+      .compare.cmds td { padding: 0; border: 0; }
+      .compare.cmds tr { padding: 14px 0; border-bottom: 1px solid var(--line); }
+      .compare.cmds td:first-child { white-space: normal; margin-bottom: 6px; }
+      .compare.cmds code { font-size: 13.5px; }
       .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; }
       .sub-hero .actions:has(.glass) { flex-direction: column; align-items: stretch; max-width: 340px; }
       .sub-hero .actions .pill { justify-content: center; }
@@ -74,6 +84,7 @@
       <a class="brand" href="/"><img src="/images/icon-192.png" alt=""> Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
+        <a href="/cli">For agents</a>
         <a href="/guides">Guides</a>
         <a href="/teams">Teams</a>
         <a href="/#faq">FAQ</a>
@@ -154,7 +165,7 @@ def verify(raw_body: bytes, header: str, secret: str) -&gt; bool:
       <nav class="footer-alts" aria-label="Guides"><a class="label" href="/guides">Guides</a><a href="/guides/stop-mac-from-sleeping">Stop your Mac from sleeping</a><a href="/guides/clamshell-mode">Clamshell mode</a><a href="/guides/mac-sleep-settings">Mac sleep settings</a><a href="/guides/keep-mac-screen-on">Keep your Mac screen on</a><a href="/guides/run-ai-agents-overnight">Run AI agents overnight</a></nav>
       <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives">Alternatives</a><a href="/alternatives/amphetamine">Amphetamine alternative</a><a href="/alternatives/caffeine">Caffeine alternative</a><a href="/alternatives/caffeinate">caffeinate alternative</a><a href="/alternatives/keepingyouawake">KeepingYouAwake alternative</a><a href="/alternatives/mouse-jiggler">Mouse jiggler alternative</a></nav>
       <span>© 2026 Corey Haines. <a href="https://github.com/coreyhaines31/midnightoil/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
-      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a> &nbsp;·&nbsp; <a href="/cli">For agents</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
     </div>
   </footer>
 </body>
