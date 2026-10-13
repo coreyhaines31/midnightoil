@@ -159,7 +159,7 @@ PAGES = [
         "faqs": [
             ("What does caffeinate do on a Mac?", "caffeinate creates a power-management assertion that stops macOS from sleeping. With no flags it prevents idle sleep until you stop it. You can scope it to a command (caffeinate -i make), a duration (caffeinate -t 3600), or a process (caffeinate -w PID)."),
             ("Does caffeinate keep a MacBook awake with the lid closed?", "No. Closing the lid is an explicit sleep request that a power assertion can't override. The workaround, sudo pmset -a disablesleep 1, needs an admin password and must be reverted by hand. Midnight Oil's closed-lid mode does this through a helper that restores sleep automatically."),
-            ("How do I keep my Mac awake while Claude Code runs overnight?", "The command-line way is tmux new-session -d 'caffeinate -i claude', which keeps the assertion alive even if the terminal closes. The simpler way is Midnight Oil: start a session while Terminal is running, or until 7 AM, and check Stay Awake with Lid Closed if you're closing the laptop."),
+            ("How do I keep my Mac awake while Claude Code runs overnight?", "The command-line way is tmux new-session -d 'caffeinate -i claude', which keeps the assertion alive even if the terminal closes. The simpler way is Midnight Oil: start a session while Terminal is running, or until 7 AM, and check Stay Awake with Lid Closed if you're closing the laptop. From the terminal, midnightoil run --lid-closed -- claude does the same and ends when the agent exits."),
             ("How do I stop caffeinate?", "Press Ctrl-C in the terminal that started it, or run killall caffeinate. Check what's holding your Mac awake with pmset -g assertions."),
         ],
         "sections": [
@@ -210,7 +210,7 @@ caffeinate -dimsu     # everything</code></pre>
                 ("Triggers", "Yes", "No"),
                 ("Weekly schedules, like work hours", "Yes", "No (cron plus a script)"),
                 ("End on low battery or unplug", "Yes", "No"),
-                ("Works from a script", "Hot keys; CLI planned", "Yes"),
+                ("Works from a script", "Yes: midnightoil run, start, and stop", "Yes"),
                 ("Install", "Homebrew cask or DMG", "None needed"),
             ]},
             {"id": "switch", "html": """
@@ -221,7 +221,10 @@ caffeinate -dimsu     # everything</code></pre>
           <li><b>Click the flame › While App Is Running › Terminal.</b> Or Keep Awake Until › 7:00 AM. Check “Stay awake with lid closed” if you're closing the laptop.</li>
           <li><b>Leave.</b> When the app quits or the time arrives, your Mac goes back to its normal sleep schedule.</li>
         </ol>
-        <p>Keep <code>caffeinate</code> in your scripts. Use Midnight Oil for everything you'd otherwise have to remember.</p>
+        <p>Like wrapping commands? Midnight Oil comes with a <code>midnightoil</code> command that works the same way, plus closed-lid mode, battery safety, and a countdown in the menu bar:</p>
+        <pre><code>midnightoil run --lid-closed -- ./build.sh   # instead of caffeinate -i ./build.sh
+midnightoil start --until 7am                # instead of caffeinate -t, minus the math</code></pre>
+        <p>Keep <code>caffeinate</code> for CI and Macs where you can't install anything. Use Midnight Oil for everything you'd otherwise have to remember.</p>
             """},
         ],
     },
