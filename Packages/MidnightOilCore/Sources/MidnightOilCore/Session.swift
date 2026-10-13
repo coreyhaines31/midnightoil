@@ -14,10 +14,13 @@ public struct WatchedApp: Equatable, Sendable {
 public struct WatchedProcess: Equatable, Sendable {
     public let pid: Int32
     public let name: String
+    /// When the process started, so a later process given the same PID isn't mistaken for it.
+    public let started: Date?
 
-    public init(pid: Int32, name: String) {
+    public init(pid: Int32, name: String, started: Date? = nil) {
         self.pid = pid
         self.name = name
+        self.started = started
     }
 }
 
@@ -107,9 +110,9 @@ public struct Session: Equatable, Sendable {
     }
 
     /// Drops processes that have exited. Returns nil once none are left.
-    public func keepingProcesses(where isRunning: (Int32) -> Bool) -> Session? {
+    public func keepingProcesses(where isRunning: (WatchedProcess) -> Bool) -> Session? {
         guard case .whileProcessesRunning(let processes) = end else { return self }
-        let running = processes.filter { isRunning($0.pid) }
+        let running = processes.filter(isRunning)
         guard !running.isEmpty else { return nil }
         var kept = self
         kept.end = .whileProcessesRunning(running)

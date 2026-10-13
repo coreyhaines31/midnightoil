@@ -308,7 +308,8 @@ final class SessionController {
             return .appQuit(app.name)
         }
         if case .whileProcessesRunning(let processes) = session.end {
-            guard let running = session.keepingProcesses(where: Self.isRunning) else {
+            // Prune the live session, not the snapshot: this tick may have changed its options.
+            guard let running = self.session?.keepingProcesses(where: ProcessInfoReader.isRunning) else {
                 return .commandFinished(processes.map(\.name).joined(separator: ", "))
             }
             self.session = running
@@ -334,11 +335,6 @@ extension SessionController {
     func join(_ process: WatchedProcess) {
         session = session?.joining(process)
         onChange?()
-    }
-
-    /// Whether a process exists. EPERM means it does but belongs to someone else.
-    fileprivate static func isRunning(_ pid: Int32) -> Bool {
-        kill(pid, 0) == 0 || errno == EPERM
     }
 
     /// Returns whether the file is still downloading.

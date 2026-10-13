@@ -92,7 +92,7 @@ struct SessionTests {
     @Test func aProcessSessionLastsUntilEveryProcessExits() {
         let processes = [WatchedProcess(pid: 1, name: "claude"), WatchedProcess(pid: 2, name: "codex")]
         let session = Session(start: start, end: .whileProcessesRunning(processes), allowsDisplaySleep: false)
-        let kept = session.keepingProcesses { $0 == 2 }
+        let kept = session.keepingProcesses { $0.pid == 2 }
         #expect(kept?.end == .whileProcessesRunning([processes[1]]))
         #expect(session.keepingProcesses { _ in false } == nil)
     }

@@ -26,7 +26,12 @@ final class CLICommands {
                 notes.append("Nothing to stop: Midnight Oil wasn't keeping your Mac awake.")
             }
         case .start:
-            if let end = request.sessionEnd {
+            if var end = request.sessionEnd {
+                if case .whileProcessesRunning(let processes) = end {
+                    end = .whileProcessesRunning(processes.map {
+                        WatchedProcess(pid: $0.pid, name: $0.name, started: ProcessInfoReader.startTime(of: $0.pid))
+                    })
+                }
                 start(end, request: request, notes: &notes)
             }
         }
@@ -46,15 +51,11 @@ final class CLICommands {
             switch current.end {
             case .whileProcessesRunning:
                 processes.forEach(sessions.join)
-                if wantsLid, sessions.canUseLidMode, !current.staysAwakeWithLidClosed {
-                    sessions.setStaysAwakeWithLidClosed(true)
-                }
+                apply(request, wantsLid: wantsLid, to: current)
                 return
             case .indefinite where current.source == .manual:
                 // Already awake until you end it; a run shouldn't cut that short.
-                if wantsLid, sessions.canUseLidMode, !current.staysAwakeWithLidClosed {
-                    sessions.setStaysAwakeWithLidClosed(true)
-                }
+                apply(request, wantsLid: wantsLid, to: current)
                 notes.append("Your Mac was already staying awake until you end it, so that session keeps running.")
                 return
             default:
@@ -63,6 +64,17 @@ final class CLICommands {
             }
         }
         sessions.start(end, allowsDisplaySleep: request.allowsDisplaySleep, staysAwakeWithLidClosed: wantsLid)
+    }
+
+    /// Options asked for when joining a running session: closed-lid mode only ever turns on,
+    /// so one run can't drop another's, and an explicit display choice applies.
+    private func apply(_ request: CLIRequest, wantsLid: Bool, to current: Session) {
+        if wantsLid, sessions.canUseLidMode, !current.staysAwakeWithLidClosed {
+            sessions.setStaysAwakeWithLidClosed(true)
+        }
+        if let allows = request.allowsDisplaySleep, allows != current.allowsDisplaySleep {
+            sessions.setAllowsDisplaySleep(allows)
+        }
     }
 
     private func status() -> CLIStatus {
