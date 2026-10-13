@@ -133,7 +133,7 @@ tmux attach -t agent       # check on it later</code></pre>
         <p><code>caffeinate -i</code> holds off idle sleep for as long as the agent runs, and tmux keeps both alive if you close the Terminal window. Swap <code>claude</code> for <code>codex</code> or whatever starts your agent. It doesn't survive a closed lid, and nothing shows it's still running. More in <a href="/alternatives/caffeinate">the caffeinate guide</a>.</p>
         <p>Midnight Oil's <code>midnightoil</code> command works the same way and covers the lid. It ends the session when the agent exits, and the menu bar shows it's still going:</p>
         <pre><code>tmux new-session -d -s agent 'midnightoil run --lid-closed -- claude'</code></pre>
-        <p>Agents can use it too. Add a line to your <code>CLAUDE.md</code> or <code>AGENTS.md</code>: “Run commands that take more than a few minutes through <code>midnightoil run -- &lt;command&gt;</code>.”</p>
+        <p>Agents can use it too. Add a line to your <code>CLAUDE.md</code> or <code>AGENTS.md</code>: “Run commands that take more than a few minutes through <code>midnightoil run -- &lt;command&gt;</code>.” Setup for each agent: <a href="/agents/claude-code">Claude Code</a>, <a href="/agents/codex">Codex</a>, <a href="/agents/cursor">Cursor</a>, <a href="/agents/gemini-cli">Gemini CLI</a>, and <a href="/cli#agents">more</a>.</p>
             
       </div></div>
     </section>
