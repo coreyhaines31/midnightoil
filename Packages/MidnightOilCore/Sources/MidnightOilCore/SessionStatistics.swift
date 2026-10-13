@@ -6,6 +6,7 @@ public enum SessionEndCause: String, Codable, Sendable, CaseIterable {
     case timeUp
     case appQuit
     case downloadFinished
+    case commandFinished
     case lowBattery
     case unplugged
     case triggerEnded
@@ -28,6 +29,7 @@ public enum SessionEndCause: String, Codable, Sendable, CaseIterable {
         case .timeUp: "Time ran out"
         case .appQuit: "The app quit"
         case .downloadFinished: "Download finished"
+        case .commandFinished: "Command finished"
         case .lowBattery: "Battery got low"
         case .unplugged: "Unplugged"
         case .triggerEnded: "Trigger stopped matching"

@@ -21,6 +21,7 @@ Midnight Oil lives in your menu bar as a small flame. Click it, pick how long, a
 - [Your first session](#your-first-session)
 - [Permissions it may ask for](#permissions-it-may-ask-for)
 - [Features](#features)
+- [Command line](#command-line)
 - [Troubleshooting](#troubleshooting)
 - [Updating and uninstalling](#updating-and-uninstalling)
 - [Privacy](#privacy)
@@ -111,10 +112,41 @@ Midnight Oil asks for nothing up front. macOS asks for each permission only the 
 - **Triggers**: start a session automatically while conditions hold: a Wi-Fi network, a USB or Bluetooth device, an external display, power source, battery level, an app running or in front, an IP address, a schedule, or how long you've been idle.
 - **Battery safety**: end sessions when you unplug or when the battery drops below a level you choose, and hear an alarm if the lid closes on battery.
 - **Drive Alive**: keep the external drives you pick from spinning down.
+- **Command line**: `midnightoil run -- <command>` keeps the Mac awake until the command finishes, closed lid included. Built for AI agents ([details](#command-line)).
 - **Hot keys**, **custom menu bar icons**, **notifications**, and **statistics**, including a CSV export of every session.
 - **Moves like every other menu bar icon**: hold <kbd>⌘</kbd> and drag the flame wherever you want it.
 
 Every setting has an ⓘ: hover for a hint, click for the full explanation.
+
+## Command line
+
+The `midnightoil` command starts and stops sessions from Terminal, so you, a script, or an AI agent can keep the Mac awake for exactly as long as a job runs. Unlike `caffeinate`, it can keep a MacBook running with the lid closed, and your battery settings still apply.
+
+```sh
+midnightoil run -- claude -p "fix the failing tests"   # awake until the command finishes
+midnightoil run --lid-closed -- npm run build          # ...even with the lid shut
+midnightoil start --for 2h                             # or --until 6am
+midnightoil status
+midnightoil stop
+```
+
+- **`run`** starts the command, keeps the Mac awake while it runs, and exits with the command's exit status. Its own messages go to stderr, so you can still pipe the command's output. Runs started in parallel share one session, which lasts until the last one finishes.
+- **`start`** keeps the Mac awake until you stop it, or for a while with `--for 90m` or `--until 6:30pm`. `--while-pid 4242` follows a process that's already running.
+- **Options:** `--lid-closed` (needs the one-time [closed-lid setup](#permissions-it-may-ask-for)), `--allow-display-sleep`, and `--json` for scripts. Leave them out and your defaults from Settings apply.
+- If Midnight Oil isn't running, `start` and `run` open it in the background. Sessions show up in the menu bar like any other, and you can end them there.
+
+**Installing the command:** Homebrew links it for you. If you installed from the DMG, link it once:
+
+```sh
+sudo mkdir -p /usr/local/bin
+sudo ln -sf "/Applications/Midnight Oil.app/Contents/MacOS/midnightoil" /usr/local/bin/midnightoil
+```
+
+**For AI agents:** add a line like this to your `CLAUDE.md` or `AGENTS.md` so long jobs don't stall when the Mac sleeps:
+
+```text
+For commands that take more than a few minutes, run them through `midnightoil run -- <command>` so the Mac stays awake until they finish.
+```
 
 ## Troubleshooting
 
@@ -137,7 +169,7 @@ Every setting has an ⓘ: hover for a hint, click for the full explanation.
 
 1. If you installed the closed-lid helper, open **Settings › Closed Lid** and click **Remove**.
 2. Quit Midnight Oil from its menu.
-3. Delete it from Applications, or run `brew uninstall --cask midnightoil`.
+3. Delete it from Applications, or run `brew uninstall --cask midnightoil`. If you linked the command yourself, also run `sudo rm /usr/local/bin/midnightoil`.
 
 To remove its settings and session history as well, delete `~/Library/Application Support/Midnight Oil` and `~/Library/Preferences/app.midnightoil.MidnightOil.plist`, or run `brew uninstall --zap --cask midnightoil`.
 

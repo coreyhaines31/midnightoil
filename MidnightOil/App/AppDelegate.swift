@@ -17,6 +17,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var driveAlive: DriveAliveController?
     private var statusItemController: StatusItemController?
     private var lastScheduleEnd: (start: Date, end: Date)?
+    private var cliServer: CLIServer?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         Preferences.registerDefaults()
@@ -38,6 +39,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         triggerController = TriggerController(store: triggerStore, schedules: scheduleStore, sessions: sessions)
         driveAlive = DriveAliveController(sessions: sessions)
+        let commands = CLICommands(sessions: sessions, schedules: scheduleStore) { [weak self] in
+            self?.expectedEnd(of: $0)
+        }
+        cliServer = CLIServer { commands.handle($0) }
+        cliServer?.start()
         if Preferences.startsSessionAtLaunch {
             sessions.start(.indefinite)
         }
@@ -84,6 +90,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        cliServer?.stop()
         sessions.end(reason: .quit)
     }
 }

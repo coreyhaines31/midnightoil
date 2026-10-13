@@ -305,13 +305,13 @@ caffeinate -d -t 3600    # for an hour</code></pre>
         "eyebrow": "Guide",
         "h1": "Run Claude Code, Codex, or Cursor agents overnight",
         "lede": "You start a long task at 11 PM, go to bed, and wake up to a Mac that fell asleep at 11:15 with the agent frozen mid-step. Here's why that happens and how to set things up so the run finishes.",
-        "tldr": "Plug in, keep the Mac awake for the length of the run, let the display sleep, and make sure the agent won't stop to ask for permission. The quickest version: <code>caffeinate -i</code> in a tmux session with the lid open, or a <a href=\"/\">Midnight Oil</a> session <em>while Terminal is running</em> or <em>until 7 AM</em>, with the lid closed if you like.",
+        "tldr": "Plug in, keep the Mac awake for the length of the run, let the display sleep, and make sure the agent won't stop to ask for permission. The quickest version: <code>caffeinate -i</code> in a tmux session with the lid open, <code>midnightoil run --lid-closed -- claude</code>, or a <a href=\"/\">Midnight Oil</a> session <em>while Terminal is running</em> or <em>until 7 AM</em>, with the lid closed if you like.",
         "card_title": "Run AI agents overnight",
         "card_blurb": "Keep Claude Code, Codex, and Cursor working while you sleep.",
         "cta": "Give your agents the night shift.",
         "faqs": [
             ("Why does Claude Code stop when my Mac goes to sleep?", "Sleep suspends every process and drops network connections. The agent's connection to its model breaks mid-step, and nothing happens until the Mac wakes. Some tools retry when it does; many don't, and you come back to an error or a half-finished change."),
-            ("How do I keep my Mac awake while Claude Code runs?", "In Terminal, run the agent inside tmux with caffeinate, for example tmux new-session -d -s agent 'caffeinate -i claude'. Or use Midnight Oil: start a session While App Is Running › Terminal, so the Mac stays awake until the terminal quits, or Keep Awake Until 7:00 AM."),
+            ("How do I keep my Mac awake while Claude Code runs?", "In Terminal, run the agent inside tmux with caffeinate, for example tmux new-session -d -s agent 'caffeinate -i claude'. Or use Midnight Oil: start a session While App Is Running › Terminal, so the Mac stays awake until the terminal quits, or Keep Awake Until 7:00 AM. From the terminal, midnightoil run -- claude keeps the Mac awake until the agent exits, even with the lid closed if you add --lid-closed."),
             ("Can I close my MacBook while an AI agent runs?", "Not by default: closing the lid sleeps the Mac, even with caffeinate running. Use an external display (clamshell mode), sudo pmset -a disablesleep 1 (and undo it after), or Midnight Oil's Stay awake with lid closed, which restores sleep on its own when the session ends."),
             ("Does an overnight agent run need the screen on?", "No. The display can turn off while the Mac keeps working. It saves power and keeps a laptop cooler, which matters on long runs."),
             ("Will my agent wait for me to approve things overnight?", "If it's set to ask before running commands or editing files, yes: it pauses at the first prompt and waits until morning. Before you leave, give the agent the permissions the task needs, in a project or branch where that's safe."),
@@ -338,6 +338,9 @@ caffeinate -d -t 3600    # for an hour</code></pre>
         <pre><code>tmux new-session -d -s agent 'caffeinate -i claude'
 tmux attach -t agent       # check on it later</code></pre>
         <p><code>caffeinate -i</code> holds off idle sleep for as long as the agent runs, and tmux keeps both alive if you close the Terminal window. Swap <code>claude</code> for <code>codex</code> or whatever starts your agent. It doesn't survive a closed lid, and nothing shows it's still running. More in <a href="/alternatives/caffeinate">the caffeinate guide</a>.</p>
+        <p>Midnight Oil's <code>midnightoil</code> command works the same way and covers the lid. It ends the session when the agent exits, and the menu bar shows it's still going:</p>
+        <pre><code>tmux new-session -d -s agent 'midnightoil run --lid-closed -- claude'</code></pre>
+        <p>Agents can use it too. Add a line to your <code>CLAUDE.md</code> or <code>AGENTS.md</code>: “Run commands that take more than a few minutes through <code>midnightoil run -- &lt;command&gt;</code>.”</p>
             """},
             {"id": "app", "gray": True, "html": """
         <h2>The menu bar way: Midnight Oil</h2>

@@ -75,6 +75,11 @@ if ! codesign -d --entitlements - "$APP" 2>/dev/null | grep -q "com.apple.securi
   echo "✗ The exported app is missing the Location entitlement" >&2
   exit 1
 fi
+# The Homebrew cask links this onto the PATH.
+if ! "$APP/Contents/MacOS/midnightoil" --version | grep -qx "$VERSION"; then
+  echo "✗ The exported app is missing the midnightoil command, or it reports the wrong version" >&2
+  exit 1
+fi
 
 echo "▶ Notarizing the app"
 ditto -c -k --keepParent "$APP" "$BUILD/app.zip"
@@ -121,5 +126,10 @@ TAP="$BUILD/homebrew-tap"
 gh repo clone coreyhaines31/homebrew-tap "$TAP" -- --quiet --depth 1
 SHA=$(shasum -a 256 "$DMG" | cut -d' ' -f1)
 sed -i '' -e "s/^  version \".*\"/  version \"$VERSION\"/" -e "s/^  sha256 \".*\"/  sha256 \"$SHA\"/" "$TAP/Casks/midnightoil.rb"
+if ! grep -q '^  binary ' "$TAP/Casks/midnightoil.rb"; then
+  sed -i '' '/^  app "Midnight Oil.app"$/a\
+  binary "#{appdir}/Midnight Oil.app/Contents/MacOS/midnightoil"
+' "$TAP/Casks/midnightoil.rb"
+fi
 git -C "$TAP" commit -qam "midnightoil $VERSION" && git -C "$TAP" push -q
 echo "✓ Released $APP_NAME $VERSION"
