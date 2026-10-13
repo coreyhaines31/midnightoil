@@ -491,4 +491,132 @@ curl -O https://example.com/big.iso; pmset sleepnow</code></pre>
             """},
         ],
     },
+    # ------------------------------------------------------------------ Put to sleep
+    {
+        "slug": "put-mac-to-sleep",
+        "updated": "2026-10-13",
+        "title": "How to put your Mac to sleep: every shortcut and command",
+        "description": "Put a Mac or MacBook to sleep from the Apple menu, the power button, a keyboard shortcut you set yourself, a hot corner, or Terminal. Including Touch ID Macs.",
+        "eyebrow": "Guide",
+        "h1": "How to put your Mac to sleep",
+        "lede": "The Apple menu works on every Mac. The keyboard shortcuts depend on your keyboard, and on a Mac with Touch ID there isn't one at all until you make it.",
+        "tldr": "<strong>Any Mac:</strong> Apple menu › Sleep, or close the lid. <strong>Keyboard without Touch ID:</strong> Option–Command–Power, or hold the power button for 1.5 seconds. <strong>Keyboard with Touch ID:</strong> no built-in shortcut; make one in System Settings › Keyboard › Keyboard Shortcuts › App Shortcuts. <strong>Terminal:</strong> <code>pmset sleepnow</code>.",
+        "card_title": "Put your Mac to sleep",
+        "card_blurb": "Every shortcut and command, including for Touch ID Macs.",
+        "cta": "Sleep when you say so.",
+        "faqs": [
+            ("What is the keyboard shortcut to put a Mac to sleep?", "On a built-in keyboard without Touch ID, Option–Command–Power, or hold the power button for 1.5 seconds. Keyboards with Touch ID have no built-in sleep shortcut; pressing the power button locks the screen instead. You can add your own in System Settings › Keyboard › Keyboard Shortcuts › App Shortcuts."),
+            ("How do I make a sleep shortcut on a MacBook with Touch ID?", "Open System Settings › Keyboard › Keyboard Shortcuts › App Shortcuts, click +, choose All Applications, type Sleep as the menu title exactly as it appears in the Apple menu, and press the keys you want, such as Control–Option–Command–S."),
+            ("How do I put just the screen to sleep?", "Set a hot corner to Put Display to Sleep in System Settings › Desktop & Dock › Hot Corners, or press Control–Shift–Power on a keyboard without Touch ID. The Mac keeps running; only the display turns off."),
+            ("How do I put a Mac to sleep from Terminal?", "Run pmset sleepnow. It works immediately, without an admin password, even while music or video is playing."),
+            ("What's the difference between sleep and lock screen?", "Locking (Control–Command–Q, or the power button on Touch ID keyboards) hides your desktop behind the login screen but keeps the Mac running. Sleep pauses the whole Mac to save power."),
+        ],
+        "sections": [
+            {"id": "ways", "html": """
+        <h2>Every way, at a glance</h2>
+        <div class="table-scroll"><table class="compare">
+          <thead><tr><th>How</th><th>Works on</th></tr></thead>
+          <tbody>
+            <tr><td>Apple menu › Sleep</td><td>Every Mac</td></tr>
+            <tr><td>Close the lid</td><td>MacBooks, unless clamshell mode keeps them awake</td></tr>
+            <tr><td>Option–Command–Power</td><td>Built-in keyboards without Touch ID</td></tr>
+            <tr><td>Hold the power button for 1.5 seconds</td><td>Built-in keyboards without Touch ID</td></tr>
+            <tr><td>Control–Power, then Sleep</td><td>Built-in keyboards without Touch ID</td></tr>
+            <tr><td>A shortcut you make in App Shortcuts</td><td>Every Mac, including Touch ID keyboards</td></tr>
+            <tr><td><code>pmset sleepnow</code> in Terminal</td><td>Every Mac</td></tr>
+          </tbody>
+        </table></div>
+        <p>Apple's own list is in <a href="https://support.apple.com/en-us/102650">Mac keyboard shortcuts</a>.</p>
+            """},
+            {"id": "touch-id", "gray": True, "html": """
+        <h2>Make a sleep shortcut on a Touch ID Mac</h2>
+        <p>On a keyboard with Touch ID, the power button locks the screen, and Apple lists no sleep shortcut. You can add one, because macOS lets you assign keys to any menu item, including Sleep in the Apple menu:</p>
+        <ol class="steps">
+          <li><b>Open System Settings › Keyboard › Keyboard Shortcuts…</b></li>
+          <li><b>Choose App Shortcuts and click +.</b></li>
+          <li><b>Set Application to All Applications.</b></li>
+          <li><b>Type <code>Sleep</code> as the menu title.</b> Spell it exactly as it appears in the Apple menu.</li>
+          <li><b>Click the shortcut field and press your keys.</b> For example Control–Option–Command–S. Then click Done.</li>
+        </ol>
+        <p>Pick a combination no app already uses, or that app's command wins while it's in front.</p>
+            """},
+            {"id": "display", "html": """
+        <h2>Sleep just the display</h2>
+        <p>Sometimes you want the screen dark and the Mac still working: a download, a render, an AI agent finishing a task.</p>
+        <ul>
+          <li><strong>Hot corner:</strong> System Settings › Desktop &amp; Dock › Hot Corners…, set a corner to <em>Put Display to Sleep</em>, then flick the pointer into it.</li>
+          <li><strong>Keyboard without Touch ID:</strong> Control–Shift–Power.</li>
+          <li><strong>Terminal:</strong> <code>pmset displaysleepnow</code>.</li>
+        </ul>
+        <p>Whether the Mac then sleeps on its own depends on your sleep settings. To keep it working with the screen off until the job is done, <a href="/">Midnight Oil</a>'s <strong>Allow display sleep</strong> does exactly that.</p>
+            """},
+            {"id": "terminal", "gray": True, "html": """
+        <h2>From Terminal or a script</h2>
+        <pre><code>pmset sleepnow             # sleep now
+pmset displaysleepnow      # just the display
+sleep 1800; pmset sleepnow # sleep in 30 minutes</code></pre>
+        <p>None of these need an admin password. To sleep at a set time, or once a job finishes, see <a href="/guides/mac-sleep-timer">how to set a sleep timer</a>.</p>
+            """},
+            {"id": "wont", "html": """
+        <h2>Mac wakes right back up?</h2>
+        <p>If it sleeps and comes straight back, something is waking it: the network, a USB device, or a scheduled wake. If it won't go to sleep at all, an app is holding it awake. Both are covered in <a href="/guides/mac-wont-sleep">Mac won't sleep</a>.</p>
+            """},
+        ],
+    },
+    # ------------------------------------------------------------------ Sleep or shut down
+    {
+        "slug": "sleep-or-shut-down-mac",
+        "updated": "2026-10-13",
+        "title": "Should you shut down or sleep your Mac at night?",
+        "description": "Sleep or shut down a MacBook overnight? What each does to battery, updates, and speed, when a restart helps, and the case for leaving it awake.",
+        "eyebrow": "Guide",
+        "h1": "Sleep or shut down your Mac?",
+        "lede": "Short answer: let it sleep. Modern Macs are built to sleep for days and wake in a second. Shutting down still has its moments, and there's a third option people forget.",
+        "tldr": "<strong>Every night:</strong> sleep. It uses very little power, wakes instantly, and lets the Mac run backups and updates while plugged in. <strong>Once in a while:</strong> restart, to apply updates and clear out a Mac that feels slow. <strong>Away for weeks or storing it:</strong> shut down, with the battery around half full. <strong>Something still running:</strong> keep it awake until the job is done, then let it sleep.",
+        "card_title": "Sleep or shut down?",
+        "card_blurb": "Which is better for a Mac overnight, and when to restart.",
+        "cta": "Awake for the job. Asleep after.",
+        "faqs": [
+            ("Is it better to shut down or sleep a MacBook?", "Sleep, for everyday use. A sleeping Mac uses very little power, wakes instantly with your apps where you left them, and can run backups and updates when plugged in. Shut down when you won't use it for a long time."),
+            ("Is it bad to never shut down a Mac?", "No. Macs are designed to sleep for long stretches. Restart now and then, especially after updates or when it feels sluggish, which clears memory and finishes installs."),
+            ("Does a MacBook lose battery while asleep?", "A little. Sleep keeps memory powered, and after a long sleep on battery a MacBook moves to a deeper standby that uses even less. Expect a small drop overnight, not a dead battery."),
+            ("Should I shut down my Mac before putting it in a bag?", "Sleep is fine, as long as nothing keeps it awake with the lid closed. A Mac running hot in a closed bag is the real risk, which is why Midnight Oil sounds an alarm if the lid closes on battery during a closed-lid session."),
+            ("How long should a Mac be off before I shut it down?", "Apple doesn't give a cutoff. A common rule: sleep for anything up to a few days, shut down for longer. For long-term storage, Apple recommends leaving the battery about half charged."),
+        ],
+        "sections": [
+            {"id": "compare", "html": """
+        <h2>Sleep vs shut down</h2>
+        <div class="table-scroll"><table class="compare">
+          <thead><tr><th></th><th>Sleep</th><th>Shut down</th></tr></thead>
+          <tbody>
+            <tr><td>Back to work in</td><td>About a second</td><td>A minute or so, then reopen your apps</td></tr>
+            <tr><td>Your open apps and windows</td><td>Exactly as you left them</td><td>Reopened if you ask macOS to</td></tr>
+            <tr><td>Power use</td><td>Very low</td><td>Practically none</td></tr>
+            <tr><td>Backups and updates overnight</td><td>Yes, when plugged in (Power Nap)</td><td>No</td></tr>
+            <tr><td>Clears memory, finishes installs</td><td>No</td><td>Yes</td></tr>
+            <tr><td>Running jobs</td><td>Paused until you wake it</td><td>Stopped</td></tr>
+          </tbody>
+        </table></div>
+            """},
+            {"id": "sleep", "gray": True, "html": """
+        <h2>Why sleep is the default</h2>
+        <p>Sleep keeps your memory powered and turns almost everything else off. On a MacBook that's been asleep on battery for a while, macOS goes a step further into standby, saving memory to disk and cutting power more. You can see the settings behind this with <code>pmset -g</code>: <code>standby</code>, <code>hibernatemode</code>, and <code>powernap</code>.</p>
+        <p>Plugged in, Power Nap lets a sleeping Mac wake briefly for Time Machine, Mail, and software updates. That's work it can't do if it's off.</p>
+            """},
+            {"id": "restart", "html": """
+        <h2>When to restart or shut down</h2>
+        <ul>
+          <li><strong>After a macOS update</strong>, or when one is waiting: restart to finish installing it.</li>
+          <li><strong>When the Mac feels slow or glitchy</strong>: a restart clears memory and resets background processes. Weeks of uptime is fine; months of creeping slowness is a hint.</li>
+          <li><strong>Away for weeks, or storing it:</strong> shut down. For long storage, Apple's battery advice is to leave it about half charged.</li>
+          <li><strong>Holding Option</strong> while choosing Restart or Shut Down from the Apple menu skips the confirmation.</li>
+        </ul>
+            """},
+            {"id": "awake", "gray": True, "html": """
+        <h2>The third option: stay awake, then sleep</h2>
+        <p>Sometimes the Mac shouldn't do either yet: a download, a backup to a slow drive, a render, or an AI agent working through the night. Sleeping pauses that work, and shutting down kills it.</p>
+        <p>Keep the Mac awake for exactly that long, then let it sleep: <code>caffeinate -i</code> in Terminal for a quick job, or <a href="/">Midnight Oil</a> for “until 7 AM,” “until this app quits,” or with the lid closed. When the session ends, the Mac goes back to sleeping on its normal schedule. More in <a href="/guides/stop-mac-from-sleeping">how to stop your Mac from sleeping</a>.</p>
+            """},
+        ],
+    },
 ]
