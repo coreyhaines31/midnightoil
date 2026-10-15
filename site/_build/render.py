@@ -138,10 +138,25 @@ def footer_agents():
     return f'      <nav class="footer-alts" aria-label="For agents"><a class="label" href="/cli">For agents</a>{links}</nav>\n'
 
 
+FAMILY = [
+    ("Green Room", "https://greenroomformac.com", "Check your camera, mic, and speakers"),
+    ("WiFi or ISP", "https://wifiorisp.com", "Is slow internet your Wi-Fi or your ISP?"),
+    ("Disk Forecast", "https://diskforecast.com", "Know before your Mac runs out of space"),
+    ("Spare", "https://spareformac.com", "See what's using your Mac"),
+    ("On Hand", "https://onhandformac.com", "A clipboard manager for your Mac"),
+]
+
+
+def footer_family():
+    """Corey's other free Mac apps, cross-linked from every footer."""
+    links = "".join(f'<a href="{url}" title="{esc(desc)}">{esc(name)}</a>' for name, url, desc in FAMILY)
+    return f'      <nav class="footer-alts" aria-label="More free Mac apps"><a class="label" href="https://github.com/coreyhaines31">More free Mac apps</a>{links}</nav>\n'
+
+
 def footer():
     return f'''  <footer>
     <div class="wrap">
-{footer_agents()}{footer_guides()}{footer_alternatives()}      <span>© 2026 Corey Haines. <a href="{REPO}/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+{footer_agents()}{footer_guides()}{footer_alternatives()}{footer_family()}      <span>© 2026 Corey Haines. <a href="{REPO}/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
       <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="{REPO}/issues">Issues</a> &nbsp;·&nbsp; <a href="/cli">For agents</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
     </div>
   </footer>
@@ -156,7 +171,7 @@ def render_homepage_footer():
     start, end = "<!-- alternatives -->\n", "<!-- /alternatives -->"
     i, j = page.index(start) + len(start), page.index(end)
     with open(path, "w") as f:
-        f.write(page[:i] + footer_agents() + footer_guides() + footer_alternatives() + "      " + page[j:])
+        f.write(page[:i] + footer_agents() + footer_guides() + footer_alternatives() + footer_family() + "      " + page[j:])
 
 
 def head(title, description, path):
