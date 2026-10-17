@@ -24,7 +24,7 @@ enum Preferences {
         static let driveAliveVolumes = "driveAliveVolumes"
     }
 
-    static let defaultBatteryFloorPercent = 20
+    static let defaultBatteryFloorPercent = 10
     static let defaultSound = "default"
     static let noSound = "none"
     static let defaultLidAlarmSound = "Sosumi"
@@ -32,12 +32,17 @@ enum Preferences {
     private static var defaults: UserDefaults { .standard }
 
     static func registerDefaults() {
+        // The level used to default to 20%. Keep it for anyone who turned the cutoff on themselves.
+        if defaults.object(forKey: Key.batteryFloorEnabled) != nil,
+           defaults.object(forKey: Key.batteryFloorPercent) == nil {
+            defaults.set(20, forKey: Key.batteryFloorPercent)
+        }
         defaults.register(defaults: [
             Key.allowsDisplaySleep: false,
             Key.startsSessionAtLaunch: false,
             Key.staysAwakeWithLidClosed: false,
             Key.soundsLidAlarm: true,
-            Key.batteryFloorEnabled: false,
+            Key.batteryFloorEnabled: true,
             Key.batteryFloorPercent: defaultBatteryFloorPercent,
             Key.endsWhenUnplugged: false,
             Key.showsRemainingInMenuBar: false,

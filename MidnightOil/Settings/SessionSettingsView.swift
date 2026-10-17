@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SessionSettingsView: View {
     @AppStorage(Preferences.Key.allowsDisplaySleep) private var allowsDisplaySleep = false
-    @AppStorage(Preferences.Key.batteryFloorEnabled) private var batteryFloorEnabled = false
+    @AppStorage(Preferences.Key.batteryFloorEnabled) private var batteryFloorEnabled = true
     @AppStorage(Preferences.Key.batteryFloorPercent)
     private var batteryFloorPercent = Preferences.defaultBatteryFloorPercent
     @AppStorage(Preferences.Key.endsWhenUnplugged) private var endsWhenUnplugged = false

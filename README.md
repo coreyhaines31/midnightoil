@@ -89,7 +89,7 @@ Two options on the running session card are worth knowing:
 - **Allow display sleep** lets the screen turn off while the Mac keeps working. This is what you want for overnight runs.
 - **Stay awake with lid closed** keeps a MacBook running after you close it. It needs a one-time setup, described next.
 
-To start Midnight Oil when you log in, turn on *Launch at login* in **Settings › General**.
+Midnight Oil starts when you log in. To stop that, turn off *Launch at login* in **Settings › General**.
 
 ## Permissions it may ask for
 
