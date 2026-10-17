@@ -9,8 +9,9 @@ enum LaunchAtLoginDefault {
         #if !DEBUG
         let defaults = UserDefaults.standard
         guard !defaults.bool(forKey: appliedKey) else { return }
+        // Only once it took, so a failed attempt (say, run from a disk image) tries again next launch.
+        guard (try? SMAppService.mainApp.register()) != nil else { return }
         defaults.set(true, forKey: appliedKey)
-        try? SMAppService.mainApp.register()
         #endif
     }
 }
