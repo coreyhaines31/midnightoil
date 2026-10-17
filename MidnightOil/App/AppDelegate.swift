@@ -21,6 +21,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         Preferences.registerDefaults()
+        LaunchAtLoginDefault.applyOnce()
         sessions.helper.refreshAfterUpdate()
         sessions.policy = { [teamsLicense] in
             TeamsPolicy.read(from: .standard, licensed: teamsLicense.unlocks(.policies))
