@@ -24,7 +24,7 @@ enum Preferences {
         static let driveAliveVolumes = "driveAliveVolumes"
     }
 
-    static let defaultBatteryFloorPercent = 20
+    static let defaultBatteryFloorPercent = 10
     static let defaultSound = "default"
     static let noSound = "none"
     static let defaultLidAlarmSound = "Sosumi"
@@ -37,7 +37,7 @@ enum Preferences {
             Key.startsSessionAtLaunch: false,
             Key.staysAwakeWithLidClosed: false,
             Key.soundsLidAlarm: true,
-            Key.batteryFloorEnabled: false,
+            Key.batteryFloorEnabled: true,
             Key.batteryFloorPercent: defaultBatteryFloorPercent,
             Key.endsWhenUnplugged: false,
             Key.showsRemainingInMenuBar: false,
