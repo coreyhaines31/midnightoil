@@ -32,6 +32,11 @@ enum Preferences {
     private static var defaults: UserDefaults { .standard }
 
     static func registerDefaults() {
+        // The level used to default to 20%. Keep it for anyone who turned the cutoff on themselves.
+        if defaults.object(forKey: Key.batteryFloorEnabled) != nil,
+           defaults.object(forKey: Key.batteryFloorPercent) == nil {
+            defaults.set(20, forKey: Key.batteryFloorPercent)
+        }
         defaults.register(defaults: [
             Key.allowsDisplaySleep: false,
             Key.startsSessionAtLaunch: false,
