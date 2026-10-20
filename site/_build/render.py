@@ -145,6 +145,7 @@ FAMILY = [
     ("Spare", "https://spareformac.com", "See what's using your Mac"),
     ("On Hand", "https://onhandformac.com", "A clipboard manager for your Mac"),
     ("Coat Check", "https://coatcheckformac.com", "Reach the menu bar icons the notch hides"),
+    ("Fuel Gauge", "https://fuelgauge.app", "Know if you'll make it to reset"),
 ]
 
 
