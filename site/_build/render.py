@@ -197,6 +197,7 @@ def head(title, description, path):
   <link rel="stylesheet" href="/site.css">
   <style>{PAGE_CSS}  </style>
   <script async src="https://tracerkit.com/t.js" data-key="tk__vMOLefQSrM_pLCt"></script>
+  <script src="https://ingest.getuserproof.com/sdk.js" data-site="f47d3267-ab67-4aae-8dee-7c160e0f05f1" defer></script>
 </head>
 <body>
 '''
