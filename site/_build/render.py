@@ -720,7 +720,7 @@ def render_sitemap():
     root = os.path.normpath(ROOT)
     urls = []
     for folder, _, files in os.walk(root):
-        if "_build" in os.path.relpath(folder, root).split(os.sep):
+        if {"_build", "_og"} & set(os.path.relpath(folder, root).split(os.sep)):
             continue
         for name in files:
             if not name.endswith(".html") or name == "404.html":
