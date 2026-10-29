@@ -1,0 +1,9 @@
+.env*
+.vercel
+_build
+*.py
+__pycache__
+Makefile
+README*
+.gitignore
+.vercelignore
