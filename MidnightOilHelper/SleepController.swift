@@ -13,6 +13,9 @@ final class SleepController: @unchecked Sendable {
     // All state is confined to this serial queue.
     private let queue = DispatchQueue(label: "app.midnightoil.MidnightOil.Helper.sleep")
     private var holders = Set<ObjectIdentifier>()
+    /// What pmset last succeeded at. Compared against instead of the old holder set, so a failed
+    /// restore is retried on the next request or disconnect rather than forgotten.
+    private var appliedDisabled = false
 
     func restoreIfLeftDisabled() {
         queue.sync {
@@ -24,15 +27,16 @@ final class SleepController: @unchecked Sendable {
 
     func setSleepDisabled(_ disabled: Bool, for holder: ObjectIdentifier) -> Bool {
         queue.sync {
-            let wasDisabled = !holders.isEmpty
             if disabled {
                 holders.insert(holder)
             } else {
                 holders.remove(holder)
             }
             let shouldDisable = !holders.isEmpty
-            guard shouldDisable != wasDisabled else { return true }
-            return apply(disabled: shouldDisable)
+            guard shouldDisable != appliedDisabled else { return true }
+            let succeeded = apply(disabled: shouldDisable)
+            if succeeded { appliedDisabled = shouldDisable }
+            return succeeded
         }
     }
 
