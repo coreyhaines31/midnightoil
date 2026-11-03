@@ -278,18 +278,8 @@ final class SessionController {
         if let reason = endReason(for: session) {
             end(reason: reason)
         } else {
-            soundLidAlarmIfNeeded(for: session)
+            handleLidChange(for: session)
             onChange?()
-        }
-    }
-
-    private func soundLidAlarmIfNeeded(for session: Session) {
-        guard session.staysAwakeWithLidClosed, Preferences.soundsLidAlarm else { return }
-        let isClosed = LidState.isClosed() ?? false
-        defer { lastLidClosed = isClosed }
-        let isOnBattery = lastPower?.isOnBattery ?? false
-        if LidAlarm.shouldSound(wasClosed: lastLidClosed, isClosed: isClosed, isOnBattery: isOnBattery) {
-            SystemSounds.play(Preferences.lidAlarmSound)
         }
     }
 
@@ -347,5 +337,29 @@ extension SessionController {
         let stillDownloading = progress.update(size: size, at: .now)
         download = progress
         return stillDownloading
+    }
+}
+
+extension SessionController {
+    fileprivate func handleLidChange(for session: Session) {
+        guard session.staysAwakeWithLidClosed else {
+            lastLidClosed = nil
+            return
+        }
+        let isClosed = LidState.isClosed() ?? false
+        defer { lastLidClosed = isClosed }
+        let isOnBattery = lastPower?.isOnBattery ?? false
+        if Preferences.soundsLidAlarm,
+           LidAlarm.shouldSound(wasClosed: lastLidClosed, isClosed: isClosed, isOnBattery: isOnBattery) {
+            SystemSounds.play(Preferences.lidAlarmSound)
+        }
+        if Preferences.locksOnLidClose,
+           LidLock.shouldLock(
+               wasClosed: lastLidClosed,
+               isClosed: isClosed,
+               hasExternalDisplay: ScreenLocker.hasExternalDisplay()
+           ) {
+            ScreenLocker.lock()
+        }
     }
 }
