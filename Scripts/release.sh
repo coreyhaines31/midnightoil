@@ -75,6 +75,12 @@ if ! codesign -d --entitlements - "$APP" 2>/dev/null | grep -q "com.apple.securi
   echo "✗ The exported app is missing the Location entitlement" >&2
   exit 1
 fi
+# The Control Center toggle reads session state from the app group it shares with the app.
+CONTROL="$APP/Contents/PlugIns/MidnightOilControl.appex"
+if ! codesign -d --entitlements - "$CONTROL" 2>/dev/null | grep -q "KPQU8X839X.app.midnightoil.MidnightOil"; then
+  echo "✗ The exported app is missing the Control Center extension or its app group" >&2
+  exit 1
+fi
 # The Homebrew cask links this onto the PATH.
 if ! "$APP/Contents/MacOS/midnightoil" --version | grep -qx "$VERSION"; then
   echo "✗ The exported app is missing the midnightoil command, or it reports the wrong version" >&2
