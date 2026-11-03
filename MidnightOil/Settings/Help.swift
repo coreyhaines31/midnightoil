@@ -303,6 +303,10 @@ enum Help {
         static let checkForUpdates = "New versions download in the background and install when Midnight Oil quits."
         static let allowDisplaySleep = allowDisplaySleepShort
         static let staysAwakeWithLidClosed = "Keep working with the lid shut. Needs the closed-lid helper."
+        static let lidPausedForHeat = """
+            Your Mac got hot with the lid closed, so it can sleep for now. Closed-lid mode comes back \
+            once it cools.
+            """
         static let allowDisplaySleepShort = "Let the screen turn off while your Mac keeps working."
     }
 }
