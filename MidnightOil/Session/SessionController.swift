@@ -142,6 +142,8 @@ final class SessionController {
             download = nil
         }
         applyAssertions()
+        // Already hot? Don't switch closed-lid mode on just to pause it a second later.
+        pauseLidModeIfHot(for: newSession)
         syncLidClosedMode()
         startTicker()
         onSessionEvent?(.started(newSession))
@@ -212,6 +214,13 @@ final class SessionController {
         lidModeRequested = wanted
         Task {
             let applied = await helper.setSleepDisabled(wanted)
+            // Sleep left off is the failure that matters: retry until it's back on.
+            if !wanted, !applied, !lidModeRequested {
+                lidModeRequested = true
+                try? await Task.sleep(for: .seconds(5))
+                syncLidClosedMode()
+                return
+            }
             // If the helper couldn't do it, don't pretend the lid is covered.
             if wanted, !applied, lidModeRequested {
                 lidModeRequested = false
