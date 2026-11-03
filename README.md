@@ -182,7 +182,7 @@ Midnight Oil has no account and no analytics. Its only network request is the up
 
 ### Requirements
 
-- Xcode 16 or later
+- Xcode 26 or later (the Control Center extension needs the macOS 26 SDK)
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen) and [SwiftLint](https://github.com/realm/SwiftLint)
 
 ```sh
