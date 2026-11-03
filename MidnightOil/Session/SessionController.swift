@@ -58,6 +58,7 @@ final class SessionController {
     /// What we last asked the helper for, so it's only messaged on changes.
     private var lidModeRequested = false
     private var lastLidClosed: Bool?
+    private var lastUnattended: Bool?
     private var ticker: Task<Void, Never>?
     private var download: DownloadProgress?
     private var lastPower: PowerState?
@@ -152,6 +153,7 @@ final class SessionController {
         download = nil
         lastPower = nil
         lastLidClosed = nil
+        lastUnattended = nil
         ticker?.cancel()
         ticker = nil
         assertions.releaseAll()
@@ -344,6 +346,7 @@ extension SessionController {
     fileprivate func handleLidChange(for session: Session) {
         guard session.staysAwakeWithLidClosed else {
             lastLidClosed = nil
+            lastUnattended = nil
             return
         }
         let isClosed = LidState.isClosed() ?? false
@@ -353,12 +356,21 @@ extension SessionController {
            LidAlarm.shouldSound(wasClosed: lastLidClosed, isClosed: isClosed, isOnBattery: isOnBattery) {
             SystemSounds.play(Preferences.lidAlarmSound)
         }
-        if Preferences.locksOnLidClose,
-           LidLock.shouldLock(
-               wasClosed: lastLidClosed,
-               isClosed: isClosed,
-               hasExternalDisplay: ScreenLocker.hasExternalDisplay()
-           ) {
+        lockIfUnattended(isClosed: isClosed)
+    }
+
+    private func lockIfUnattended(isClosed: Bool) {
+        guard Preferences.locksOnLidClose else {
+            lastUnattended = nil
+            return
+        }
+        // An open lid already rules it out, so skip the display lookup.
+        let isUnattended = isClosed && LidLock.isUnattended(
+            isClosed: isClosed,
+            hasExternalDisplay: ScreenLocker.hasExternalDisplay()
+        )
+        defer { lastUnattended = isUnattended }
+        if LidLock.shouldLock(wasUnattended: lastUnattended, isUnattended: isUnattended) {
             ScreenLocker.lock()
         }
     }
