@@ -63,6 +63,16 @@ struct CLIArgumentsTests {
         #expect(expected.sessionEnd == .after(7_200))
     }
 
+    @Test func aBareDurationStartsATimedSession() throws {
+        #expect(try parse("45m") == .send(CLIRequest(action: .start, duration: 2_700), json: false))
+        let expected = CLIRequest(action: .start, duration: 7_200, staysAwakeWithLidClosed: true)
+        #expect(try parse("2h --lid-closed --json") == .send(expected, json: true))
+    }
+
+    @Test func aBareDurationStillRejectsNonsense() {
+        #expect(throws: CLIUsageError.self) { try parse("90") }
+    }
+
     @Test func startWatchesAProcess() throws {
         let command = try parse("start --while-pid 4242")
         guard case .send(let request, _) = command else { Issue.record("not a send"); return }

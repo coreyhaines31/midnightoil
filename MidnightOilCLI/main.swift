@@ -6,12 +6,14 @@ midnightoil: keep your Mac awake from the terminal, with Midnight Oil's closed-l
 
 Usage:
   midnightoil start [--for 2h | --until 6am | --while-pid PID] [options]
+  midnightoil DURATION [options]
   midnightoil run [options] [--] <command> [arguments...]
   midnightoil stop
   midnightoil status [--json]
 
 Commands:
   start     Keep the Mac awake until you stop it, or for a time with --for or --until.
+            A duration on its own, like midnightoil 45m, is short for start --for 45m.
   run       Run a command and keep the Mac awake until it finishes. Runs started
             in parallel share one session that lasts until the last one finishes.
   stop      End the current session.
@@ -29,6 +31,7 @@ Options you leave out follow your defaults in Midnight Oil's Settings.
 
 Examples:
   midnightoil start --for 8h --lid-closed
+  midnightoil 45m
   midnightoil run --lid-closed -- claude -p "fix the failing tests"
 """
 
@@ -116,7 +119,11 @@ func describe(_ status: CLIStatus) -> String {
     var lines = ["Keeping your Mac awake: \(status.detail ?? "until you end it")"]
     if let startedBy = status.startedBy, startedBy != "you" { lines.append("Started by \(startedBy)") }
     var options: [String] = []
-    if status.staysAwakeWithLidClosed { options.append("stays awake with the lid closed") }
+    if status.staysAwakeWithLidClosed {
+        options.append(status.lidPausedForHeat == true
+            ? "closed-lid mode paused while your Mac cools down"
+            : "stays awake with the lid closed")
+    }
     if status.allowsDisplaySleep { options.append("the screen can turn off") }
     if !options.isEmpty { lines.append(options.joined(separator: ", ").prefixUppercased) }
     return lines.joined(separator: "\n")

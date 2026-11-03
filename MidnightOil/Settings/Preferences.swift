@@ -8,6 +8,8 @@ enum Preferences {
         static let startsSessionAtLaunch = "startsSessionAtLaunch"
         static let staysAwakeWithLidClosed = "staysAwakeWithLidClosed"
         static let soundsLidAlarm = "soundsLidAlarm"
+        static let locksOnLidClose = "locksOnLidClose"
+        static let pausesLidModeWhenHot = "pausesLidModeWhenHot"
         static let batteryFloorEnabled = "batteryFloorEnabled"
         static let batteryFloorPercent = "batteryFloorPercent"
         static let endsWhenUnplugged = "endsWhenUnplugged"
@@ -42,6 +44,8 @@ enum Preferences {
             Key.startsSessionAtLaunch: false,
             Key.staysAwakeWithLidClosed: false,
             Key.soundsLidAlarm: true,
+            Key.locksOnLidClose: true,
+            Key.pausesLidModeWhenHot: true,
             Key.batteryFloorEnabled: true,
             Key.batteryFloorPercent: defaultBatteryFloorPercent,
             Key.endsWhenUnplugged: false,
@@ -65,6 +69,11 @@ enum Preferences {
     static var staysAwakeWithLidClosed: Bool { defaults.bool(forKey: Key.staysAwakeWithLidClosed) }
 
     static var soundsLidAlarm: Bool { defaults.bool(forKey: Key.soundsLidAlarm) }
+
+    /// Whether to lock the screen when the lid closes during a closed-lid session.
+    static var locksOnLidClose: Bool { defaults.bool(forKey: Key.locksOnLidClose) }
+    /// Whether closed-lid mode steps aside so a hot, closed Mac can sleep and cool down.
+    static var pausesLidModeWhenHot: Bool { defaults.bool(forKey: Key.pausesLidModeWhenHot) }
 
     static var batteryFloorPercent: Int? {
         defaults.bool(forKey: Key.batteryFloorEnabled) ? defaults.integer(forKey: Key.batteryFloorPercent) : nil

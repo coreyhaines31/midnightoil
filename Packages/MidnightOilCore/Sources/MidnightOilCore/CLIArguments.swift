@@ -34,6 +34,9 @@ public enum CLIArguments {
             return .send(CLIRequest(action: .status), json: try takeJSONOnly(rest, command: name))
         case "start": return try parseStart(rest, now: now, calendar: calendar)
         case "run": return try parseRun(rest, now: now, calendar: calendar)
+        // "midnightoil 45m" is shorthand for "midnightoil start --for 45m".
+        case let shorthand where shorthand.first?.isNumber == true:
+            return try parseStart(["--for", shorthand] + rest, now: now, calendar: calendar)
         default:
             throw CLIUsageError("Unknown command: \(name)")
         }

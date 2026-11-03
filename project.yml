@@ -31,6 +31,7 @@ targets:
     sources:
       - MidnightOil
       - Shared
+      - ControlBridge
       - ee/App
       - path: LaunchDaemons
         buildPhase:
@@ -51,12 +52,17 @@ targets:
         copy:
           destination: executables
         codeSignOnCopy: true
+      # The Control Center toggle (macOS 26 and later; older systems ignore it).
+      - target: MidnightOilControl
     entitlements:
       path: MidnightOil/MidnightOil.entitlements
       properties:
         # The hardened runtime blocks Location Services without this, and macOS only
         # reveals the Wi-Fi network name to apps with Location access.
         com.apple.security.personal-information.location: true
+        # Shared with the Control Center extension. The team prefix needs no provisioning profile.
+        com.apple.security.application-groups:
+          - KPQU8X839X.app.midnightoil.MidnightOil
     info:
       path: MidnightOil/Info.plist
       properties:
@@ -89,6 +95,30 @@ targets:
         SKIP_INSTALL: YES
         GENERATE_INFOPLIST_FILE: YES
         CREATE_INFOPLIST_SECTION_IN_BINARY: YES
+  MidnightOilControl:
+    type: app-extension
+    platform: macOS
+    deploymentTarget: "26.0"
+    sources: [MidnightOilControl, ControlBridge]
+    entitlements:
+      path: MidnightOilControl/MidnightOilControl.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups:
+          - KPQU8X839X.app.midnightoil.MidnightOil
+    info:
+      path: MidnightOilControl/Info.plist
+      properties:
+        CFBundleDisplayName: Midnight Oil
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_NAME: MidnightOilControl
+        PRODUCT_BUNDLE_IDENTIFIER: app.midnightoil.MidnightOil.Control
+        SKIP_INSTALL: YES
   MidnightOilCLI:
     type: tool
     platform: macOS

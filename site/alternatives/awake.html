@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Awake for Mac alternative: closed-lid mode without sudoers</title>
+  <meta name="description" content="Awake keeps a closed MacBook running for AI agents. Midnight Oil does too, as a full app on Intel and macOS 14+, with a signed helper instead of a passwordless sudo rule.">
+  <link rel="canonical" href="https://midnightoil.app/alternatives/awake">
+  <meta property="og:title" content="Awake for Mac alternative: closed-lid mode without sudoers">
+  <meta property="og:description" content="Awake keeps a closed MacBook running for AI agents. Midnight Oil does too, as a full app on Intel and macOS 14+, with a signed helper instead of a passwordless sudo rule.">
+  <meta property="og:image" content="https://midnightoil.app/images/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://midnightoil.app/alternatives/awake">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/images/icon-192.png">
+  <link rel="apple-touch-icon" href="/images/icon-512.png">
+  <link rel="stylesheet" href="/site.css">
+  <style>
+    .sub-hero { padding: 72px 22px 40px; }
+    .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
+    .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
+    .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
+    .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
+    .sub-hero .actions { display: flex; align-items: center; gap: 14px; margin-top: 28px; flex-wrap: wrap; }
+    .tldr { background: var(--glass); border-radius: 28px; padding: 26px 28px; margin: 44px 0 0; max-width: 900px; position: relative; box-shadow: var(--glass-shadow); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+    .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
+    .prose { max-width: 760px; }
+    .prose h2 { font-size: clamp(28px, 3.6vw, 40px); margin: 0 0 16px; }
+    .prose h3 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 8px; }
+    .prose p, .prose li { color: var(--muted); font-size: 17px; line-height: 1.6; }
+    .prose p strong { color: var(--text); font-weight: 600; }
+    .prose ul { padding-left: 20px; margin: 0 0 8px; }
+    .prose li { margin-bottom: 6px; }
+    .prose h2 code { font-size: 0.86em; background: none; padding: 0; }
+    .compare.cmds:not(.asks) td:first-child { white-space: nowrap; }
+    .compare.cmds td:last-child code { white-space: nowrap; }
+    .agent-head code { font-size: 12px; padding: 1px 5px; }
+    .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
+    .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+    .prose blockquote { margin: 18px 0; padding: 14px 20px; border-left: 3px solid var(--gold); background: var(--gray); border-radius: 0 12px 12px 0; }
+    .prose blockquote p { margin: 0; font-size: 16px; }
+    .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
+    .prose blockquote cite a { color: var(--faint); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+    .two > div { background: var(--glass); border-radius: 22px; padding: 22px; box-shadow: var(--glass-shadow); }
+    .two h3 { margin: 0 0 10px; font-size: 18px; }
+    .two ul { margin: 0; padding-left: 18px; }
+    .two li { font-size: 15px; margin-bottom: 6px; }
+    .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
+    .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
+    .glance { max-width: 760px; margin: 0 0 44px; }
+    .glance .compare td:first-child { font-weight: 500; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+    .related a { display: block; background: var(--glass); border-radius: 22px; padding: 18px 20px; text-decoration: none; box-shadow: var(--glass-shadow); transition: transform .2s ease, background .2s ease; }
+    .related a:hover { background: var(--glass-strong); transform: translateY(-2px); }
+    .related b { display: block; margin-bottom: 4px; }
+    .related span { color: var(--muted); font-size: 14px; }
+    section.tight { padding: 64px 0; }
+    .tldr::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; background: var(--rim);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+    @media (max-width: 720px) {
+      .compare.cmds, .compare.cmds tbody, .compare.cmds tr, .compare.cmds td { display: block; width: auto; min-width: 0; }
+      .compare.cmds thead { display: none; }
+      .compare.cmds td { padding: 0; border: 0; }
+      .compare.cmds tr { padding: 14px 0; border-bottom: 1px solid var(--line); }
+      .compare.cmds td:first-child { white-space: normal; margin-bottom: 6px; }
+      .compare.cmds code { font-size: 13.5px; }
+      .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; }
+      .sub-hero .actions:has(.glass) { flex-direction: column; align-items: stretch; max-width: 340px; }
+      .sub-hero .actions .pill { justify-content: center; }
+    }
+  </style>
+  <script async src="https://tracerkit.com/t.js" data-key="tk__vMOLefQSrM_pLCt"></script>
+  <script src="https://ingest.getuserproof.com/sdk.js" data-site="f47d3267-ab67-4aae-8dee-7c160e0f05f1" defer></script>
+</head>
+<body>
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  <div class="nav">
+    <div class="wrap">
+      <a class="brand" href="/"><img src="/images/icon-192.png" alt="" width="28" height="28"> Midnight Oil</a>
+      <nav>
+        <a href="/#features">Features</a>
+        <a href="/cli">For agents</a>
+        <a href="/guides">Guides</a>
+        <a href="/teams">Teams</a>
+        <a href="/#faq">FAQ</a>
+        <a href="https://github.com/coreyhaines31/midnightoil">GitHub</a>
+        <a class="pill" href="https://github.com/coreyhaines31/midnightoil/releases/latest">Download</a>
+      </nav>
+    </div>
+  </div>
+  <main>
+    <div class="wrap sub-hero">
+      <div class="eyebrow">Awake alternative</div>
+      <h1>Same job as Awake.<br>A narrower key to the power settings.</h1>
+      <p class="lede">Awake, an open-source app Ilias Ism launched in November 2026, is built for one thing: closing your MacBook lid while Claude Code, Codex, or Cursor keeps working. It's a good app with sharp ideas. Midnight Oil does the same job, runs as a full app on more Macs, and turns sleep off through a signed helper that only answers Midnight Oil.</p>
+      <div class="actions">
+        <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Download free</a>
+        <a class="pill big glass" href="https://github.com/coreyhaines31/midnightoil"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>View source code</a>
+      </div>
+      <div class="tldr"><h2>The short version</h2><p>On Apple Silicon with macOS 26 and happy with a sudoers rule? Awake is a solid, MIT-licensed choice. Want the menu bar app on an Intel Mac or an older macOS, or triggers, schedules, and sleep restored even if the app is killed? Midnight Oil.</p></div>
+    </div>
+    <section class="tight" id="why">
+      <div class="wrap"><div class="prose">
+
+        <h2>What Awake gets right</h2>
+        <p>It starts from the right problem. Bare <code>caffeinate</code> only blocks idle sleep, so closing the lid still triggers clamshell sleep, drops Wi-Fi, and kills a running agent. Raw <code>sudo pmset -a disablesleep 1</code> fixes that but leaves the screen unlocked and can cook a MacBook in a backpack. Awake bundles the fix and the safeguards: it locks the screen the instant the lid closes, pauses at 10% battery or 40&nbsp;°C, and resumes when the Mac recovers. It has a Control Center toggle, a menu bar timer, a short CLI (<code>awake 45m</code>, <code>awake -- codex …</code>), a Nix flake, and no telemetry. It's a thoughtful first release.</p>
+        <h2>Where it stops</h2>
+        <h3>A passwordless sudo rule</h3>
+        <p>Setup writes <code>/etc/sudoers.d/awake</code>, letting every member of the <code>admin</code> group run <code>pmset -a disablesleep 0</code> or <code>1</code> without a password. The rule is narrow, two exact commands and validated with <code>visudo</code>, but it applies to every process running as any admin user, not just Awake. Midnight Oil's helper accepts connections only from the Midnight Oil app signed by its developer team.</p>
+        <h3>A shell watcher holds the off switch</h3>
+        <p><code>pmset disablesleep</code> is a system setting that outlives the process that set it. Awake turns sleep back on from a background shell process that watches its <code>caffeinate</code>. That works when the timer or command ends, but if the watcher itself is killed, say by a logout or a stray <code>kill</code>, it exits without restoring sleep, and the Mac stays sleepless until you run <code>asleep</code>. Midnight Oil's helper is a launchd service: it turns sleep back on when the app quits or crashes, and again on its own launch if it was ever stopped.</p>
+        <h3>The app is Apple Silicon and Tahoe only</h3>
+        <p>Its Homebrew cask depends on <code>arch: :arm64</code> and <code>macos: :tahoe</code>, and the only download is an arm64 DMG. On an Intel Mac or anything older than macOS 26 you can still install the command line tool from its Homebrew formula or Nix flake, but not the menu bar app or the Control Center toggle.</p>
+        <h3>One kind of session</h3>
+        <p>Indefinite, a timer, or while a command runs. No “until 7 AM,” no “while this app is open,” no schedules, and no triggers for Wi-Fi, power, displays, or devices.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight gray" id="compare">
+      <div class="wrap"><div class="prose">
+
+        <h2>Midnight Oil vs Awake</h2>
+                <div class="table-scroll"><table class="compare">
+          <thead><tr><th></th><th class="us">Midnight Oil</th><th>Awake</th></tr></thead><tbody>
+            <tr><td>Price</td><td class="us y">Free</td><td>Free</td></tr>
+            <tr><td>Source code public</td><td class="us y">Yes (FSL, MIT after 2 years)</td><td>Yes, MIT</td></tr>
+            <tr><td>Closed-lid mode</td><td class="us y">Yes, opt-in</td><td>Yes</td></tr>
+            <tr><td>How it disables sleep</td><td class="us y">Signed helper, only answers Midnight Oil</td><td>sudoers rule for all admin users</td></tr>
+            <tr><td>Sleep restored if the app is killed</td><td class="us y">Yes, by a launchd helper</td><td>Only if its shell watcher survives</td></tr>
+            <tr><td>Locks the screen when the lid closes</td><td class="us y">Yes, unless docked to a display</td><td>Yes</td></tr>
+            <tr><td>Pauses when the Mac gets hot</td><td class="us y">Yes, lets it sleep; resumes once it wakes cool</td><td>Yes, resumes when cool (not for awake --)</td></tr>
+            <tr><td>Low-battery cutoff</td><td class="us y">Yes, level you choose</td><td>Yes, 10% by default</td></tr>
+            <tr><td>Control Center toggle</td><td class="us y">Yes (macOS 26)</td><td>Yes (macOS 26)</td></tr>
+            <tr><td>Command line</td><td class="us y">midnightoil run, start, 45m, status</td><td>awake, awake 45m, awake --</td></tr>
+            <tr><td>Keep awake until a time</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>While an app is running</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Triggers and weekly schedules</td><td class="us y">Yes</td><td>No</td></tr>
+            <tr><td>Battery temperature in the menu</td><td class="us y">No</td><td>Yes</td></tr>
+            <tr><td>Intel Macs</td><td class="us y">Yes</td><td>Command line only</td></tr>
+            <tr><td>Minimum macOS</td><td class="us y">14 Sonoma</td><td>26 Tahoe for the app</td></tr>
+            <tr><td>Install</td><td class="us y">Homebrew cask or DMG</td><td>Script, Homebrew, DMG, or Nix</td></tr>
+          </tbody></table></div>
+        <h3>What Awake does better</h3>
+        <p>It's MIT today, it shows the battery temperature in its menu, it ships a Nix flake and nix-darwin module, and it can run your own script when the lid closes, handy for unmounting an encrypted volume. If you're on Apple Silicon with Tahoe and want the smallest thing that works, it's a fine pick.</p>
+        <h3>What Midnight Oil does better</h3>
+        <p>A signed helper instead of a sudoers rule, sleep restored even if the app is killed, the full app on Intel and macOS 14, sessions that end at a clock time or when an app quits, ten trigger types, weekly schedules, and <code>midnightoil run</code> that returns your command's exit status and shares one session across parallel runs.</p>
+            
+      </div></div>
+    </section>
+    <section class="tight" id="switch">
+      <div class="wrap"><div class="prose">
+
+        <h2>Switching</h2>
+        <ol class="steps">
+          <li><b>Restore sleep and remove Awake's sudo rule.</b> Run <code>asleep</code>, then Awake's uninstall steps; check that <code>/etc/sudoers.d/awake</code> is gone and <code>pmset -g</code> no longer shows <code>SleepDisabled 1</code>.</li>
+          <li><b>Install Midnight Oil.</b> <code>brew install --cask coreyhaines31/tap/midnightoil</code></li>
+          <li><b>Set up closed-lid mode.</b> Settings › Closed Lid › Install, then approve Midnight Oil once in System Settings › Login Items. Screen lock and the heat pause are on by default.</li>
+          <li><b>Swap your commands.</b> <code>awake 45m</code> becomes <code>midnightoil 45m --lid-closed</code>; <code>awake -- codex exec …</code> becomes <code>midnightoil run --lid-closed -- codex exec …</code>.</li>
+        </ol>
+            
+      </div></div>
+    </section>
+    <section class="tight gray">
+      <div class="wrap">
+        <div class="section-head"><h2>Other ways people keep a Mac awake</h2></div>
+        <div class="related">
+          <a href="/alternatives/amphetamine"><b>Amphetamine</b><span>Last update 2023. Closed-lid mode takes a script, a sudoers file, and a Terminal command.</span></a>
+          <a href="/alternatives/caffeine"><b>Caffeine</b><span>The 2006 original. One click, and that&#x27;s the whole app: no timers, triggers, or lid mode.</span></a>
+          <a href="/alternatives/caffeinate"><b>caffeinate command</b><span>Built in and free. Stops at a closed lid, and dies with the terminal.</span></a>
+          <a href="/alternatives/keepingyouawake"><b>KeepingYouAwake</b><span>Maintained, minimal, open source. Refuses closed-lid mode on principle.</span></a>
+          <a href="/alternatives/mouse-jiggler"><b>Mouse jigglers</b><span>Fake input to look busy. Detectable, and no help once the lid closes.</span></a>
+          <a href="/alternatives/insomniax"><b>InsomniaX</b><span>The old lid-closed classic. Unsupported since 2017, Intel only.</span></a>
+        </div>
+      </div>
+    </section>
+    <section class="cta">
+      <div class="wrap">
+        <div class="cta-card">
+          <img src="/images/icon-192.png" alt="" width="96" height="96">
+          <h2>Close the lid. Keep the safeguards.</h2>
+          <p>Free. No account, no subscription.</p>
+          <div class="actions">
+            <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Download free</a>
+        <a class="pill big glass" href="https://github.com/coreyhaines31/midnightoil"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>View source code</a>
+          </div>
+          <p class="fineprint">macOS 14 or later · Apple Silicon and Intel · <code>brew install --cask coreyhaines31/tap/midnightoil</code></p>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="wrap">
+      <nav class="footer-alts" aria-label="For agents"><a class="label" href="/cli">For agents</a><a href="/agents/claude-code">Claude Code</a><a href="/agents/codex">Codex CLI</a><a href="/agents/cursor">Cursor</a><a href="/agents/gemini-cli">Gemini CLI</a><a href="/agents/aider">Aider</a><a href="/agents/copilot">GitHub Copilot</a><a href="/agents/cline">Cline</a><a href="/agents/ollama">Ollama</a></nav>
+      <nav class="footer-alts" aria-label="Guides"><a class="label" href="/guides">Guides</a><a href="/guides/stop-mac-from-sleeping">Stop your Mac from sleeping</a><a href="/guides/clamshell-mode">Clamshell mode</a><a href="/guides/mac-sleep-settings">Mac sleep settings</a><a href="/guides/keep-mac-screen-on">Keep your Mac screen on</a><a href="/guides/run-ai-agents-overnight">Run AI agents overnight</a><a href="/guides/mac-wont-sleep">Mac won&#x27;t sleep</a><a href="/guides/mac-sleep-timer">Mac sleep timer</a><a href="/guides/put-mac-to-sleep">Put your Mac to sleep</a><a href="/guides/sleep-or-shut-down-mac">Sleep or shut down?</a></nav>
+      <nav class="footer-alts" aria-label="Alternatives"><a class="label" href="/alternatives">Alternatives</a><a href="/alternatives/amphetamine">Amphetamine alternative</a><a href="/alternatives/caffeine">Caffeine alternative</a><a href="/alternatives/caffeinate">caffeinate alternative</a><a href="/alternatives/keepingyouawake">KeepingYouAwake alternative</a><a href="/alternatives/mouse-jiggler">Mouse jiggler alternative</a><a href="/alternatives/awake">Awake alternative</a><a href="/alternatives/insomniax">InsomniaX alternative</a></nav>
+      <nav class="footer-alts" aria-label="More free Mac apps"><a class="label" href="https://github.com/coreyhaines31">More free Mac apps</a><a href="https://greenroomformac.com" title="Check your camera, mic, and speakers">Green Room</a><a href="https://wifiorisp.com" title="Is slow internet your Wi-Fi or your ISP?">WiFi or ISP</a><a href="https://diskforecast.com" title="Know before your Mac runs out of space">Disk Forecast</a><a href="https://spareformac.com" title="See what&#x27;s using your Mac">Spare</a><a href="https://onhandformac.com" title="A clipboard manager for your Mac">On Hand</a><a href="https://coatcheckformac.com" title="Reach the menu bar icons the notch hides">Coat Check</a><a href="https://fuelgauge.app" title="Know if you&#x27;ll make it to reset">Fuel Gauge</a></nav>
+      <span>© 2026 Corey Haines. <a href="https://github.com/coreyhaines31/midnightoil/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+      <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a> &nbsp;·&nbsp; <a href="/cli">For agents</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
+    </div>
+  </footer>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How does Awake keep a closed MacBook awake?", "acceptedAnswer": {"@type": "Answer", "text": "It runs pmset -a disablesleep 1 together with caffeinate -dims. To run pmset without a password prompt, its setup installs a rule in /etc/sudoers.d that lets any administrator account turn system sleep on and off with no password."}}, {"@type": "Question", "name": "How is Midnight Oil's approach different?", "acceptedAnswer": {"@type": "Answer", "text": "Midnight Oil ships a small helper registered with SMAppService. It runs the same pmset command, but only accepts requests from the Midnight Oil app signed by its developer team, and it restores normal sleep if the app quits, crashes, or is killed. Nothing is added to sudoers."}}, {"@type": "Question", "name": "Does Awake run on Intel Macs or macOS Sonoma?", "acceptedAnswer": {"@type": "Answer", "text": "Its command line tool does: the Homebrew formula and the Nix flake build for Intel and older macOS. Its menu bar app and Control Center toggle need Apple Silicon and macOS 26 Tahoe. Midnight Oil is one universal app for Intel and Apple Silicon on macOS 14 Sonoma and later."}}, {"@type": "Question", "name": "Do both lock the screen and watch the temperature with the lid closed?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Both lock the screen when the lid closes during a closed-lid session (Midnight Oil skips it while an external display is connected, since the Mac is in use as a desktop), and both step aside so a hot, closed Mac can sleep and cool down. Awake also shows the battery temperature in its menu."}}, {"@type": "Question", "name": "Is Awake open source?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, MIT. Midnight Oil's full source is on GitHub under FSL-1.1-MIT: free to use and modify, not to resell, and each release becomes MIT two years after it ships."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Midnight Oil", "item": "https://midnightoil.app/"}, {"@type": "ListItem", "position": 2, "name": "Alternatives", "item": "https://midnightoil.app/alternatives"}, {"@type": "ListItem", "position": 3, "name": "Awake", "item": "https://midnightoil.app/alternatives/awake"}]}</script>
+</body>
+</html>
