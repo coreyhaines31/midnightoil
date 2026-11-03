@@ -128,7 +128,7 @@ sudo pmset -a disablesleep 0      # undo that</code></pre>
         "faqs": [
             ("What is clamshell mode on a MacBook?", "Clamshell mode, also called closed-display mode, is using a MacBook with its lid closed while it drives an external display. Apple supports it when the Mac is connected to power, an external display, and an external keyboard and mouse or trackpad."),
             ("Can I use clamshell mode without an external monitor?", "Not with Apple's settings alone: without a display attached, closing the lid puts the Mac to sleep. You can keep it running with sudo pmset -a disablesleep 1, or with an app like Midnight Oil whose closed-lid mode keeps the Mac awake for a session and restores normal sleep afterwards."),
-            ("Does clamshell mode work on battery?", "Apple's clamshell mode expects the power adapter. With sleep disabled or Midnight Oil's closed-lid mode, a closed MacBook can keep running on battery, but plan for the drain: Midnight Oil can end the session below a battery level you choose, and sounds an alarm if the lid closes on battery."),
+            ("Does clamshell mode work on battery?", "Apple's clamshell mode expects the power adapter. With sleep disabled or Midnight Oil's closed-lid mode, a closed MacBook can keep running on battery, but plan for the drain: Midnight Oil can end the session below a battery level you choose, sounds an alarm if the lid closes on battery, and lets a closed Mac that gets hot sleep to cool down."),
             ("Is it bad to run a MacBook with the lid closed?", "No, Apple supports it. Heat is the thing to watch. On a desk with the vents clear it's fine. In a bag or sleeve under heavy load, airflow is limited, so keep long, heavy jobs to an open space or a lighter workload."),
             ("Why does my external display go black when I close the lid?", "Usually the Mac isn't on power, or no external keyboard or mouse is connected, so it sleeps instead of switching to clamshell mode. Connect power, press a key on the external keyboard to wake it, and reconnect the display if it stays dark."),
         ],
@@ -352,6 +352,7 @@ tmux attach -t agent       # check on it later</code></pre>
           <li><strong>Stay awake with lid closed</strong>: close the laptop. Sleep comes back automatically when the session ends.</li>
           <li><strong>Allow display sleep</strong>: the screen goes dark, the Mac keeps working.</li>
           <li><strong>End sessions when the battery is low</strong>, and an alarm if the lid closes on battery.</li>
+          <li><strong>Screen lock and a heat pause</strong>: the screen locks when the lid closes, and a closed Mac that gets hot sleeps to cool down, then resumes.</li>
           <li><strong>Schedules</strong>: an “Overnight agents” schedule from 11 PM to 7 AM, only while plugged in, so you don't have to remember at all.</li>
         </ul>
             """},
@@ -580,7 +581,7 @@ sleep 1800; pmset sleepnow # sleep in 30 minutes</code></pre>
             ("Is it better to shut down or sleep a MacBook?", "Sleep, for everyday use. A sleeping Mac uses very little power, wakes instantly with your apps where you left them, and can run backups and updates when plugged in. Shut down when you won't use it for a long time."),
             ("Is it bad to never shut down a Mac?", "No. Macs are designed to sleep for long stretches. Restart now and then, especially after updates or when it feels sluggish, which clears memory and finishes installs."),
             ("Does a MacBook lose battery while asleep?", "A little. Sleep keeps memory powered, and after a long sleep on battery a MacBook moves to a deeper standby that uses even less. Expect a small drop overnight, not a dead battery."),
-            ("Should I shut down my Mac before putting it in a bag?", "Sleep is fine, as long as nothing keeps it awake with the lid closed. A Mac running hot in a closed bag is the real risk, which is why Midnight Oil sounds an alarm if the lid closes on battery during a closed-lid session."),
+            ("Should I shut down my Mac before putting it in a bag?", "Sleep is fine, as long as nothing keeps it awake with the lid closed. A Mac running hot in a closed bag is the real risk, which is why Midnight Oil sounds an alarm if the lid closes on battery during a closed-lid session, and lets the Mac sleep to cool down if it gets hot."),
             ("How long should a Mac be off before I shut it down?", "Apple doesn't give a cutoff. A common rule: sleep for anything up to a few days, shut down for longer. For long-term storage, Apple recommends leaving the battery about half charged."),
         ],
         "sections": [
