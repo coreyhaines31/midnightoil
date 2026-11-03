@@ -6,7 +6,8 @@ import os
 /// uses the login framework's SACLockScreenImmediate, looked up at runtime so a missing symbol
 /// only disables the feature.
 enum ScreenLocker {
-    private typealias LockFunction = @convention(c) () -> Int32
+    // Declared returning nothing, as Hammerspoon does: the symbol has no public header to trust.
+    private typealias LockFunction = @convention(c) () -> Void
     private static let logger = Logger(subsystem: "app.midnightoil.MidnightOil", category: "ScreenLocker")
 
     private static let lockFunction: LockFunction? = {
@@ -20,16 +21,16 @@ enum ScreenLocker {
             logger.error("SACLockScreenImmediate is unavailable")
             return
         }
-        let result = lockFunction()
-        if result != 0 { logger.error("SACLockScreenImmediate returned \(result)") }
+        lockFunction()
     }
 
-    /// Whether a display other than the built-in one is on, i.e. the Mac is docked.
+    /// Whether a display other than the built-in one is connected, i.e. the Mac is docked. Online,
+    /// not active: a hardware-mirrored display is connected but missing from the active list.
     static func hasExternalDisplay() -> Bool {
         var count: UInt32 = 0
-        guard CGGetActiveDisplayList(0, nil, &count) == .success else { return false }
+        guard CGGetOnlineDisplayList(0, nil, &count) == .success else { return false }
         var displays = [CGDirectDisplayID](repeating: 0, count: Int(count))
-        guard CGGetActiveDisplayList(count, &displays, &count) == .success else { return false }
+        guard CGGetOnlineDisplayList(count, &displays, &count) == .success else { return false }
         return displays.prefix(Int(count)).contains { CGDisplayIsBuiltin($0) == 0 }
     }
 }
