@@ -59,6 +59,8 @@ final class SessionController {
     private var lidModeRequested = false
     private var lastLidClosed: Bool?
     private var lastUnattended: Bool?
+    /// Closed-lid mode is stepping aside so a hot Mac can sleep and cool down.
+    private(set) var isLidModePausedForHeat = false
     private var ticker: Task<Void, Never>?
     private var download: DownloadProgress?
     private var lastPower: PowerState?
@@ -125,6 +127,7 @@ final class SessionController {
         session = newSession
         lastLidClosed = nil
         lastUnattended = nil
+        isLidModePausedForHeat = false
         tally = SessionTally(start: newSession.start)
         batteryAtStart = PowerSourceReader.current().batteryPercent
         switch newSession.source {
@@ -150,6 +153,7 @@ final class SessionController {
             onUserEndedAutomaticSession?(id)
         }
         self.session = nil
+        isLidModePausedForHeat = false
         let record = recordFinished(session, reason: reason)
         tally = nil
         download = nil
@@ -244,7 +248,7 @@ final class SessionController {
     }
 
     private func syncLidClosedMode() {
-        let wanted = session?.staysAwakeWithLidClosed ?? false
+        let wanted = (session?.staysAwakeWithLidClosed ?? false) && !isLidModePausedForHeat
         guard wanted != lidModeRequested else { return }
         lidModeRequested = wanted
         Task {
@@ -283,6 +287,7 @@ final class SessionController {
             end(reason: reason)
         } else {
             handleLidChange(for: session)
+            pauseLidModeIfHot(for: session)
             onChange?()
         }
     }
@@ -375,5 +380,19 @@ extension SessionController {
         if LidLock.shouldLock(wasUnattended: lastUnattended, isUnattended: isUnattended) {
             ScreenLocker.lock()
         }
+    }
+
+    fileprivate func pauseLidModeIfHot(for session: Session) {
+        let shouldPause = session.staysAwakeWithLidClosed
+            && Preferences.pausesLidModeWhenHot
+            && ThermalGuard.shouldPause(
+                wasPaused: isLidModePausedForHeat,
+                level: ThermalLevel(ProcessInfo.processInfo.thermalState),
+                isLidClosed: LidState.isClosed() ?? false
+            )
+        guard shouldPause != isLidModePausedForHeat else { return }
+        isLidModePausedForHeat = shouldPause
+        syncLidClosedMode()
+        if shouldPause { SessionNotifier.lidModePausedForHeat() }
     }
 }

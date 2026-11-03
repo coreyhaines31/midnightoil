@@ -25,6 +25,14 @@ enum SessionNotifier {
         post(title: "Keeping your Mac awake", body: "Your “\(name)” schedule started a session.")
     }
 
+    static func lidModePausedForHeat() {
+        guard Preferences.notifiesOnSessionEnd else { return }
+        post(
+            title: "Letting your Mac cool down",
+            body: "It got hot with the lid closed, so it can sleep for now. Closed-lid mode comes back once it cools."
+        )
+    }
+
     private static func post(title: String, body: String) {
         Task {
             let center = UNUserNotificationCenter.current()
