@@ -217,6 +217,10 @@ enum Help {
         Plays a sound when you close the lid on battery during a closed-lid session, so you know the \
         Mac is still running before it goes in a bag.
         """
+    static let lidLock = """
+        Locks your Mac the moment you close the lid during a closed-lid session, so it isn't left \
+        unlocked in a bag while it keeps working. Skipped when an external display is connected.
+        """
     static let lidDisplayNote = """
         Plugged in with an external display, macOS already keeps a closed MacBook awake, so you don't \
         need the helper for that setup.

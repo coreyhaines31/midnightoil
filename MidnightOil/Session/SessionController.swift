@@ -58,6 +58,7 @@ final class SessionController {
     /// What we last asked the helper for, so it's only messaged on changes.
     private var lidModeRequested = false
     private var lastLidClosed: Bool?
+    private var lastUnattended: Bool?
     private var ticker: Task<Void, Never>?
     private var download: DownloadProgress?
     private var lastPower: PowerState?
@@ -122,6 +123,8 @@ final class SessionController {
             recordFinished(previous, reason: .replaced)
         }
         session = newSession
+        lastLidClosed = nil
+        lastUnattended = nil
         tally = SessionTally(start: newSession.start)
         batteryAtStart = PowerSourceReader.current().batteryPercent
         switch newSession.source {
@@ -152,6 +155,7 @@ final class SessionController {
         download = nil
         lastPower = nil
         lastLidClosed = nil
+        lastUnattended = nil
         ticker?.cancel()
         ticker = nil
         assertions.releaseAll()
@@ -278,18 +282,8 @@ final class SessionController {
         if let reason = endReason(for: session) {
             end(reason: reason)
         } else {
-            soundLidAlarmIfNeeded(for: session)
+            handleLidChange(for: session)
             onChange?()
-        }
-    }
-
-    private func soundLidAlarmIfNeeded(for session: Session) {
-        guard session.staysAwakeWithLidClosed, Preferences.soundsLidAlarm else { return }
-        let isClosed = LidState.isClosed() ?? false
-        defer { lastLidClosed = isClosed }
-        let isOnBattery = lastPower?.isOnBattery ?? false
-        if LidAlarm.shouldSound(wasClosed: lastLidClosed, isClosed: isClosed, isOnBattery: isOnBattery) {
-            SystemSounds.play(Preferences.lidAlarmSound)
         }
     }
 
@@ -347,5 +341,39 @@ extension SessionController {
         let stillDownloading = progress.update(size: size, at: .now)
         download = progress
         return stillDownloading
+    }
+}
+
+extension SessionController {
+    fileprivate func handleLidChange(for session: Session) {
+        guard session.staysAwakeWithLidClosed else {
+            lastLidClosed = nil
+            lastUnattended = nil
+            return
+        }
+        let isClosed = LidState.isClosed() ?? false
+        defer { lastLidClosed = isClosed }
+        let isOnBattery = lastPower?.isOnBattery ?? false
+        if Preferences.soundsLidAlarm,
+           LidAlarm.shouldSound(wasClosed: lastLidClosed, isClosed: isClosed, isOnBattery: isOnBattery) {
+            SystemSounds.play(Preferences.lidAlarmSound)
+        }
+        lockIfUnattended(isClosed: isClosed)
+    }
+
+    private func lockIfUnattended(isClosed: Bool) {
+        guard Preferences.locksOnLidClose else {
+            lastUnattended = nil
+            return
+        }
+        // An open lid already rules it out, so skip the display lookup.
+        let isUnattended = isClosed && LidLock.isUnattended(
+            isClosed: isClosed,
+            hasExternalDisplay: ScreenLocker.hasExternalDisplay()
+        )
+        defer { lastUnattended = isUnattended }
+        if LidLock.shouldLock(wasUnattended: lastUnattended, isUnattended: isUnattended) {
+            ScreenLocker.lock()
+        }
     }
 }
