@@ -1,4 +1,5 @@
 import AppIntents
+import AppKit
 import SwiftUI
 import WidgetKit
 
@@ -25,7 +26,10 @@ struct SessionToggleControl: ControlWidget {
         var previewValue: Bool { false }
 
         func currentValue() async throws -> Bool {
-            ControlBridge.defaults?.bool(forKey: ControlBridge.isAwakeKey) ?? false
+            // The app may have crashed mid-session; then nothing is keeping the Mac awake.
+            let appIsRunning = !NSRunningApplication
+                .runningApplications(withBundleIdentifier: ControlBridge.appBundleIdentifier).isEmpty
+            return appIsRunning && ControlBridge.publishedIsAwake
         }
     }
 }
@@ -37,7 +41,7 @@ struct SetSessionIntent: SetValueIntent {
     var value: Bool
 
     func perform() async throws -> some IntentResult {
-        ControlBridge.post(value ? ControlBridge.startNotification : ControlBridge.stopNotification)
+        ControlBridge.request(awake: value)
         return .result()
     }
 }
