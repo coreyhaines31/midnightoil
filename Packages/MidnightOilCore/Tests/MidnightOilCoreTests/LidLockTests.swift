@@ -18,7 +18,8 @@ struct LidLockTests {
         #expect(!LidLock.shouldLock(wasUnattended: false, isUnattended: false))
     }
 
-    @Test func needsAPreviousReading() {
-        #expect(!LidLock.shouldLock(wasUnattended: nil, isUnattended: true))
+    @Test func locksAMacThatIsAlreadyUnattendedOnTheFirstReading() {
+        #expect(LidLock.shouldLock(wasUnattended: nil, isUnattended: true))
+        #expect(!LidLock.shouldLock(wasUnattended: nil, isUnattended: false))
     }
 }

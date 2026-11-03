@@ -123,6 +123,8 @@ final class SessionController {
             recordFinished(previous, reason: .replaced)
         }
         session = newSession
+        lastLidClosed = nil
+        lastUnattended = nil
         tally = SessionTally(start: newSession.start)
         batteryAtStart = PowerSourceReader.current().batteryPercent
         switch newSession.source {

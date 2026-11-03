@@ -7,9 +7,9 @@ public enum LidLock {
     }
 
     /// Lock on the moment the Mac becomes unattended: the lid closing, or the last external
-    /// display unplugging while the lid is already shut.
+    /// display unplugging while the lid is already shut. With no earlier reading, as when the lid
+    /// shuts before the first check, an unattended Mac locks too: locking a closed Mac costs nothing.
     public static func shouldLock(wasUnattended: Bool?, isUnattended: Bool) -> Bool {
-        guard let wasUnattended else { return false }
-        return !wasUnattended && isUnattended
+        !(wasUnattended ?? false) && isUnattended
     }
 }
