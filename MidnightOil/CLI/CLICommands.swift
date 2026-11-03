@@ -105,6 +105,7 @@ final class CLICommands {
             started: session.start,
             ends: ends,
             staysAwakeWithLidClosed: session.staysAwakeWithLidClosed,
+            lidPausedForHeat: sessions.isLidModePausedForHeat ? true : nil,
             allowsDisplaySleep: session.allowsDisplaySleep,
             processes: processes
         )

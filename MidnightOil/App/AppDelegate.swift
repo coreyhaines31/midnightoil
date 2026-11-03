@@ -18,6 +18,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItemController: StatusItemController?
     private var lastScheduleEnd: (start: Date, end: Date)?
     private var cliServer: CLIServer?
+    private lazy var controlCenter = ControlCenterBridge(sessions: sessions)
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         Preferences.registerDefaults()
@@ -29,6 +30,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         sessions.onSessionEvent = { [weak self] event in
             self?.webhook.send(event)
             self?.fleet.report(event)
+            self?.controlCenter.publish()
         }
         fleet.start()
         statusItemController = StatusItemController(
@@ -45,6 +47,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         cliServer = CLIServer { commands.handle($0) }
         cliServer?.start()
+        controlCenter.start()
         if Preferences.startsSessionAtLaunch {
             sessions.start(.indefinite)
         }

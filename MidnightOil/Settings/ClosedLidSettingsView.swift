@@ -7,11 +7,18 @@ struct ClosedLidSettingsView: View {
     @State private var status: HelperClient.Status = .notInstalled
     @AppStorage(Preferences.Key.staysAwakeWithLidClosed) private var staysAwakeWithLidClosed = false
     @AppStorage(Preferences.Key.soundsLidAlarm) private var soundsLidAlarm = true
+    @AppStorage(Preferences.Key.locksOnLidClose) private var locksOnLidClose = true
+    @AppStorage(Preferences.Key.pausesLidModeWhenHot) private var pausesLidModeWhenHot = true
 
     var body: some View {
         Form {
             PaneIntro(intro: Help.Pane.closedLid)
-            ManagedNotice(keys: [Preferences.Key.staysAwakeWithLidClosed, Preferences.Key.soundsLidAlarm])
+            ManagedNotice(keys: [
+                Preferences.Key.staysAwakeWithLidClosed,
+                Preferences.Key.soundsLidAlarm,
+                Preferences.Key.locksOnLidClose,
+                Preferences.Key.pausesLidModeWhenHot
+            ])
 
             Section {
                 LabeledContent {
@@ -39,6 +46,16 @@ struct ClosedLidSettingsView: View {
                 }
                 .help(Help.lidAlarm)
                 .managed(Preferences.Key.soundsLidAlarm)
+                Toggle(isOn: $locksOnLidClose) {
+                    InfoLabel("Lock the screen when the lid closes", info: Help.lidLock)
+                }
+                .help(Help.lidLock)
+                .managed(Preferences.Key.locksOnLidClose)
+                Toggle(isOn: $pausesLidModeWhenHot) {
+                    InfoLabel("Let the Mac sleep if it gets hot with the lid closed", info: Help.lidHeat)
+                }
+                .help(Help.lidHeat)
+                .managed(Preferences.Key.pausesLidModeWhenHot)
             }
         }
         .formStyle(.grouped)
