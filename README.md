@@ -126,6 +126,7 @@ The `midnightoil` command starts and stops sessions from Terminal, so you, a scr
 midnightoil run -- claude -p "fix the failing tests"   # awake until the command finishes
 midnightoil run --lid-closed -- npm run build          # ...even with the lid shut
 midnightoil start --for 2h                             # or --until 6am
+midnightoil 45m                                        # short for start --for 45m
 midnightoil status
 midnightoil stop
 ```
