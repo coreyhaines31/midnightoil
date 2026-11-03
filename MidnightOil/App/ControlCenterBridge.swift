@@ -43,15 +43,17 @@ final class ControlCenterBridge {
         }
     }
 
-    private func handleRequest(isRetry: Bool = false) {
+    /// The write can land a moment after the notification, so look again a few times.
+    private static let rechecks: [Duration] = [.milliseconds(300), .seconds(1), .seconds(3)]
+
+    private func handleRequest(attempt: Int = 0) {
         // Any user's process can post the notification; only this user's extension can write
         // a new request to the app group.
         guard let request = ControlBridge.latestRequest, request.id != handledRequestID else {
-            // The write can land just after the notification; look once more before giving up.
-            if !isRetry {
+            if attempt < Self.rechecks.count {
                 Task {
-                    try? await Task.sleep(for: .milliseconds(300))
-                    handleRequest(isRetry: true)
+                    try? await Task.sleep(for: Self.rechecks[attempt])
+                    handleRequest(attempt: attempt + 1)
                 }
             }
             return
