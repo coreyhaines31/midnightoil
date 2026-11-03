@@ -73,7 +73,12 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             statusItem.button?.title = title
         }
         if let session = sessions.session {
-            card.update(from: session, schedules: schedules.schedules, policy: sessions.policy())
+            card.update(
+                from: session,
+                schedules: schedules.schedules,
+                policy: sessions.policy(),
+                lidPausedForHeat: sessions.isLidModePausedForHeat
+            )
         }
     }
 
@@ -131,7 +136,12 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     }
 
     private func addCurrentSessionItems(for session: Session, to menu: NSMenu) {
-        card.update(from: session, schedules: schedules.schedules, policy: sessions.policy())
+        card.update(
+            from: session,
+            schedules: schedules.schedules,
+            policy: sessions.policy(),
+            lidPausedForHeat: sessions.isLidModePausedForHeat
+        )
         let cardView = SessionCardView(
             model: card,
             showsLidOption: LidState.hasLid && !sessions.policy().disallowsClosedLid,

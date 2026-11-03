@@ -55,13 +55,17 @@ final class SessionController {
     let helper: HelperClient
     let history = SessionHistory()
     private let assertions = AssertionManager()
-    /// What we last asked the helper for, so it's only messaged on changes.
-    private var lidModeRequested = false
-    private var lastLidClosed: Bool?
-    private var lastUnattended: Bool?
+    /// What we last asked the helper for, so it's only messaged on changes. Internal for
+    /// SessionController+Lid.swift.
+    var lidModeRequested = false
+    // Internal for SessionController+Lid.swift.
+    var lastLidClosed: Bool?
+    var lastUnattended: Bool?
+    /// Closed-lid mode is stepping aside so a hot Mac can sleep and cool down.
+    var isLidModePausedForHeat = false
     private var ticker: Task<Void, Never>?
     private var download: DownloadProgress?
-    private var lastPower: PowerState?
+    private(set) var lastPower: PowerState?
     private var tally: SessionTally?
     private var batteryAtStart: Int?
 
@@ -125,6 +129,7 @@ final class SessionController {
         session = newSession
         lastLidClosed = nil
         lastUnattended = nil
+        isLidModePausedForHeat = false
         tally = SessionTally(start: newSession.start)
         batteryAtStart = PowerSourceReader.current().batteryPercent
         switch newSession.source {
@@ -138,6 +143,8 @@ final class SessionController {
             download = nil
         }
         applyAssertions()
+        // Already hot? Don't switch closed-lid mode on just to pause it a second later.
+        pauseLidModeIfHot(for: newSession)
         syncLidClosedMode()
         startTicker()
         onSessionEvent?(.started(newSession))
@@ -150,6 +157,7 @@ final class SessionController {
             onUserEndedAutomaticSession?(id)
         }
         self.session = nil
+        isLidModePausedForHeat = false
         let record = recordFinished(session, reason: reason)
         tally = nil
         download = nil
@@ -172,48 +180,6 @@ final class SessionController {
             lidClosed: LidState.isClosed() ?? false,
             lidMode: session.staysAwakeWithLidClosed
         )
-    }
-
-    @discardableResult
-    private func recordFinished(_ session: Session, reason: SessionEndReason) -> SessionRecord {
-        // Count the time since the last tick, and a lid mode switched on just now.
-        tally?.sample(
-            at: .now,
-            idleSeconds: SystemStateReader.idleSeconds(),
-            lidClosed: LidState.isClosed() ?? false,
-            lidMode: session.staysAwakeWithLidClosed
-        )
-        var triggerName: String?
-        var scheduleName: String?
-        switch session.source {
-        case .trigger(_, let name): triggerName = name
-        case .schedule(_, let name): scheduleName = name
-        case .manual: break
-        }
-        var subject: String?
-        switch session.end {
-        case .whileAppRunning(let app): subject = app.name
-        case .whileDownloading(let file): subject = DownloadProgress.displayName(for: file)
-        case .whileProcessesRunning(let processes): subject = processes.map(\.name).joined(separator: ", ")
-        case .indefinite, .after, .until: break
-        }
-        let record = SessionRecord(
-            start: session.start,
-            end: .now,
-            triggerName: triggerName,
-            scheduleName: scheduleName,
-            endCause: reason.cause,
-            subject: subject,
-            awakeTime: tally?.awake,
-            awayTime: tally?.away,
-            lidClosedTime: tally?.lidClosed,
-            usedLidMode: tally?.usedLidMode ?? session.staysAwakeWithLidClosed,
-            batteryStart: batteryAtStart,
-            batteryEnd: PowerSourceReader.current().batteryPercent
-        )
-        history.record(record)
-        onSessionEvent?(.ended(session, record))
-        return record
     }
 
     func extend(by interval: TimeInterval) {
@@ -243,12 +209,13 @@ final class SessionController {
         onChange?()
     }
 
-    private func syncLidClosedMode() {
-        let wanted = session?.staysAwakeWithLidClosed ?? false
+    func syncLidClosedMode() {
+        let wanted = (session?.staysAwakeWithLidClosed ?? false) && !isLidModePausedForHeat
         guard wanted != lidModeRequested else { return }
         lidModeRequested = wanted
         Task {
             let applied = await helper.setSleepDisabled(wanted)
+            if !wanted, !applied { retryRestoringSleep() }
             // If the helper couldn't do it, don't pretend the lid is covered.
             if wanted, !applied, lidModeRequested {
                 lidModeRequested = false
@@ -283,6 +250,7 @@ final class SessionController {
             end(reason: reason)
         } else {
             handleLidChange(for: session)
+            pauseLidModeIfHot(for: session)
             onChange?()
         }
     }
@@ -345,35 +313,45 @@ extension SessionController {
 }
 
 extension SessionController {
-    fileprivate func handleLidChange(for session: Session) {
-        guard session.staysAwakeWithLidClosed else {
-            lastLidClosed = nil
-            lastUnattended = nil
-            return
-        }
-        let isClosed = LidState.isClosed() ?? false
-        defer { lastLidClosed = isClosed }
-        let isOnBattery = lastPower?.isOnBattery ?? false
-        if Preferences.soundsLidAlarm,
-           LidAlarm.shouldSound(wasClosed: lastLidClosed, isClosed: isClosed, isOnBattery: isOnBattery) {
-            SystemSounds.play(Preferences.lidAlarmSound)
-        }
-        lockIfUnattended(isClosed: isClosed)
-    }
-
-    private func lockIfUnattended(isClosed: Bool) {
-        guard Preferences.locksOnLidClose else {
-            lastUnattended = nil
-            return
-        }
-        // An open lid already rules it out, so skip the display lookup.
-        let isUnattended = isClosed && LidLock.isUnattended(
-            isClosed: isClosed,
-            hasExternalDisplay: ScreenLocker.hasExternalDisplay()
+    @discardableResult
+    fileprivate func recordFinished(_ session: Session, reason: SessionEndReason) -> SessionRecord {
+        // Count the time since the last tick, and a lid mode switched on just now.
+        tally?.sample(
+            at: .now,
+            idleSeconds: SystemStateReader.idleSeconds(),
+            lidClosed: LidState.isClosed() ?? false,
+            lidMode: session.staysAwakeWithLidClosed
         )
-        defer { lastUnattended = isUnattended }
-        if LidLock.shouldLock(wasUnattended: lastUnattended, isUnattended: isUnattended) {
-            ScreenLocker.lock()
+        var triggerName: String?
+        var scheduleName: String?
+        switch session.source {
+        case .trigger(_, let name): triggerName = name
+        case .schedule(_, let name): scheduleName = name
+        case .manual: break
         }
+        var subject: String?
+        switch session.end {
+        case .whileAppRunning(let app): subject = app.name
+        case .whileDownloading(let file): subject = DownloadProgress.displayName(for: file)
+        case .whileProcessesRunning(let processes): subject = processes.map(\.name).joined(separator: ", ")
+        case .indefinite, .after, .until: break
+        }
+        let record = SessionRecord(
+            start: session.start,
+            end: .now,
+            triggerName: triggerName,
+            scheduleName: scheduleName,
+            endCause: reason.cause,
+            subject: subject,
+            awakeTime: tally?.awake,
+            awayTime: tally?.away,
+            lidClosedTime: tally?.lidClosed,
+            usedLidMode: tally?.usedLidMode ?? session.staysAwakeWithLidClosed,
+            batteryStart: batteryAtStart,
+            batteryEnd: PowerSourceReader.current().batteryPercent
+        )
+        history.record(record)
+        onSessionEvent?(.ended(session, record))
+        return record
     }
 }

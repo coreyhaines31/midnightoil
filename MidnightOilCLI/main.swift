@@ -119,7 +119,11 @@ func describe(_ status: CLIStatus) -> String {
     var lines = ["Keeping your Mac awake: \(status.detail ?? "until you end it")"]
     if let startedBy = status.startedBy, startedBy != "you" { lines.append("Started by \(startedBy)") }
     var options: [String] = []
-    if status.staysAwakeWithLidClosed { options.append("stays awake with the lid closed") }
+    if status.staysAwakeWithLidClosed {
+        options.append(status.lidPausedForHeat == true
+            ? "closed-lid mode paused while your Mac cools down"
+            : "stays awake with the lid closed")
+    }
     if status.allowsDisplaySleep { options.append("the screen can turn off") }
     if !options.isEmpty { lines.append(options.joined(separator: ", ").prefixUppercased) }
     return lines.joined(separator: "\n")

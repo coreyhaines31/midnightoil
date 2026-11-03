@@ -70,6 +70,8 @@ public struct CLIStatus: Codable, Equatable, Sendable {
     public var started: Date?
     public var ends: Date?
     public var staysAwakeWithLidClosed: Bool
+    /// Closed-lid mode is letting a hot Mac sleep to cool down. Optional so older apps still decode.
+    public var lidPausedForHeat: Bool?
     public var allowsDisplaySleep: Bool
     public var processes: [String]?
 
@@ -80,6 +82,7 @@ public struct CLIStatus: Codable, Equatable, Sendable {
         started: Date? = nil,
         ends: Date? = nil,
         staysAwakeWithLidClosed: Bool = false,
+        lidPausedForHeat: Bool? = nil,
         allowsDisplaySleep: Bool = false,
         processes: [String]? = nil
     ) {
@@ -89,6 +92,7 @@ public struct CLIStatus: Codable, Equatable, Sendable {
         self.started = started
         self.ends = ends
         self.staysAwakeWithLidClosed = staysAwakeWithLidClosed
+        self.lidPausedForHeat = lidPausedForHeat
         self.allowsDisplaySleep = allowsDisplaySleep
         self.processes = processes
     }

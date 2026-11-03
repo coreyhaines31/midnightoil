@@ -221,6 +221,11 @@ enum Help {
         Locks your Mac the moment you close the lid during a closed-lid session, so it isn't left \
         unlocked in a bag while it keeps working. Skipped when an external display is connected.
         """
+    static let lidHeat = """
+        A closed MacBook in a bag can't shed heat. If it gets hot during a closed-lid session, \
+        Midnight Oil lets it sleep to cool down, keeps the session going, and turns closed-lid mode \
+        back on once it has cooled.
+        """
     static let lidDisplayNote = """
         Plugged in with an external display, macOS already keeps a closed MacBook awake, so you don't \
         need the helper for that setup.
@@ -303,6 +308,10 @@ enum Help {
         static let checkForUpdates = "New versions download in the background and install when Midnight Oil quits."
         static let allowDisplaySleep = allowDisplaySleepShort
         static let staysAwakeWithLidClosed = "Keep working with the lid shut. Needs the closed-lid helper."
+        static let lidPausedForHeat = """
+            Your Mac got hot with the lid closed, so it can sleep for now. Closed-lid mode comes back \
+            once it cools.
+            """
         static let allowDisplaySleepShort = "Let the screen turn off while your Mac keeps working."
     }
 }

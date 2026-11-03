@@ -9,11 +9,18 @@ final class SessionCardModel {
     var triggerLine: String?
     var allowsDisplaySleep = false
     var staysAwakeWithLidClosed = false
+    var lidPausedForHeat = false
 
-    func update(from session: Session, schedules: [AwakeSchedule], policy: SessionPolicy = .none) {
+    func update(
+        from session: Session,
+        schedules: [AwakeSchedule],
+        policy: SessionPolicy = .none,
+        lidPausedForHeat: Bool = false
+    ) {
         detail = Self.describe(session)
         allowsDisplaySleep = session.allowsDisplaySleep
         staysAwakeWithLidClosed = session.staysAwakeWithLidClosed
+        self.lidPausedForHeat = lidPausedForHeat
         switch session.source {
         case .trigger(_, let name):
             triggerLine = "Started by the “\(name)” trigger"
@@ -114,6 +121,13 @@ struct SessionCardView: View {
                         set: { onStayAwakeWithLidClosed($0) }
                     ))
                     .help(Help.Menu.staysAwakeWithLidClosed)
+                    if model.staysAwakeWithLidClosed, model.lidPausedForHeat {
+                        Text("Paused while your Mac cools down")
+                            .font(.system(size: 11))
+                            .foregroundStyle(.orange)
+                            .padding(.leading, 20)
+                            .help(Help.Menu.lidPausedForHeat)
+                    }
                 }
             }
             .toggleStyle(.checkbox)
