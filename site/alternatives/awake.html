@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Awake for Mac alternative: closed-lid mode without sudoers</title>
-  <meta name="description" content="Awake keeps a closed MacBook running for AI agents. Midnight Oil does too, on Intel and macOS 14+, with a signed helper instead of a passwordless sudo rule.">
+  <meta name="description" content="Awake keeps a closed MacBook running for AI agents. Midnight Oil does too, as a full app on Intel and macOS 14+, with a signed helper instead of a passwordless sudo rule.">
   <link rel="canonical" href="https://midnightoil.app/alternatives/awake">
   <meta property="og:title" content="Awake for Mac alternative: closed-lid mode without sudoers">
-  <meta property="og:description" content="Awake keeps a closed MacBook running for AI agents. Midnight Oil does too, on Intel and macOS 14+, with a signed helper instead of a passwordless sudo rule.">
+  <meta property="og:description" content="Awake keeps a closed MacBook running for AI agents. Midnight Oil does too, as a full app on Intel and macOS 14+, with a signed helper instead of a passwordless sudo rule.">
   <meta property="og:image" content="https://midnightoil.app/images/og.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -98,12 +98,12 @@
     <div class="wrap sub-hero">
       <div class="eyebrow">Awake alternative</div>
       <h1>Same job as Awake.<br>A narrower key to the power settings.</h1>
-      <p class="lede">Awake, an open-source app Ilias Ism launched in November 2026, is built for one thing: closing your MacBook lid while Claude Code, Codex, or Cursor keeps working. It's a good app with sharp ideas. Midnight Oil does the same job, runs on more Macs, and turns sleep off through a signed helper that only answers Midnight Oil.</p>
+      <p class="lede">Awake, an open-source app Ilias Ism launched in November 2026, is built for one thing: closing your MacBook lid while Claude Code, Codex, or Cursor keeps working. It's a good app with sharp ideas. Midnight Oil does the same job, runs as a full app on more Macs, and turns sleep off through a signed helper that only answers Midnight Oil.</p>
       <div class="actions">
         <a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Download free</a>
         <a class="pill big glass" href="https://github.com/coreyhaines31/midnightoil"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>View source code</a>
       </div>
-      <div class="tldr"><h2>The short version</h2><p>On Apple Silicon with macOS 26 and happy with a sudoers rule? Awake is a solid, MIT-licensed choice. On an Intel Mac or an older macOS, or want triggers, schedules, and sleep restored even if the app is killed? Midnight Oil.</p></div>
+      <div class="tldr"><h2>The short version</h2><p>On Apple Silicon with macOS 26 and happy with a sudoers rule? Awake is a solid, MIT-licensed choice. Want the menu bar app on an Intel Mac or an older macOS, or triggers, schedules, and sleep restored even if the app is killed? Midnight Oil.</p></div>
     </div>
     <section class="tight" id="why">
       <div class="wrap"><div class="prose">
@@ -115,8 +115,8 @@
         <p>Setup writes <code>/etc/sudoers.d/awake</code>, letting every member of the <code>admin</code> group run <code>pmset -a disablesleep 0</code> or <code>1</code> without a password. The rule is narrow, two exact commands and validated with <code>visudo</code>, but it applies to every process running as any admin user, not just Awake. Midnight Oil's helper accepts connections only from the Midnight Oil app signed by its developer team.</p>
         <h3>A shell watcher holds the off switch</h3>
         <p><code>pmset disablesleep</code> is a system setting that outlives the process that set it. Awake turns sleep back on from a background shell process that watches its <code>caffeinate</code>. That works when the timer or command ends, but if the watcher itself is killed, say by a logout or a stray <code>kill</code>, it exits without restoring sleep, and the Mac stays sleepless until you run <code>asleep</code>. Midnight Oil's helper is a launchd service: it turns sleep back on when the app quits or crashes, and again on its own launch if it was ever stopped.</p>
-        <h3>Apple Silicon and Tahoe only</h3>
-        <p>Its Homebrew cask depends on <code>arch: :arm64</code> and <code>macos: :tahoe</code>, and the only download is an arm64 DMG. Intel Macs and anything older than macOS 26 are out.</p>
+        <h3>The app is Apple Silicon and Tahoe only</h3>
+        <p>Its Homebrew cask depends on <code>arch: :arm64</code> and <code>macos: :tahoe</code>, and the only download is an arm64 DMG. On an Intel Mac or anything older than macOS 26 you can still install the command line tool from its Homebrew formula or Nix flake, but not the menu bar app or the Control Center toggle.</p>
         <h3>One kind of session</h3>
         <p>Indefinite, a timer, or while a command runs. No “until 7 AM,” no “while this app is open,” no schedules, and no triggers for Wi-Fi, power, displays, or devices.</p>
             
@@ -133,8 +133,8 @@
             <tr><td>Closed-lid mode</td><td class="us y">Yes, opt-in</td><td>Yes</td></tr>
             <tr><td>How it disables sleep</td><td class="us y">Signed helper, only answers Midnight Oil</td><td>sudoers rule for all admin users</td></tr>
             <tr><td>Sleep restored if the app is killed</td><td class="us y">Yes, by a launchd helper</td><td>Only if its shell watcher survives</td></tr>
-            <tr><td>Locks the screen when the lid closes</td><td class="us y">Yes</td><td>Yes</td></tr>
-            <tr><td>Pauses when the Mac gets hot</td><td class="us y">Yes, resumes when cool</td><td>Yes, resumes when cool</td></tr>
+            <tr><td>Locks the screen when the lid closes</td><td class="us y">Yes, unless docked to a display</td><td>Yes</td></tr>
+            <tr><td>Pauses when the Mac gets hot</td><td class="us y">Yes, lets it sleep; resumes once it wakes cool</td><td>Yes, resumes when cool (not for awake --)</td></tr>
             <tr><td>Low-battery cutoff</td><td class="us y">Yes, level you choose</td><td>Yes, 10% by default</td></tr>
             <tr><td>Control Center toggle</td><td class="us y">Yes (macOS 26)</td><td>Yes (macOS 26)</td></tr>
             <tr><td>Command line</td><td class="us y">midnightoil run, start, 45m, status</td><td>awake, awake 45m, awake --</td></tr>
@@ -142,14 +142,14 @@
             <tr><td>While an app is running</td><td class="us y">Yes</td><td>No</td></tr>
             <tr><td>Triggers and weekly schedules</td><td class="us y">Yes</td><td>No</td></tr>
             <tr><td>Battery temperature in the menu</td><td class="us y">No</td><td>Yes</td></tr>
-            <tr><td>Intel Macs</td><td class="us y">Yes</td><td>No</td></tr>
-            <tr><td>Minimum macOS</td><td class="us y">14 Sonoma</td><td>26 Tahoe</td></tr>
+            <tr><td>Intel Macs</td><td class="us y">Yes</td><td>Command line only</td></tr>
+            <tr><td>Minimum macOS</td><td class="us y">14 Sonoma</td><td>26 Tahoe for the app</td></tr>
             <tr><td>Install</td><td class="us y">Homebrew cask or DMG</td><td>Script, Homebrew, DMG, or Nix</td></tr>
           </tbody></table></div>
         <h3>What Awake does better</h3>
         <p>It's MIT today, it shows the battery temperature in its menu, it ships a Nix flake and nix-darwin module, and it can run your own script when the lid closes, handy for unmounting an encrypted volume. If you're on Apple Silicon with Tahoe and want the smallest thing that works, it's a fine pick.</p>
         <h3>What Midnight Oil does better</h3>
-        <p>A signed helper instead of a sudoers rule, sleep restored even if the app is killed, Intel and macOS 14 support, sessions that end at a clock time or when an app quits, ten trigger types, weekly schedules, and <code>midnightoil run</code> that returns your command's exit status and shares one session across parallel runs.</p>
+        <p>A signed helper instead of a sudoers rule, sleep restored even if the app is killed, the full app on Intel and macOS 14, sessions that end at a clock time or when an app quits, ten trigger types, weekly schedules, and <code>midnightoil run</code> that returns your command's exit status and shares one session across parallel runs.</p>
             
       </div></div>
     </section>
@@ -204,7 +204,7 @@
       <span><a href="https://github.com/coreyhaines31/midnightoil">GitHub</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/releases">Releases</a> &nbsp;·&nbsp; <a href="https://github.com/coreyhaines31/midnightoil/issues">Issues</a> &nbsp;·&nbsp; <a href="/cli">For agents</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
     </div>
   </footer>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How does Awake keep a closed MacBook awake?", "acceptedAnswer": {"@type": "Answer", "text": "It runs pmset -a disablesleep 1 together with caffeinate -dims. To run pmset without a password prompt, its setup installs a rule in /etc/sudoers.d that lets any administrator account turn system sleep on and off with no password."}}, {"@type": "Question", "name": "How is Midnight Oil's approach different?", "acceptedAnswer": {"@type": "Answer", "text": "Midnight Oil ships a small helper registered with SMAppService. It runs the same pmset command, but only accepts requests from the Midnight Oil app signed by its developer team, and it restores normal sleep if the app quits, crashes, or is killed. Nothing is added to sudoers."}}, {"@type": "Question", "name": "Does Awake run on Intel Macs or macOS Sonoma?", "acceptedAnswer": {"@type": "Answer", "text": "Not today. Its Homebrew cask requires Apple Silicon and macOS 26 Tahoe. Midnight Oil is a universal app for Intel and Apple Silicon and runs on macOS 14 Sonoma and later."}}, {"@type": "Question", "name": "Do both lock the screen and watch the temperature with the lid closed?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Both lock the screen the moment the lid closes during a closed-lid session, and both step aside so a hot, closed Mac can sleep and cool down, then resume. Awake also shows the battery temperature in its menu."}}, {"@type": "Question", "name": "Is Awake open source?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, MIT. Midnight Oil's full source is on GitHub under FSL-1.1-MIT: free to use and modify, not to resell, and each release becomes MIT two years after it ships."}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How does Awake keep a closed MacBook awake?", "acceptedAnswer": {"@type": "Answer", "text": "It runs pmset -a disablesleep 1 together with caffeinate -dims. To run pmset without a password prompt, its setup installs a rule in /etc/sudoers.d that lets any administrator account turn system sleep on and off with no password."}}, {"@type": "Question", "name": "How is Midnight Oil's approach different?", "acceptedAnswer": {"@type": "Answer", "text": "Midnight Oil ships a small helper registered with SMAppService. It runs the same pmset command, but only accepts requests from the Midnight Oil app signed by its developer team, and it restores normal sleep if the app quits, crashes, or is killed. Nothing is added to sudoers."}}, {"@type": "Question", "name": "Does Awake run on Intel Macs or macOS Sonoma?", "acceptedAnswer": {"@type": "Answer", "text": "Its command line tool does: the Homebrew formula and the Nix flake build for Intel and older macOS. Its menu bar app and Control Center toggle need Apple Silicon and macOS 26 Tahoe. Midnight Oil is one universal app for Intel and Apple Silicon on macOS 14 Sonoma and later."}}, {"@type": "Question", "name": "Do both lock the screen and watch the temperature with the lid closed?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Both lock the screen when the lid closes during a closed-lid session (Midnight Oil skips it while an external display is connected, since the Mac is in use as a desktop), and both step aside so a hot, closed Mac can sleep and cool down. Awake also shows the battery temperature in its menu."}}, {"@type": "Question", "name": "Is Awake open source?", "acceptedAnswer": {"@type": "Answer", "text": "Yes, MIT. Midnight Oil's full source is on GitHub under FSL-1.1-MIT: free to use and modify, not to resell, and each release becomes MIT two years after it ships."}}]}</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Midnight Oil", "item": "https://midnightoil.app/"}, {"@type": "ListItem", "position": 2, "name": "Alternatives", "item": "https://midnightoil.app/alternatives"}, {"@type": "ListItem", "position": 3, "name": "Awake", "item": "https://midnightoil.app/alternatives/awake"}]}</script>
 </body>
 </html>
