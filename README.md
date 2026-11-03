@@ -107,7 +107,7 @@ Midnight Oil asks for nothing up front. macOS asks for each permission only the 
 ## Features
 
 - **Sessions**: keep awake indefinitely, for a set time, until a clock time, while an app is running, or while a file downloads. Extend a running session without restarting it.
-- **Closed-lid mode**: keep a MacBook running with the lid shut. Normal sleep comes back when the session ends, when the app quits, and even if the app crashes ([how it works](#how-closed-lid-mode-works)).
+- **Closed-lid mode**: keep a MacBook running with the lid shut, and the screen locks the moment you close it. Normal sleep comes back when the session ends, when the app quits, and even if the app crashes ([how it works](#how-closed-lid-mode-works)).
 - **Schedules**: stay awake at the same times every week, like weekdays 9 to 5 or every night while your agents run. Add conditions such as “only while plugged in,” and skip a window from the menu when you take a day off.
 - **Triggers**: start a session automatically while conditions hold: a Wi-Fi network, a USB or Bluetooth device, an external display, power source, battery level, an app running or in front, an IP address, a schedule, or how long you've been idle.
 - **Battery safety**: end sessions when you unplug or when the battery drops below a level you choose, and hear an alarm if the lid closes on battery.
@@ -226,6 +226,8 @@ Contributions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
 ### How closed-lid mode works
 
 macOS sleeps a laptop when the lid closes, whatever apps ask for. Midnight Oil ships a small helper, registered with `SMAppService`, that runs `pmset disablesleep 1` as root while a closed-lid session runs and `pmset disablesleep 0` the moment it ends. If the app quits or crashes, the helper notices the dropped connection and restores sleep. If the helper itself stops, launchd restarts it and it restores sleep on launch. Nothing is left disabled behind your back.
+
+With sleep disabled, macOS also skips the lock it normally does when the lid closes, so the app locks the screen itself (the same lock as Control-Command-Q) unless an external display is connected. Turn it off in **Settings › Closed Lid**.
 
 ### Releasing
 
