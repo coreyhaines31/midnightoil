@@ -110,7 +110,7 @@ Midnight Oil asks for nothing up front. macOS asks for each permission only the 
 - **Closed-lid mode**: keep a MacBook running with the lid shut, and the screen locks the moment you close it. Normal sleep comes back when the session ends, when the app quits, and even if the app crashes ([how it works](#how-closed-lid-mode-works)).
 - **Schedules**: stay awake at the same times every week, like weekdays 9 to 5 or every night while your agents run. Add conditions such as “only while plugged in,” and skip a window from the menu when you take a day off.
 - **Triggers**: start a session automatically while conditions hold: a Wi-Fi network, a USB or Bluetooth device, an external display, power source, battery level, an app running or in front, an IP address, a schedule, or how long you've been idle.
-- **Battery safety**: end sessions when you unplug or when the battery drops below a level you choose, and hear an alarm if the lid closes on battery.
+- **Battery and heat safety**: end sessions when you unplug or when the battery drops below a level you choose, hear an alarm if the lid closes on battery, and let a closed Mac that gets hot sleep to cool down. Closed-lid mode comes back once it has cooled.
 - **Drive Alive**: keep the external drives you pick from spinning down.
 - **Command line**: `midnightoil run -- <command>` keeps the Mac awake until the command finishes, closed lid included. Built for AI agents ([details](#command-line)).
 - **Hot keys**, **custom menu bar icons**, **notifications**, and **statistics**, including a CSV export of every session.
