@@ -21,21 +21,24 @@ final class SleepController: @unchecked Sendable {
         queue.sync {
             guard FileManager.default.fileExists(atPath: markerURL.path) else { return }
             Self.logger.notice("Found sleep left disabled by a previous run; restoring")
-            _ = apply(disabled: false)
+            // If that fails, sleep is still off: remember it so the next release retries.
+            appliedDisabled = !apply(disabled: false)
         }
     }
 
     func setSleepDisabled(_ disabled: Bool, for holder: ObjectIdentifier) -> Bool {
         queue.sync {
-            if disabled {
-                holders.insert(holder)
-            } else {
-                holders.remove(holder)
-            }
+            let isNewHolder = disabled && holders.insert(holder).inserted
+            if !disabled { holders.remove(holder) }
             let shouldDisable = !holders.isEmpty
             guard shouldDisable != appliedDisabled else { return true }
             let succeeded = apply(disabled: shouldDisable)
-            if succeeded { appliedDisabled = shouldDisable }
+            if succeeded {
+                appliedDisabled = shouldDisable
+            } else if isNewHolder {
+                // The app gives up on closed-lid mode when this fails; don't keep a hold it dropped.
+                holders.remove(holder)
+            }
             return succeeded
         }
     }
