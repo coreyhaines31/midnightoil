@@ -55,8 +55,9 @@ final class SessionController {
     let helper: HelperClient
     let history = SessionHistory()
     private let assertions = AssertionManager()
-    /// What we last asked the helper for, so it's only messaged on changes.
-    private var lidModeRequested = false
+    /// What we last asked the helper for, so it's only messaged on changes. Internal for
+    /// SessionController+Lid.swift.
+    var lidModeRequested = false
     // Internal for SessionController+Lid.swift.
     var lastLidClosed: Bool?
     var lastUnattended: Bool?
@@ -214,13 +215,7 @@ final class SessionController {
         lidModeRequested = wanted
         Task {
             let applied = await helper.setSleepDisabled(wanted)
-            // Sleep left off is the failure that matters: retry until it's back on.
-            if !wanted, !applied, !lidModeRequested {
-                lidModeRequested = true
-                try? await Task.sleep(for: .seconds(5))
-                syncLidClosedMode()
-                return
-            }
+            if !wanted, !applied { retryRestoringSleep() }
             // If the helper couldn't do it, don't pretend the lid is covered.
             if wanted, !applied, lidModeRequested {
                 lidModeRequested = false

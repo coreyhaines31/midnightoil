@@ -48,3 +48,17 @@ extension SessionController {
         if shouldPause { SessionNotifier.lidModePausedForHeat() }
     }
 }
+
+extension SessionController {
+    /// Sleep left off is the failure that matters, so keep asking until it's back on. Stops as
+    /// soon as closed-lid mode is wanted again, since that request takes the helper's hold anyway.
+    func retryRestoringSleep() {
+        Task {
+            try? await Task.sleep(for: .seconds(5))
+            guard !lidModeRequested else { return }
+            if !(await helper.setSleepDisabled(false)), !lidModeRequested {
+                retryRestoringSleep()
+            }
+        }
+    }
+}
