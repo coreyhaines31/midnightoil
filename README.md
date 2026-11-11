@@ -177,7 +177,9 @@ To remove its settings and session history as well, delete `~/Library/Applicatio
 
 ## Privacy
 
-Midnight Oil has no account and no analytics. Its only network request is the update check to GitHub, which you can turn off with *Check for updates automatically* in **Settings › General**. Session history stays on your Mac.
+Midnight Oil has no account and no analytics. On its own, its only network request is the update check to GitHub, which you can turn off with *Check for updates automatically* in **Settings › General**. Session history stays on your Mac.
+
+On a Mac an organization manages with [Midnight Oil for Teams](#midnight-oil-for-teams), its license and configuration profile can turn on two more: a [fleet heartbeat](#fleet-heartbeat) to `app.midnightoil.app` and [session webhooks](#session-webhooks) to a URL the organization chooses. Neither runs without both a Teams license that includes it and a profile that sets it up.
 
 ## Building from source
 
@@ -240,6 +242,25 @@ Maintainers release from `main` with `Scripts/release.sh 1.2.3`. It builds, sign
 ## Midnight Oil for Teams
 
 Organizations that manage Macs can deploy Midnight Oil with their MDM, lock policies, get session webhooks, and see their fleet on a dashboard. That code lives in `ee/` under its own [commercial license](ee/LICENSE). None of it changes how the app behaves, or contacts any server, unless an organization's license and configuration profile turn it on. Details at [midnightoil.app/teams](https://midnightoil.app/teams).
+
+### Fleet heartbeat
+
+When the license includes the fleet dashboard and the profile sets `fleetReporting` to true, each Mac posts a report to `https://app.midnightoil.app/api/v1/devices/report` every 5 minutes and whenever a session starts or ends. The request is authenticated with the license key and never follows redirects. A report contains:
+
+- A random device id made once per Mac, the `deviceLabel` from the profile (if any), and the app version. The computer's own name is never sent.
+- Whether the Mac is being kept awake, and for an active session: its source (manual, schedule, or trigger), the schedule or trigger name, start and expected end times, and whether closed-lid mode is on.
+- Battery percent and whether it's on battery.
+- The session event that prompted the report, in the same shape as a webhook.
+
+The reply can carry a renewed license key, which the app adopts so keys never need redeploying by hand. An expired key still reports so a Mac that was offline through a renewal can pick up the new one.
+
+### Session webhooks
+
+When the license includes webhooks and the profile sets `webhookURL`, each Mac posts a `session.started` and a `session.ended` event to that URL. Only `https` URLs are allowed, plus plain `http` to `localhost`, `127.0.0.1`, or `::1`. Redirects are never followed. A failed delivery is retried after 2, 10, and 60 seconds, then dropped; 4xx responses other than 429 aren't retried.
+
+The JSON body has `event`, a unique `id` per event (so receivers can ignore retries), `occurredAt`, `device` (id, label, app version), and `session`: start, expected end, end, source and its name, whether the display may sleep, closed-lid mode, and on `session.ended` the end cause plus awake and away seconds.
+
+If the profile also sets `webhookSecret`, requests carry an `X-MidnightOil-Signature` header of the form `t=<unix seconds>,v1=<hex HMAC-SHA256 of "<t>.<body>">`, the same scheme Stripe uses. Slack incoming webhook URLs (`hooks.slack.com`) get a short readable `text` message instead of the JSON body.
 
 ## License
 
