@@ -1,6 +1,6 @@
 # Trademark policy
 
-The Midnight Oil code is licensed under the terms in [LICENSE](LICENSE). The **Midnight Oil** name, the flame logo, and the app icon are not. They identify the official app, so people know what they're installing.
+The Midnight Oil code is licensed under the terms in [LICENSE](LICENSE). The **Midnight Oil** name, the 24-hour clock logo, and the app icon are not. They identify the official app, so people know what they're installing.
 
 ## What's fine
 
@@ -10,7 +10,7 @@ The Midnight Oil code is licensed under the terms in [LICENSE](LICENSE). The **M
 
 ## What needs a different name
 
-If you distribute a modified version, give it its own name and icon. Don't call it Midnight Oil, use the flame logo or app icon, or present it as the official app.
+If you distribute a modified version, give it its own name and icon. Don't call it Midnight Oil, use the 24-hour clock logo or app icon, or present it as the official app.
 
 ## Questions
 
