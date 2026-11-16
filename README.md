@@ -15,7 +15,7 @@
 
 ---
 
-Midnight Oil lives in your menu bar as a small flame. Click it, pick how long, and your Mac stays awake: overnight while Claude Code, Codex, or Cursor works through a task, until a download finishes, or with the lid closed in your bag. When the session ends, your Mac goes back to its normal sleep settings on its own.
+Midnight Oil lives in your menu bar as a small 24-hour clock. Click it, pick how long, and your Mac stays awake: overnight while Claude Code, Codex, or Cursor works through a task, until a download finishes, or with the lid closed in your bag. When the session ends, your Mac goes back to its normal sleep settings on its own.
 
 - [Install](#install)
 - [Your first session](#your-first-session)
@@ -60,7 +60,7 @@ Install Midnight Oil, a free macOS menu bar app that keeps my Mac awake (https:/
    mnt=$(hdiutil attach -nobrowse -readonly /tmp/MidnightOil.dmg | grep -o '/Volumes/.*' | tail -1)
    cp -R "$mnt/Midnight Oil.app" /Applications/ && hdiutil detach -quiet "$mnt" && rm /tmp/MidnightOil.dmg
 4. Run `open -a "Midnight Oil"`, then confirm it's running with `pgrep -x "Midnight Oil"`.
-5. Tell me to look for the flame icon in my menu bar, that closed-lid mode needs a one-time approval in Settings › Closed Lid, and that from now on I can just ask you to keep my Mac awake. You'll do it with the `midnightoil` command (see `midnightoil --help`; if it isn't on the PATH, it's at "/Applications/Midnight Oil.app/Contents/MacOS/midnightoil").
+5. Tell me to look for the clock icon in my menu bar, that closed-lid mode needs a one-time approval in Settings › Closed Lid, and that from now on I can just ask you to keep my Mac awake. You'll do it with the `midnightoil` command (see `midnightoil --help`; if it isn't on the PATH, it's at "/Applications/Midnight Oil.app/Contents/MacOS/midnightoil").
 ```
 
 **Without Homebrew, from Terminal**
@@ -76,13 +76,13 @@ open -a "Midnight Oil"
 
 ## Your first session
 
-Midnight Oil has no Dock icon and no window. After you open it, look for the **flame in the menu bar**, near the clock.
+Midnight Oil has no Dock icon and no window. After you open it, look for the **clock in the menu bar**, near the clock.
 
 > **Don't see it?** On a MacBook with a notch, a crowded menu bar can hide icons behind the notch. Quit an app you don't need in the menu bar, or hold <kbd>⌘</kbd> and drag other icons to make room.
 
-1. **Click the flame.**
+1. **Click the clock.**
 2. **Pick how long:** *Keep Awake Indefinitely*, *Keep Awake For* (5 minutes to 12 hours), *Keep Awake Until* a time, *While App Is Running*, or *While File Is Downloading*.
-3. **Walk away.** The flame lights up while a session runs. Click it to see the time left, extend the session, or end it.
+3. **Walk away.** The clock's night half fills in while a session runs. Click it to see the time left, extend the session, or end it.
 
 Two options on the running session card are worth knowing:
 
@@ -115,7 +115,7 @@ Midnight Oil asks for nothing up front. macOS asks for each permission only the 
 - **Control Center**: on macOS 26 and later, add the Midnight Oil toggle under Control Center › Edit Controls to start or end a session without the menu bar.
 - **Command line**: `midnightoil run -- <command>` keeps the Mac awake until the command finishes, closed lid included. Built for AI agents ([details](#command-line)).
 - **Hot keys**, **custom menu bar icons**, **notifications**, and **statistics**, including a CSV export of every session.
-- **Moves like every other menu bar icon**: hold <kbd>⌘</kbd> and drag the flame wherever you want it.
+- **Moves like every other menu bar icon**: hold <kbd>⌘</kbd> and drag the clock wherever you want it.
 
 Every setting has an ⓘ: hover for a hint, click for the full explanation.
 

@@ -1,9 +1,10 @@
 import AppKit
 
-/// The menu bar image for each state: built-in symbols, or the user's own images.
+/// The menu bar image for each state: the 24-hour clock glyph, or the user's own images.
 enum StatusIcon {
     enum Style: String, CaseIterable {
-        case flame
+        /// Stored as "flame", the app's original icon, so existing settings and managed profiles keep working.
+        case clock = "flame"
         case custom
     }
 
@@ -25,7 +26,7 @@ enum StatusIcon {
                 return custom
             }
         }
-        return FlameIcon.menuBarImage(lit: state == .active)
+        return ClockGlyph.image(awake: state == .active)
     }
 
     static func customImageURL(for state: State) -> URL {

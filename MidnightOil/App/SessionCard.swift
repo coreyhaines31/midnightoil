@@ -1,4 +1,5 @@
 import MidnightOilCore
+import PanelKit
 import SwiftUI
 
 /// What the menu's session card shows. Updated every tick while the menu is open.
@@ -10,6 +11,12 @@ final class SessionCardModel {
     var allowsDisplaySleep = false
     var staysAwakeWithLidClosed = false
     var lidPausedForHeat = false
+    /// When the session started, for the fascia timestamp and the meter's band.
+    var start = Date.now
+    /// When the session will end, if it has a known end (time limit, schedule window or policy cutoff).
+    var end: Date?
+    /// Short end condition for the fascia's detail strip, e.g. "Until 5:00 PM".
+    var endSummary = ""
 
     func update(
         from session: Session,
@@ -18,6 +25,9 @@ final class SessionCardModel {
         lidPausedForHeat: Bool = false
     ) {
         detail = Self.describe(session)
+        start = session.start
+        end = session.endDate
+        endSummary = Self.summarize(session)
         allowsDisplaySleep = session.allowsDisplaySleep
         staysAwakeWithLidClosed = session.staysAwakeWithLidClosed
         self.lidPausedForHeat = lidPausedForHeat
@@ -26,9 +36,11 @@ final class SessionCardModel {
             triggerLine = "Started by the “\(name)” trigger"
         case .schedule(let id, let name):
             triggerLine = "On your “\(name)” schedule"
-            if let end = Self.windowEnd(of: id, in: schedules) {
-                let remaining = RemainingTime.detailed(max(0, end.timeIntervalSinceNow))
-                detail = "\(remaining) left · until \(Self.clockTime(end))"
+            if let windowEnd = Self.windowEnd(of: id, in: schedules) {
+                let remaining = RemainingTime.detailed(max(0, windowEnd.timeIntervalSinceNow))
+                detail = "\(remaining) left · until \(Self.clockTime(windowEnd))"
+                end = windowEnd
+                endSummary = "Until \(Self.clockTime(windowEnd))"
             }
         case .manual:
             triggerLine = nil
@@ -38,6 +50,8 @@ final class SessionCardModel {
                 if (session.endDate ?? .distantFuture) > cutoff {
                     detail = "Ends by \(Self.clockTime(cutoff))"
                     triggerLine = "Limit set by your organization"
+                    end = cutoff
+                    endSummary = "Ends by \(Self.clockTime(cutoff))"
                 }
             }
         }
@@ -65,6 +79,17 @@ final class SessionCardModel {
         }
     }
 
+    private static func summarize(_ session: Session) -> String {
+        switch session.end {
+        case .whileAppRunning(let app): "While \(app.name) runs"
+        case .whileDownloading: "While a file downloads"
+        case .whileProcessesRunning(let processes):
+            processes.count == 1 ? "While a command runs" : "While commands run"
+        case .indefinite: "Until you end it"
+        case .after, .until: session.endDate.map { "Until \(clockTime($0))" } ?? ""
+        }
+    }
+
     /// "9:00 AM" today, "Tomorrow 9:00 AM", "Mon 9:00 AM" this week, "Oct 8, 9:00 AM" beyond.
     /// For schedule times, which can be a week away on the same weekday.
     static func upcomingTime(_ date: Date) -> String {
@@ -85,61 +110,86 @@ final class SessionCardModel {
     }
 }
 
-/// The top of the menu while a session runs: status, countdown, and per-session options.
+/// The top of the menu while a session runs: the Brushed card with the 24-hour meter,
+/// the countdown and source, and the per-session switches.
 struct SessionCardView: View {
     let model: SessionCardModel
     let showsLidOption: Bool
     var displaySleepLocked = false
+    var helperInstalled = false
     let onAllowDisplaySleep: @MainActor (Bool) -> Void
     let onStayAwakeWithLidClosed: @MainActor (Bool) -> Void
 
     var body: some View {
-        // No flame here: the lit icon in the menu bar right above already shows a session is running.
-        VStack(alignment: .leading, spacing: 2) {
-            Text("Keeping your Mac awake")
-                .font(.system(size: 13, weight: .semibold))
-            Text(model.detail)
-                .font(.system(size: 12))
-                .foregroundStyle(.secondary)
+        // TimelineView keeps the needle on the current time while the menu stays open.
+        TimelineView(.periodic(from: .now, by: 30)) { context in
+            MenuCard(accent: PanelAccent.midnightOil, appearance: .dark) {
+                Fascia(
+                    nameplate: "Awake",
+                    timestamp: "Since \(SessionCardModel.clockTime(model.start))",
+                    detail: model.endSummary,
+                    label: "Session"
+                ) {
+                    DayMeter(
+                        span: model.start...max(model.start, model.end ?? context.date),
+                        now: context.date,
+                        accessibilityValue: meterValue
+                    )
+                }
+                Verdict(
+                    "Keeping your Mac awake",
+                    message: message,
+                    status: .go,
+                    statusLabel: "Keeping awake"
+                )
                 .monospacedDigit()
-            if let triggerLine = model.triggerLine {
-                Text(triggerLine)
-                    .font(.system(size: 11))
-                    .foregroundStyle(.tertiary)
-            }
-
-            VStack(alignment: .leading, spacing: 3) {
-                Toggle("Allow display sleep", isOn: Binding(
-                    get: { model.allowsDisplaySleep },
-                    set: { onAllowDisplaySleep($0) }
-                ))
+                Row("Allow display sleep", subtitle: displaySleepSubtitle, options: displaySleepLocked ? .dimmed : []) {
+                    PanelSwitch(
+                        isOn: Binding(get: { model.allowsDisplaySleep }, set: { onAllowDisplaySleep($0) }),
+                        accessibilityLabel: "Allow display sleep"
+                    )
+                    .disabled(displaySleepLocked)
+                }
                 .help(Help.Menu.allowDisplaySleepShort)
-                .disabled(displaySleepLocked)
                 if showsLidOption {
-                    Toggle("Stay awake with lid closed", isOn: Binding(
-                        get: { model.staysAwakeWithLidClosed },
-                        set: { onStayAwakeWithLidClosed($0) }
-                    ))
+                    Row("Stay awake with lid closed", subtitle: lidSubtitle) {
+                        PanelSwitch(
+                            isOn: Binding(
+                                get: { model.staysAwakeWithLidClosed },
+                                set: { onStayAwakeWithLidClosed($0) }
+                            ),
+                            accessibilityLabel: "Stay awake with lid closed"
+                        )
+                    }
                     .help(Help.Menu.staysAwakeWithLidClosed)
                     if model.staysAwakeWithLidClosed, model.lidPausedForHeat {
-                        Text("Paused while your Mac cools down")
-                            .font(.system(size: 11))
-                            .foregroundStyle(.orange)
-                            .padding(.leading, 20)
+                        StatusLight(.caution, "Paused while your Mac cools down")
+                            .padding(.horizontal, 14)
+                            .padding(.bottom, 4)
                             .help(Help.Menu.lidPausedForHeat)
                     }
                 }
+                Spacer().frame(height: 6)
             }
-            .toggleStyle(.checkbox)
-            .controlSize(.small)
-            .font(.system(size: 12))
-            .padding(.top, 6)
         }
-        .padding(.leading, 14)
-        .padding(.trailing, 16)
-        .padding(.top, 4)
-        .padding(.bottom, 6)
-        .frame(width: 290, alignment: .leading)
+    }
+
+    private var message: String {
+        guard let triggerLine = model.triggerLine else { return model.detail + "." }
+        return "\(model.detail). \(triggerLine)."
+    }
+
+    private var meterValue: String {
+        let now = Date.now.formatted(.dateTime.hour().minute())
+        return "Now \(now). \(model.endSummary)."
+    }
+
+    private var displaySleepSubtitle: String {
+        displaySleepLocked ? "Set by your organization" : "The Mac stays awake, the screen can turn off"
+    }
+
+    private var lidSubtitle: String {
+        helperInstalled ? "Keep working with the lid shut" : "Installs the Closed-Lid Helper once"
     }
 }
 
@@ -148,21 +198,28 @@ struct LastSessionView: View {
     let record: SessionRecord
 
     var body: some View {
-        // No flame here: the menu bar icon right above already says what this is.
-        VStack(alignment: .leading, spacing: 2) {
-            Text("While you were away")
-                .font(.system(size: 13, weight: .semibold))
-            Text(summary)
-                .font(.system(size: 12))
-                .foregroundStyle(.secondary)
-            Text(ending)
-                .font(.system(size: 11))
-                .foregroundStyle(.tertiary)
+        TimelineView(.periodic(from: .now, by: 30)) { context in
+            MenuCard(accent: PanelAccent.midnightOil, appearance: .dark) {
+                Fascia(
+                    nameplate: "Awake",
+                    timestamp: "Ended \(SessionCardModel.clockTime(record.end))",
+                    detail: "\(RemainingTime.short(record.away)) away",
+                    label: "Last session",
+                    isLit: false
+                ) {
+                    DayMeter(
+                        span: record.start...max(record.start, record.end),
+                        now: context.date,
+                        accessibilityValue: accessibilityValue
+                    )
+                }
+                Verdict("While you were away", message: "\(summary). \(ending).", status: .off, statusLabel: "Idle")
+            }
         }
-        .padding(.leading, 14)
-        .padding(.trailing, 16)
-        .padding(.vertical, 4)
-        .frame(width: 290, alignment: .leading)
+    }
+
+    private var accessibilityValue: String {
+        "Last session \(SessionCardModel.clockTime(record.start)) to \(SessionCardModel.clockTime(record.end))"
     }
 
     private var summary: String {
@@ -172,7 +229,7 @@ struct LastSessionView: View {
     private var ending: String {
         let time = SessionCardModel.clockTime(record.end)
         guard let cause = record.endCause else { return "Ended \(time)" }
-        return "Ended \(time) · \(cause.label)"
+        return "Ended \(time)\u{00A0}· \(cause.label)"
     }
 
     /// The last session worth recapping: recent, and mostly unattended.
