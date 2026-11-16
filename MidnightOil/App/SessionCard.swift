@@ -123,8 +123,9 @@ struct SessionCardView: View {
     var body: some View {
         // TimelineView keeps the needle on the current time while the menu stays open.
         TimelineView(.periodic(from: .now, by: 30)) { context in
-            BrushedMenuCard {
-                OilFascia(
+            MenuCard(accent: PanelAccent.midnightOil, appearance: .dark) {
+                Fascia(
+                    nameplate: "Awake",
                     timestamp: "Since \(SessionCardModel.clockTime(model.start))",
                     detail: model.endSummary,
                     label: "Session"
@@ -198,8 +199,9 @@ struct LastSessionView: View {
 
     var body: some View {
         TimelineView(.periodic(from: .now, by: 30)) { context in
-            BrushedMenuCard {
-                OilFascia(
+            MenuCard(accent: PanelAccent.midnightOil, appearance: .dark) {
+                Fascia(
+                    nameplate: "Awake",
                     timestamp: "Ended \(SessionCardModel.clockTime(record.end))",
                     detail: "\(RemainingTime.short(record.away)) away",
                     label: "Last session",
