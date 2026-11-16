@@ -1,6 +1,7 @@
 import AppKit
 import MidnightOilCore
 import MidnightOilTeams
+import PanelKit
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -22,6 +23,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         Preferences.registerDefaults()
+        PanelKit.registerFonts()
         LaunchAtLoginDefault.applyOnce()
         sessions.helper.refreshAfterUpdate()
         sessions.policy = { [teamsLicense] in
