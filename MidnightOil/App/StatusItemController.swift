@@ -146,6 +146,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             model: card,
             showsLidOption: LidState.hasLid && !sessions.policy().disallowsClosedLid,
             displaySleepLocked: sessions.isDisplaySleepLocked,
+            helperInstalled: sessions.helper.status == .installed,
             onAllowDisplaySleep: { [weak self] allowed in self?.sessions.setAllowsDisplaySleep(allowed) },
             onStayAwakeWithLidClosed: { [weak self] _ in
                 guard let self, let session = sessions.session else { return }
