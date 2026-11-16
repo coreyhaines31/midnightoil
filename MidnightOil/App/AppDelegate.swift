@@ -23,7 +23,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         Preferences.registerDefaults()
-        PanelKit.registerFonts()
+        PanelFont.register()
         LaunchAtLoginDefault.applyOnce()
         sessions.helper.refreshAfterUpdate()
         sessions.policy = { [teamsLicense] in
