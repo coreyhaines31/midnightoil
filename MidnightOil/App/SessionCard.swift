@@ -17,6 +17,8 @@ final class SessionCardModel {
     var end: Date?
     /// Short end condition for the fascia's detail strip, e.g. "Until 5:00 PM".
     var endSummary = ""
+    /// The fascia's instrument for this session.
+    var gauge = SessionGauge.reels
 
     func update(
         from session: Session,
@@ -31,6 +33,15 @@ final class SessionCardModel {
         allowsDisplaySleep = session.allowsDisplaySleep
         staysAwakeWithLidClosed = session.staysAwakeWithLidClosed
         self.lidPausedForHeat = lidPausedForHeat
+        var endsWithScheduleWindow = false
+        var hasPolicyCutoff = false
+        defer {
+            gauge = SessionGauge.pick(
+                for: session,
+                endsWithScheduleWindow: endsWithScheduleWindow,
+                hasPolicyCutoff: hasPolicyCutoff
+            )
+        }
         switch session.source {
         case .trigger(_, let name):
             triggerLine = "Started by the “\(name)” trigger"
@@ -41,6 +52,7 @@ final class SessionCardModel {
                 detail = "\(remaining) left · until \(Self.clockTime(windowEnd))"
                 end = windowEnd
                 endSummary = "Until \(Self.clockTime(windowEnd))"
+                endsWithScheduleWindow = true
             }
         case .manual:
             triggerLine = nil
@@ -52,6 +64,7 @@ final class SessionCardModel {
                     triggerLine = "Limit set by your organization"
                     end = cutoff
                     endSummary = "Ends by \(Self.clockTime(cutoff))"
+                    hasPolicyCutoff = true
                 }
             }
         }
@@ -110,8 +123,8 @@ final class SessionCardModel {
     }
 }
 
-/// The top of the menu while a session runs: the Brushed card with the 24-hour meter,
-/// the countdown and source, and the per-session switches.
+/// The top of the menu while a session runs: the Brushed card with the session's instrument
+/// (reels, countdown or 24-hour meter), the countdown and source, and the per-session switches.
 struct SessionCardView: View {
     let model: SessionCardModel
     let showsLidOption: Bool
@@ -121,8 +134,9 @@ struct SessionCardView: View {
     let onStayAwakeWithLidClosed: @MainActor (Bool) -> Void
 
     var body: some View {
-        // TimelineView keeps the needle on the current time while the menu stays open.
-        TimelineView(.periodic(from: .now, by: 30)) { context in
+        // TimelineView keeps the instrument current while the menu stays open: every second for the
+        // countdown's needle, every 30 seconds for the clock's needle and the reels' minute counter.
+        TimelineView(.periodic(from: .now, by: model.gauge == .countdown ? 1 : 30)) { context in
             MenuCard(accent: PanelAccent.midnightOil, appearance: .dark) {
                 Fascia(
                     nameplate: "Awake",
@@ -130,11 +144,7 @@ struct SessionCardView: View {
                     detail: model.endSummary,
                     label: "Session"
                 ) {
-                    DayMeter(
-                        span: model.start...max(model.start, model.end ?? context.date),
-                        now: context.date,
-                        accessibilityValue: meterValue
-                    )
+                    gauge(at: context.date)
                 }
                 Verdict(
                     "Keeping your Mac awake",
@@ -179,6 +189,30 @@ struct SessionCardView: View {
         return "\(model.detail). \(triggerLine)."
     }
 
+    @ViewBuilder
+    private func gauge(at now: Date) -> some View {
+        let end = model.end ?? now
+        let elapsed = now.timeIntervalSince(model.start)
+        let remaining = max(0, end.timeIntervalSince(now))
+        switch model.gauge {
+        case .reels:
+            ReelGauge(
+                elapsed: elapsed,
+                isRunning: true,
+                caption: "ELAPSED",
+                accessibilityValue: "\(RemainingTime.short(elapsed)) awake. \(model.endSummary)."
+            )
+        case .countdown:
+            CountdownMeter(
+                total: end.timeIntervalSince(model.start),
+                remaining: remaining,
+                accessibilityValue: "\(RemainingTime.detailed(remaining)) left. \(model.endSummary)."
+            )
+        case .clock:
+            DayMeter(span: model.start...max(model.start, end), now: now, accessibilityValue: meterValue)
+        }
+    }
+
     private var meterValue: String {
         let now = Date.now.formatted(.dateTime.hour().minute())
         return "Now \(now). \(model.endSummary)."
@@ -198,23 +232,23 @@ struct LastSessionView: View {
     let record: SessionRecord
 
     var body: some View {
-        TimelineView(.periodic(from: .now, by: 30)) { context in
-            MenuCard(accent: PanelAccent.midnightOil, appearance: .dark) {
-                Fascia(
-                    nameplate: "Awake",
-                    timestamp: "Ended \(SessionCardModel.clockTime(record.end))",
-                    detail: "\(RemainingTime.short(record.away)) away",
-                    label: "Last session",
-                    isLit: false
-                ) {
-                    DayMeter(
-                        span: record.start...max(record.start, record.end),
-                        now: context.date,
-                        accessibilityValue: accessibilityValue
-                    )
-                }
-                Verdict("While you were away", message: "\(summary). \(ending).", status: .off, statusLabel: "Idle")
+        MenuCard(accent: PanelAccent.midnightOil, appearance: .dark) {
+            Fascia(
+                nameplate: "Awake",
+                timestamp: "Ended \(SessionCardModel.clockTime(record.end))",
+                detail: "\(RemainingTime.short(record.away)) away",
+                label: "Last session",
+                isLit: false
+            ) {
+                // At rest: the reels stopped on the last session's length, the face unlit.
+                ReelGauge(
+                    elapsed: record.awake,
+                    isRunning: false,
+                    caption: "STOPPED",
+                    accessibilityValue: accessibilityValue
+                )
             }
+            Verdict("While you were away", message: "\(summary). \(ending).", status: .off, statusLabel: "Idle")
         }
     }
 
