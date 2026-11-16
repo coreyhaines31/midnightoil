@@ -1,10 +1,10 @@
 {
   "name": "midnightoil-og",
   "private": true,
-  "description": "Source for the og:video link preview (images/og.mp4) and its still (images/og-video.png).",
+  "description": "Source for the og:video link preview (images/og.mp4), its still (images/og-video.png), and the social card (images/og.png).",
   "scripts": {
     "studio": "remotion studio",
-    "render": "remotion render OgVideo out/raw.mp4 --codec=h264 --crf=1 && ffmpeg -y -loglevel error -i out/raw.mp4 -c:v libx264 -preset veryslow -tune animation -crf 16 -pix_fmt yuv420p -profile:v high -movflags +faststart -an ../images/og.mp4 && remotion still OgVideo ../images/og-video.png --frame=225 && (command -v oxipng >/dev/null && oxipng -o 4 --strip safe -q ../images/og-video.png || true)",
+    "render": "remotion render OgVideo out/raw.mp4 --codec=h264 --crf=1 && ffmpeg -y -loglevel error -i out/raw.mp4 -c:v libx264 -preset veryslow -tune animation -crf 16 -pix_fmt yuv420p -profile:v high -movflags +faststart -an ../images/og.mp4 && remotion still OgVideo ../images/og-video.png --frame=225 && (command -v oxipng >/dev/null && oxipng -o 4 --strip safe -q ../images/og-video.png || true) && remotion still OgCard ../images/og.png && (command -v oxipng >/dev/null && oxipng -o 4 --strip safe -q ../images/og.png || true)",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

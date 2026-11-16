@@ -5,9 +5,7 @@ CHECKOUT = "https://app.midnightoil.app/checkout"
 SALES_OPEN = False
 DASHBOARD = "https://app.midnightoil.app/dashboard"
 
-FLAME = ('<svg viewBox="0 0 24 32" fill="#ff8c42" aria-hidden="true"><path d="M12 30c6.8 -0 10 -4.7 10 -10.6 0 -6.3 '
-         '-4.6 -9.4 -7.5 -18.4 -0.9 3.8 -3.6 6.6 -4.7 10.3 -1 -1.9 -2.5 -4 -3.9 -5.1C2.6 8.5 2 11.8 2 14.6 2 21.2 4.8 30 12 30z"/></svg>')
-BUILDING = ('<svg viewBox="0 0 24 24" fill="none" stroke="#ff8c42" stroke-width="1.7" stroke-linecap="round" '
+BUILDING = ('<svg viewBox="0 0 24 24" fill="none" stroke="#3d3f41" stroke-width="1.7" stroke-linecap="round" '
             'stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/>'
             '<path d="M9 7h.01M15 7h.01M9 11h.01M15 11h.01M9 15h.01M15 15h.01M10 21v-3h4v3"/></svg>')
 
@@ -58,8 +56,8 @@ LOCK_MOCK = f"""<div class="mk-win short" role="img" aria-label="Midnight Oil's 
 
 WEBHOOK_MOCK = f"""<div role="img" aria-label="Session events from Midnight Oil posted to Slack, and the signed JSON body.">
 <div class="mk-slack">
-<div class="msg"><div class="avatar">{FLAME}</div><div><b>Midnight Oil</b><span class="t">11:00 PM</span><div>🔥 Build Mac 1 is staying awake on the “Overnight agents” schedule.</div></div></div>
-<div class="msg"><div class="avatar">{FLAME}</div><div><b>Midnight Oil</b><span class="t">7:00 AM</span><div>Build Mac 1 can sleep again after 8h on the “Overnight agents” schedule.</div></div></div>
+<div class="msg"><div class="avatar"><img src="/images/icon-192.png" alt=""></div><div><b>Midnight Oil</b><span class="t">11:00 PM</span><div>🔥 Build Mac 1 is staying awake on the “Overnight agents” schedule.</div></div></div>
+<div class="msg"><div class="avatar"><img src="/images/icon-192.png" alt=""></div><div><b>Midnight Oil</b><span class="t">7:00 AM</span><div>Build Mac 1 can sleep again after 8h on the “Overnight agents” schedule.</div></div></div>
 </div>
 <div class="mk-json">{{
   <span class="k">"event"</span>: <span class="s">"session.ended"</span>,
