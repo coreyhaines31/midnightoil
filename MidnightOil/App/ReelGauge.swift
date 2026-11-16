@@ -19,7 +19,7 @@ struct ReelGauge: View {
     static let secondsPerTurn: TimeInterval = 6
 
     var body: some View {
-        let digits = ElapsedCounter.digits(elapsed)
+        let counter = ElapsedCounter(elapsed)
         let spins = isRunning && !reduceMotion
         // The animation timeline only exists while the menu is open (the menu rebuilds its card each
         // time) and is paused when the reels stand still, so a closed menu costs nothing.
@@ -29,13 +29,9 @@ struct ReelGauge: View {
         .overlay {
             GeometryReader { proxy in
                 let scale = proxy.size.width / Self.size.width
-                ZStack {
-                    DrumDigits(digits.hours)
-                        .position(x: 125, y: 40)
-                    DrumDigits(digits.minutes)
-                        .position(x: 187, y: 40)
-                }
-                .frame(width: Self.size.width, height: Self.size.height)
+                drums(counter)
+                    .position(x: Self.size.width / 2, y: 40)
+                    .frame(width: Self.size.width, height: Self.size.height)
                 .scaleEffect(scale, anchor: .topLeading)
             }
         }
@@ -43,6 +39,31 @@ struct ReelGauge: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Tape counter")
         .accessibilityValue(accessibilityValue)
+    }
+
+    /// HH:MM on the large drums; from the first full day, a days drum and the small drums so
+    /// "3 D 09:42" still fits between the reels.
+    @ViewBuilder
+    private func drums(_ counter: ElapsedCounter) -> some View {
+        let ink = isRunning ? Color(reelHex: 0x2A2216) : Color(reelHex: 0x1D1D1D)
+        let small = counter.days != nil
+        HStack(spacing: small ? 2 : 3) {
+            if let days = counter.days {
+                DrumDigits(days, small: true)
+                Text("D")
+                    .font(PanelFont.condensed(11, .semibold))
+                    .foregroundStyle(ink.opacity(0.85))
+            }
+            DrumDigits(counter.hours, small: small)
+            VStack(spacing: small ? 5 : 7) {
+                Circle().frame(width: 3.2, height: 3.2)
+                Circle().frame(width: 3.2, height: 3.2)
+            }
+            .foregroundStyle(ink.opacity(0.85))
+            .frame(width: 6)
+            DrumDigits(counter.minutes, small: small)
+        }
+        .fixedSize()
     }
 
     /// How far the reels have turned at a moment, in degrees.
@@ -71,7 +92,7 @@ private struct ReelFace: View {
             for center in Self.reels {
                 drawReel(&face, center: center, ink: ink)
             }
-            drawCounterParts(&face, ink: ink)
+            drawCaption(&face, ink: ink)
             // Glass highlight across the top of the window, as on the meters.
             face.fill(
                 Path(CGRect(x: 3, y: 3, width: 306, height: 14)),
@@ -183,10 +204,8 @@ private struct ReelFace: View {
         }
     }
 
-    /// The colon between the hours and minutes drums, and the caption under them.
-    private func drawCounterParts(_ context: inout GraphicsContext, ink: Color) {
-        context.fill(circle(CGPoint(x: 156, y: 35), 1.6), with: .color(ink.opacity(0.85)))
-        context.fill(circle(CGPoint(x: 156, y: 45), 1.6), with: .color(ink.opacity(0.85)))
+    /// The caption under the counter.
+    private func drawCaption(_ context: inout GraphicsContext, ink: Color) {
         let text = context.resolve(
             Text(caption).font(PanelFont.condensed(10, .medium)).tracking(2.5).foregroundStyle(ink.opacity(0.8))
         )

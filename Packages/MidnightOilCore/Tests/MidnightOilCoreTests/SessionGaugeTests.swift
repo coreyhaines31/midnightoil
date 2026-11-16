@@ -43,7 +43,14 @@ private let scaleCases: [(TimeInterval, String, [String])] = [
     (2 * 3_600, "HRS LEFT", ["0", "0.5", "1", "1.5", "2"]),
     (6 * 3_600, "HRS LEFT", ["0", "2", "4", "6"]),
     (12 * 3_600, "HRS LEFT", ["0", "3", "6", "9", "12"]),
-    (65 * 60, "MIN LEFT", ["0", "65"])
+    (65 * 60, "MIN LEFT", ["0", "65"]),
+    (24 * 3_600, "HRS LEFT", ["0", "6", "12", "18", "24"]),
+    (36 * 3_600, "HRS LEFT", ["0", "12", "24", "36"]),
+    (72 * 3_600, "HRS LEFT", ["0", "24", "48", "72"]),
+    (90 * 3_600, "DAYS LEFT", ["0", "3.8"]),
+    (4 * 86_400, "DAYS LEFT", ["0", "1", "2", "3", "4"]),
+    (10 * 86_400, "DAYS LEFT", ["0", "2", "4", "6", "8", "10"]),
+    (14 * 86_400, "DAYS LEFT", ["0", "7", "14"])
 ]
 
 @Test(arguments: scaleCases)
@@ -63,8 +70,18 @@ func countdownScaleSplitsEvenly(total: TimeInterval, word: String, labels: [Stri
 }
 
 @Test func elapsedCounterShowsHoursAndMinutes() {
-    #expect(ElapsedCounter.digits(0) == ("00", "00"))
-    #expect(ElapsedCounter.digits(59) == ("00", "00"))
-    #expect(ElapsedCounter.digits(5_025) == ("01", "23"))
-    #expect(ElapsedCounter.digits(500 * 3_600) == ("99", "59"))
+    #expect(ElapsedCounter(0) == ElapsedCounter(59))
+    let short = ElapsedCounter(5_025)
+    #expect(short.days == nil && short.hours == "01" && short.minutes == "23")
+    let almostADay = ElapsedCounter(86_399)
+    #expect(almostADay.days == nil && almostADay.hours == "23" && almostADay.minutes == "59")
+}
+
+@Test func elapsedCounterAddsDaysPastADay() {
+    let ninety = ElapsedCounter(81 * 3_600 + 42 * 60)
+    #expect(ninety.days == "3" && ninety.hours == "09" && ninety.minutes == "42")
+    let tenDays = ElapsedCounter(10 * 86_400 + 5 * 60)
+    #expect(tenDays.days == "10" && tenDays.hours == "00" && tenDays.minutes == "05")
+    let forever = ElapsedCounter(500 * 86_400)
+    #expect(forever.days == "99" && forever.hours == "23" && forever.minutes == "59")
 }

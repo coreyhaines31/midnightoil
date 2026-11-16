@@ -1,9 +1,11 @@
+import MidnightOilCore
 import PanelKit
 import SwiftUI
 
 /// The 24-hour meter for sessions that end at a clock time: 0 to 24 across the scale, the night hours
 /// (before 6 and after 18) shaded, the session's span printed as a band (solid for the time already
 /// awake, faint for the time to go), a tall mark on the end time, and the needle on the current time.
+/// An end on a later day adds "+1D", "+2D"… to the word and beside its mark, so it never reads as today.
 struct DayMeter: View {
     var span: ClosedRange<Date>
     var now: Date
@@ -13,6 +15,7 @@ struct DayMeter: View {
         let done = span.lowerBound...min(max(now, span.lowerBound), span.upperBound)
         let ahead = done.upperBound...span.upperBound
         let end = Self.fraction(of: span.upperBound)
+        let daysAhead = ClockTime.dayOffset(of: span.upperBound, from: now)
         Meter(
             MeterConfig(
                 majorTicks: 4,
@@ -25,7 +28,8 @@ struct DayMeter: View {
                     + Self.spanBands(done).map { MeterBand($0, width: 3, opacity: 0.9) }
                     + [MeterBand(max(0, end - 0.004)...min(1, end + 0.004), width: 13, opacity: 1)],
                 labels: [.init(0, "0"), .init(0.25, "6"), .init(0.5, "12"), .init(0.75, "18"), .init(1, "24")],
-                word: "HOURS",
+                innerLabels: daysAhead > 0 ? [MeterLabel(end, "+\(daysAhead)D")] : [],
+                word: daysAhead > 0 ? "HOURS +\(daysAhead)D" : "HOURS",
                 face: .lit,
                 accessibilityLabel: "24-hour meter"
             ),
