@@ -161,6 +161,9 @@ def footer_family():
         f'<li><a href="{url}" title="{esc(desc)}"{CURRENT if key == "oil" else ""}>'
         f'<img src="/images/family/{key}.png" alt="" width="56" height="56">{esc(name)}</a></li>'
         for key, name, url, desc in FAMILY)
+    # Kill Cord has no site yet, so it's a plain coming-soon tile.
+    items += ('<li><span class="soon"><img src="/images/family/kill.png" alt="" width="56" height="56">'
+              'Kill Cord<small>Coming soon</small></span></li>')
     return f'''    <section class="bx-family" aria-label="More free Mac apps">
       <div class="wrap">
         <a class="bx-eyebrow" href="https://github.com/coreyhaines31">More free Mac apps</a>
