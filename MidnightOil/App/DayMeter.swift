@@ -1,14 +1,18 @@
 import PanelKit
 import SwiftUI
 
-/// The 24-hour meter: 0 to 24 across the scale, the night hours (before 6 and after 18) shaded,
-/// the session's span printed as a band, and the needle on the current time.
+/// The 24-hour meter for sessions that end at a clock time: 0 to 24 across the scale, the night hours
+/// (before 6 and after 18) shaded, the session's span printed as a band (solid for the time already
+/// awake, faint for the time to go), a tall mark on the end time, and the needle on the current time.
 struct DayMeter: View {
     var span: ClosedRange<Date>
     var now: Date
     var accessibilityValue: String
 
     var body: some View {
+        let done = span.lowerBound...min(max(now, span.lowerBound), span.upperBound)
+        let ahead = done.upperBound...span.upperBound
+        let end = Self.fraction(of: span.upperBound)
         Meter(
             MeterConfig(
                 majorTicks: 4,
@@ -16,7 +20,10 @@ struct DayMeter: View {
                 bands: [
                     MeterBand(0...0.25, width: 9, opacity: 0.14),
                     MeterBand(0.75...1, width: 9, opacity: 0.14)
-                ] + Self.spanBands(span).map { MeterBand($0, width: 3, opacity: 0.9) },
+                ]
+                    + Self.spanBands(ahead).map { MeterBand($0, width: 3, opacity: 0.35) }
+                    + Self.spanBands(done).map { MeterBand($0, width: 3, opacity: 0.9) }
+                    + [MeterBand(max(0, end - 0.004)...min(1, end + 0.004), width: 13, opacity: 1)],
                 labels: [.init(0, "0"), .init(0.25, "6"), .init(0.5, "12"), .init(0.75, "18"), .init(1, "24")],
                 word: "HOURS",
                 face: .lit,
