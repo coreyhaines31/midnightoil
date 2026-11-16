@@ -141,26 +141,39 @@ def footer_agents():
 
 
 FAMILY = [
-    ("Green Room", "https://greenroomformac.com", "Check your camera, mic, and speakers"),
-    ("WiFi or ISP", "https://wifiorisp.com", "Is slow internet your Wi-Fi or your ISP?"),
-    ("Disk Forecast", "https://diskforecast.com", "Know before your Mac runs out of space"),
-    ("Spare", "https://spareformac.com", "See what's using your Mac"),
-    ("On Hand", "https://onhandformac.com", "A clipboard manager for your Mac"),
-    ("Coat Check", "https://coatcheckformac.com", "Reach the menu bar icons the notch hides"),
-    ("Fuel Gauge", "https://fuelgauge.app", "Know if you'll make it to reset"),
+    ("fuel", "Fuel Gauge", "https://fuelgauge.app", "Know if you'll make it to reset"),
+    ("spare", "Spare", "https://spareformac.com", "See what's using your Mac"),
+    ("disk", "Disk Forecast", "https://diskforecast.com", "Know before your Mac runs out of space"),
+    ("oil", "Midnight Oil", "https://midnightoil.app", "Keep your Mac awake while your AI agents work"),
+    ("wifi", "WiFi or ISP", "https://wifiorisp.com", "Is slow internet your Wi-Fi or your ISP?"),
+    ("green", "Green Room", "https://greenroomformac.com", "Check your camera, mic, and speakers"),
+    ("hand", "On Hand", "https://onhandformac.com", "A clipboard manager for your Mac"),
+    ("coat", "Coat Check", "https://coatcheckformac.com", "Reach the menu bar icons the notch hides"),
 ]
 
 
+CURRENT = ' aria-current="page"'
+
+
 def footer_family():
-    """Corey's other free Mac apps, cross-linked from every footer."""
-    links = "".join(f'<a href="{url}" title="{esc(desc)}">{esc(name)}</a>' for name, url, desc in FAMILY)
-    return f'      <nav class="footer-alts" aria-label="More free Mac apps"><a class="label" href="https://github.com/coreyhaines31">More free Mac apps</a>{links}</nav>\n'
+    """Corey's free Mac apps as a panel of their icons, cross-linked from every footer."""
+    items = "".join(
+        f'<li><a href="{url}" title="{esc(desc)}"{CURRENT if key == "oil" else ""}>'
+        f'<img src="/images/family/{key}.png" alt="" width="56" height="56">{esc(name)}</a></li>'
+        for key, name, url, desc in FAMILY)
+    return f'''    <section class="bx-family" aria-label="More free Mac apps">
+      <div class="wrap">
+        <a class="bx-eyebrow" href="https://github.com/coreyhaines31">More free Mac apps</a>
+        <ul>{items}</ul>
+      </div>
+    </section>
+'''
 
 
 def footer():
     return f'''  <footer>
-    <div class="wrap">
-{footer_agents()}{footer_guides()}{footer_alternatives()}{footer_family()}      <span>© 2026 Corey Haines. <a href="{REPO}/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
+{footer_family()}    <div class="wrap foot">
+{footer_agents()}{footer_guides()}{footer_alternatives()}      <span>© 2026 Corey Haines. <a href="{REPO}/blob/main/LICENSE">FSL-1.1-MIT License</a>.</span>
       <span><a href="{REPO}">GitHub</a> &nbsp;·&nbsp; <a href="{REPO}/releases">Releases</a> &nbsp;·&nbsp; <a href="{REPO}/issues">Issues</a> &nbsp;·&nbsp; <a href="/cli">For agents</a> &nbsp;·&nbsp; <a href="/teams">Teams</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/terms">Terms</a></span>
     </div>
   </footer>
@@ -168,14 +181,14 @@ def footer():
 
 
 def render_homepage_footer():
-    """The homepage is hand-written; keep its footer list in sync between the markers."""
+    """The homepage is hand-written; keep its footer in sync between the markers."""
     path = os.path.join(ROOT, "index.html")
     with open(path) as f:
         page = f.read()
-    start, end = "<!-- alternatives -->\n", "<!-- /alternatives -->"
+    start, end = "<!-- footer -->\n", "<!-- /footer -->"
     i, j = page.index(start) + len(start), page.index(end)
     with open(path, "w") as f:
-        f.write(page[:i] + footer_agents() + footer_guides() + footer_alternatives() + footer_family() + "      " + page[j:])
+        f.write(page[:i] + footer() + "  " + page[j:])
 
 
 def head(title, description, path):
