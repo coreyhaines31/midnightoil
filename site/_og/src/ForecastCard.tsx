@@ -1,5 +1,11 @@
 import {Easing, interpolate, spring, useCurrentFrame, useVideoConfig} from 'remotion';
-import {INK, INK_2} from './OgVideo';
+import {BODY, DISPLAY} from './OgVideo';
+
+// Black anodised, like the menu: light ink, readings lit amber, the finish mark on the green LED.
+const INK = '#e6e7e8';
+const INK_2 = '#9a9c9e';
+const AMBER = '#f2b23a';
+const GO = '#4fd06f';
 
 // Midnight Oil's session card: Claude Code keeps working past the point the Mac would have gone to sleep,
 // the session timer counts up to 3h 12m, the verdict lands, then the run rewinds to where it starts, so the loop has no seam.
@@ -20,7 +26,7 @@ const OUT_EASE = Easing.bezier(0, 0, 0.2, 1);
 
 const elapsed = (min: number) => `${Math.floor(min / 60)}h ${String(Math.floor(min % 60)).padStart(2, '0')}m`;
 
-export const ForecastCard = ({accentInk, accentFill, tint}: {accentInk: string; accentFill: string; tint: string}) => {
+export const ForecastCard = () => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const t = frame / fps;
@@ -44,35 +50,35 @@ export const ForecastCard = ({accentInk, accentFill, tint}: {accentInk: string; 
 
   return (
     <div
-      style={{width: '100%', height: '100%', boxSizing: 'border-box', padding: '30px 32px', borderRadius: 30, background: 'rgba(251,251,253,0.9)',
-        boxShadow: `0 0 0 1px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.05), 0 16px 36px rgba(${tint},0.12)`, fontVariantNumeric: 'tabular-nums'}}
+      style={{width: '100%', height: '100%', boxSizing: 'border-box', padding: '28px 16px', borderRadius: 12, background: '#161617', color: INK, fontFamily: BODY,
+        boxShadow: '0 18px 40px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.08)', fontVariantNumeric: 'tabular-nums'}}
     >
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'}}>
         <div>
-          <div style={{fontSize: 28, fontWeight: 600, letterSpacing: '-0.02em', color: INK}}>Claude Code</div>
+          <div style={{fontFamily: DISPLAY, fontSize: 32, fontWeight: 600, color: INK}}>Claude Code</div>
           <div style={{fontSize: 21, color: INK_2, marginTop: 2}}>Keeping Mac awake</div>
         </div>
-        <div style={{fontSize: 44, fontWeight: 700, letterSpacing: '-0.04em', color: accentInk, lineHeight: 1.1, whiteSpace: 'nowrap'}}>
+        <div style={{fontFamily: DISPLAY, fontSize: 48, fontWeight: 600, color: AMBER, lineHeight: 1.05, whiteSpace: 'nowrap'}}>
           {elapsed(head * SESSION_MIN)}
         </div>
       </div>
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{display: 'block', overflow: 'visible', marginTop: 26}}>
-        <line x1={0} y1={H - 4} x2={W} y2={H - 4} stroke="rgba(0,0,0,0.12)" strokeWidth={2} />
+        <line x1={0} y1={H - 4} x2={W} y2={H - 4} stroke="rgba(255,255,255,0.16)" strokeWidth={2} />
         {Array.from({length: BARS}, (_, i) => {
           const x = i * PITCH;
           const grow = Math.min(1, Math.max(0, (headX - x) / PITCH));
           if (grow <= 0) return null;
           const h = (H - 4 - TOP) * activity(i) * grow;
-          return <rect key={i} x={x} y={H - 6 - h} width={BAR} height={h} rx={4} fill={accentFill} opacity={x / W < SLEEP ? 0.45 : 0.9} />;
+          return <rect key={i} x={x} y={H - 6 - h} width={BAR} height={h} rx={1.5} fill={x / W < SLEEP ? '#5b5d5e' : AMBER} />;
         })}
-        <line x1={SLEEP * W} y1={TOP - 8} x2={SLEEP * W} y2={H - 4} stroke="#6e6e73" strokeWidth={2} strokeDasharray="4 5" />
+        <line x1={SLEEP * W} y1={TOP - 8} x2={SLEEP * W} y2={H - 4} stroke="#8f9193" strokeWidth={2} strokeDasharray="4 5" />
         <text x={SLEEP * W + 8} y={TOP - 12} fontSize={18} fill={INK_2} opacity={0.4 + 0.6 * passed}>
           Would sleep at 11:32p
         </text>
         {done > 0.01 && (
           <g transform={`translate(${W - 10} ${TOP - 16}) scale(${done})`}>
-            <circle r={13} fill={accentInk} stroke="#fff" strokeWidth={3} />
-            <path d="M-5.5 0.5 L-1.5 4.5 L5.5 -3.5" fill="none" stroke="#fff" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
+            <circle r={13} fill={GO} stroke="#161617" strokeWidth={3} />
+            <path d="M-5.5 0.5 L-1.5 4.5 L5.5 -3.5" fill="none" stroke="#161617" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" />
           </g>
         )}
       </svg>
@@ -80,11 +86,11 @@ export const ForecastCard = ({accentInk, accentFill, tint}: {accentInk: string; 
         <span style={{position: 'absolute', left: 0}}>11:02p</span>
         <span style={{position: 'absolute', right: 0}}>2:14a</span>
       </div>
-      <div style={{position: 'absolute', marginTop: 18, fontSize: 30, fontWeight: 600, letterSpacing: '-0.02em', color: '#8e8e93', opacity: working}}>
+      <div style={{position: 'absolute', marginTop: 18, fontFamily: DISPLAY, fontSize: 32, fontWeight: 600, color: INK_2, opacity: working}}>
         Agent working…
       </div>
       <div style={{marginTop: 18, opacity: shown, transform: `translateY(${(1 - verdictIn) * 8}px)`}}>
-        <div style={{fontSize: 38, fontWeight: 700, letterSpacing: '-0.03em', color: accentInk}}>Still awake</div>
+        <div style={{fontFamily: DISPLAY, fontSize: 40, fontWeight: 600, color: INK}}>Still awake</div>
         <div style={{fontSize: 22, color: INK_2, marginTop: 4}}>Task finished at 2:14a</div>
       </div>
     </div>
