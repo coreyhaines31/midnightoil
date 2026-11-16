@@ -9,6 +9,7 @@ BUILDING = ('<svg viewBox="0 0 24 24" fill="none" stroke="#3d3f41" stroke-width=
             'stroke-linejoin="round" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/>'
             '<path d="M9 7h.01M15 7h.01M9 11h.01M15 11h.01M9 15h.01M15 15h.01M10 21v-3h4v3"/></svg>')
 
+
 def web(url, nav_on, inner):
     tabs = "".join(f'<span class="{"on" if t == nav_on else ""}">{t}</span>' for t in ["Overview", "Fleet", "Deploy", "Members", "Billing"])
     return (f'<div class="mk-web" role="img" aria-label="The Midnight Oil for Teams dashboard, {nav_on} page">'
