@@ -197,21 +197,27 @@ struct LastSessionView: View {
     let record: SessionRecord
 
     var body: some View {
-        // No flame here: the menu bar icon right above already says what this is.
-        VStack(alignment: .leading, spacing: 2) {
-            Text("While you were away")
-                .font(.system(size: 13, weight: .semibold))
-            Text(summary)
-                .font(.system(size: 12))
-                .foregroundStyle(.secondary)
-            Text(ending)
-                .font(.system(size: 11))
-                .foregroundStyle(.tertiary)
+        TimelineView(.periodic(from: .now, by: 30)) { context in
+            BrushedMenuCard {
+                OilFascia(
+                    timestamp: "Ended \(SessionCardModel.clockTime(record.end))",
+                    detail: "\(RemainingTime.short(record.away)) away",
+                    label: "Last session",
+                    isLit: false
+                ) {
+                    DayMeter(
+                        span: record.start...max(record.start, record.end),
+                        now: context.date,
+                        accessibilityValue: accessibilityValue
+                    )
+                }
+                Verdict("While you were away", message: "\(summary). \(ending).", status: .off, statusLabel: "Idle")
+            }
         }
-        .padding(.leading, 14)
-        .padding(.trailing, 16)
-        .padding(.vertical, 4)
-        .frame(width: 290, alignment: .leading)
+    }
+
+    private var accessibilityValue: String {
+        "Last session \(SessionCardModel.clockTime(record.start)) to \(SessionCardModel.clockTime(record.end))"
     }
 
     private var summary: String {
@@ -221,7 +227,7 @@ struct LastSessionView: View {
     private var ending: String {
         let time = SessionCardModel.clockTime(record.end)
         guard let cause = record.endCause else { return "Ended \(time)" }
-        return "Ended \(time) · \(cause.label)"
+        return "Ended \(time)\u{00A0}· \(cause.label)"
     }
 
     /// The last session worth recapping: recent, and mostly unattended.
