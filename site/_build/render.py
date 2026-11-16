@@ -4,6 +4,7 @@
     python3 site/_build/render.py
 """
 import html
+import re
 import json
 import datetime
 import os
@@ -103,10 +104,11 @@ def esc(t):
 
 
 def nav():
-    return f'''  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
-  <div class="nav">
-    <div class="wrap">
-      <a class="brand" href="/"><img src="/images/icon-192.png" alt="" width="28" height="28"> Midnight Oil</a>
+    """Opens the brushed header; write() closes it after the page's sub-hero."""
+    return f'''  <a class="skip" href="#main">Skip to content</a>
+  <header class="bx-hero">
+    <div class="wrap bx-nav">
+      <a class="bx-brand" href="/"><img src="/images/icon-192.png" alt="" width="32" height="32">Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
         <a href="/cli">For agents</a>
@@ -117,7 +119,6 @@ def nav():
         <a class="pill" href="{DOWNLOAD}">Download</a>
       </nav>
     </div>
-  </div>
 '''
 
 
@@ -287,8 +288,7 @@ def render_page(p):
     parts.append(faq_schema(p["faqs"]) + "\n"
                  + breadcrumb_schema([("Alternatives", "/alternatives"), (p["card_title"], path)]) + "\n</body>\n</html>\n")
     os.makedirs(os.path.join(ROOT, "alternatives"), exist_ok=True)
-    with open(os.path.join(ROOT, "alternatives", f"{p['slug']}.html"), "w") as f:
-        f.write("".join(parts))
+    write(f"/alternatives/{p['slug']}", "".join(parts))
 
 
 def article_schema(g, path):
@@ -385,15 +385,28 @@ def render_hub():
 </body>
 </html>
 '''
-    with open(os.path.join(ROOT, "alternatives", "index.html"), "w") as f:
-        f.write(body)
+    write("/alternatives/index", body)
+
+
+def close_header(body):
+    """Moves <main> to after the sub-hero, so the nav and the page's hero share one brushed header."""
+    start = body.index('  <main>\n')
+    body = body[:start] + body[start + len('  <main>\n'):]
+    hero = body.index('<div class="wrap sub-hero">', start)
+    depth, i = 0, hero
+    for m in re.finditer(r"<div\b|</div>", body[hero:]):
+        depth += 1 if m.group() == "<div" else -1
+        if depth == 0:
+            i = hero + m.end()
+            break
+    return body[:i] + '\n  </header>\n  <main id="main">' + body[i:]
 
 
 def write(path, body):
     out = os.path.join(ROOT, path.strip("/") + ".html")
     os.makedirs(os.path.dirname(out), exist_ok=True)
     with open(out, "w") as f:
-        f.write(body)
+        f.write(close_header(body))
 
 
 def render_teams():
