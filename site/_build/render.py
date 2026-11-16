@@ -192,8 +192,9 @@ def head(title, description, path):
   <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://midnightoil.app{path}">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" href="/images/icon-192.png">
-  <link rel="apple-touch-icon" href="/images/icon-512.png">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <link rel="stylesheet" href="/site.css">
   <style>{PAGE_CSS}  </style>
   <script async src="https://tracerkit.com/t.js" data-key="tk__vMOLefQSrM_pLCt"></script>
