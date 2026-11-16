@@ -5,35 +5,36 @@ import Testing
 struct SessionGaugeTests {
     let start = Date(timeIntervalSinceReferenceDate: 1_000_000)
 
-    func session(_ end: SessionEnd) -> Session {
-        Session(start: start, end: end, allowsDisplaySleep: false)
+    func gauge(_ end: SessionEnd, window: Bool = false, cutoff: Bool = false) -> SessionGauge {
+        let session = Session(start: start, end: end, allowsDisplaySleep: false)
+        return SessionGauge.pick(for: session, endsWithScheduleWindow: window, hasPolicyCutoff: cutoff)
     }
 
     @Test func indefiniteAndWhileModesTurnTheReels() {
         let app = WatchedApp(bundleIdentifier: "com.apple.TextEdit", name: "TextEdit")
         for end in [SessionEnd.indefinite, .whileAppRunning(app), .whileDownloading(URL(filePath: "/tmp/a.part"))] {
-            #expect(SessionGauge.pick(for: session(end), endsWithScheduleWindow: false, hasPolicyCutoff: false) == .reels)
+            #expect(gauge(end) == .reels)
         }
     }
 
     @Test func durationsCountDown() {
-        #expect(SessionGauge.pick(for: session(.after(1_800)), endsWithScheduleWindow: false, hasPolicyCutoff: false) == .countdown)
+        #expect(gauge(.after(1_800)) == .countdown)
     }
 
     @Test func clockTimesUseTheDial() {
-        let until = session(.until(start.addingTimeInterval(3_600)))
-        #expect(SessionGauge.pick(for: until, endsWithScheduleWindow: false, hasPolicyCutoff: false) == .clock)
+        #expect(gauge(.until(start.addingTimeInterval(3_600))) == .clock)
     }
 
     @Test func scheduleWindowsUseTheDial() {
-        #expect(SessionGauge.pick(for: session(.indefinite), endsWithScheduleWindow: true, hasPolicyCutoff: false) == .clock)
+        #expect(gauge(.indefinite, window: true) == .clock)
     }
 
     @Test func policyLimitsCountDown() {
-        #expect(SessionGauge.pick(for: session(.indefinite), endsWithScheduleWindow: false, hasPolicyCutoff: true) == .countdown)
+        #expect(gauge(.indefinite, cutoff: true) == .countdown)
     }
 }
 
+// swiftlint:disable:next large_tuple
 private let scaleCases: [(TimeInterval, String, [String])] = [
     (5 * 60, "MIN LEFT", ["0", "1", "2", "3", "4", "5"]),
     (15 * 60, "MIN LEFT", ["0", "5", "10", "15"]),

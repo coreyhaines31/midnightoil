@@ -37,7 +37,9 @@ public struct CountdownScale: Equatable, Sendable {
     }
 
     /// Steps the scale can count in, shortest first.
-    private static let steps: [TimeInterval] = [60, 120, 300, 600, 900, 1_200, 1_800, 3_600, 7_200, 10_800, 14_400, 21_600]
+    private static let steps: [TimeInterval] = [
+        60, 120, 300, 600, 900, 1_200, 1_800, 3_600, 7_200, 10_800, 14_400, 21_600
+    ]
 
     public init(total: TimeInterval) {
         let total = max(total, 60)
