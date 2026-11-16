@@ -115,11 +115,9 @@ final class SessionCardModel {
         return date.formatted(.dateTime.month(.abbreviated).day().hour().minute())
     }
 
-    /// "5:00 PM" today, "Wed 1:00 AM" on another day.
+    /// "5:00 PM" today, "Wed 1:00 AM" within the week either side, "Nov 24, 5:00 PM" further out.
     static func clockTime(_ date: Date) -> String {
-        date.formatted(Calendar.current.isDateInToday(date)
-            ? .dateTime.hour().minute()
-            : .dateTime.weekday(.abbreviated).hour().minute())
+        ClockTime.format(date)
     }
 }
 
