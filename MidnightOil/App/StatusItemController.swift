@@ -1,5 +1,6 @@
 import AppKit
 import MidnightOilCore
+import PanelKit
 import SwiftUI
 
 /// Owns the menu bar icon. It stays a plain `NSStatusItem` with an `autosaveName`
@@ -91,11 +92,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             addCurrentSessionItems(for: session, to: menu)
             menu.addItem(.separator())
         } else if let recap = LastSessionView.recap(from: sessions.history.records) {
-            let view = NSHostingView(rootView: LastSessionView(record: recap))
-            view.frame.size = view.fittingSize
-            let item = NSMenuItem()
-            item.view = view
-            menu.addItem(item)
+            menu.addItem(.panelCard(LastSessionView(record: recap)))
             menu.addItem(.separator())
         }
 
@@ -154,11 +151,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
                 toggleLidClosedMode(for: session)
             }
         )
-        let hostingView = NSHostingView(rootView: cardView)
-        hostingView.frame.size = hostingView.fittingSize
-        let cardItem = NSMenuItem()
-        cardItem.view = hostingView
-        menu.addItem(cardItem)
+        menu.addItem(.panelCard(cardView))
 
         if session.endDate != nil {
             menu.addItem(submenuItem("Extend Session", items: Self.extendChoices.map { minutes in
