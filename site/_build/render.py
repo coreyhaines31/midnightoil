@@ -146,6 +146,7 @@ FAMILY = [
     ("green", "Green Room", "https://greenroomformac.com", "Check your camera, mic, and speakers"),
     ("hand", "On Hand", "https://onhandformac.com", "A clipboard manager for your Mac"),
     ("coat", "Coat Check", "https://coatcheckformac.com", "Reach the menu bar icons the notch hides"),
+    ("kill", "Kill Cord", "https://killcord.app", "See your API spend before the bill does"),
 ]
 
 
@@ -158,9 +159,6 @@ def footer_family():
         f'<li><a href="{url}" title="{esc(desc)}"{CURRENT if key == "oil" else ""}>'
         f'<img src="/images/family/{key}.png" alt="" width="56" height="56">{esc(name)}</a></li>'
         for key, name, url, desc in FAMILY)
-    # Kill Cord has no site yet, so it's a plain coming-soon tile.
-    items += ('<li><span class="soon"><img src="/images/family/kill.png" alt="" width="56" height="56">'
-              'Kill Cord<small>Coming soon</small></span></li>')
     return f'''    <section class="bx-family" aria-label="More free Mac apps">
       <div class="wrap">
         <a class="bx-eyebrow" href="https://github.com/coreyhaines31">More free Mac apps</a>
