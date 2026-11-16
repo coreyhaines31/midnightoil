@@ -135,7 +135,7 @@ PAGES = [
         <h2>Switching</h2>
         <ol class="steps">
           <li><b>Install Midnight Oil.</b> <code>brew install --cask coreyhaines31/tap/midnightoil</code>, or the DMG from GitHub.</li>
-          <li><b>Click the flame instead of the cup.</b> “Keep Awake Indefinitely” is the same thing Caffeine did. The menu also offers minutes, hours, a clock time, or while an app runs.</li>
+          <li><b>Click the clock instead of the cup.</b> “Keep Awake Indefinitely” is the same thing Caffeine did. The menu also offers minutes, hours, a clock time, or while an app runs.</li>
           <li><b>Quit Caffeine.</b> Two keep-awake apps at once is harmless but pointless.</li>
         </ol>
         <h3>Who should stay on Caffeine</h3>
@@ -190,7 +190,7 @@ caffeinate -dimsu     # everything</code></pre>
         <p>It can't start when you dock, stop when the battery gets low, say “until 7 AM and then let it sleep,” or hold your Mac awake every weekday from 9 to 5. You'd script all of that yourself, cron included.</p>
         <h2>The overnight agent problem, specifically</h2>
         <p>People running Claude Code, Codex, and Cursor agents overnight have converged on the same recipe: <code>tmux new-session -d -s agent 'caffeinate -i claude'</code>, sometimes wired into Claude Code's hooks so it starts automatically. It works, as long as the lid stays open and you never need to see whether it's still running. There are half a dozen wrapper projects on GitHub whose only job is to make caffeinate less annoying.</p>
-        <p>Midnight Oil is what that recipe wants to be. Start a session <strong>while Terminal is running</strong> and it ends when the agent's app quits. Or <strong>until 7 AM</strong>. Check <strong>Stay awake with lid closed</strong> and you can shut the laptop. The flame in the menu bar shows time remaining, and normal sleep comes back on its own when the session ends, when the app quits, or if anything crashes.</p>
+        <p>Midnight Oil is what that recipe wants to be. Start a session <strong>while Terminal is running</strong> and it ends when the agent's app quits. Or <strong>until 7 AM</strong>. Check <strong>Stay awake with lid closed</strong> and you can shut the laptop. The clock in the menu bar shows time remaining, and normal sleep comes back on its own when the session ends, when the app quits, or if anything crashes.</p>
             """},
             {"id": "compare", "gray": True, "html": """
         <h2>Midnight Oil vs caffeinate</h2>
@@ -202,7 +202,7 @@ caffeinate -dimsu     # everything</code></pre>
             """, "table": [
                 ("Price", "Free", "Free, preinstalled"),
                 ("Mechanism", "IOKit power assertion", "IOKit power assertion"),
-                ("Shows it's running and time left", "Menu bar flame and countdown", "Nothing; check pmset"),
+                ("Shows it's running and time left", "Menu bar clock and countdown", "Nothing; check pmset"),
                 ("Survives closing the terminal", "Yes", "No (unless wrapped in tmux)"),
                 ("Keep awake until a clock time", "Yes", "No (seconds only, via -t)"),
                 ("While an app is running", "Yes, pick from a list", "Yes, one process, via -w or wrapping"),
@@ -218,7 +218,7 @@ caffeinate -dimsu     # everything</code></pre>
         <ol class="steps">
           <li><b>Install Midnight Oil.</b> <code>brew install --cask coreyhaines31/tap/midnightoil</code></li>
           <li><b>Start the agent</b> in Terminal, Cursor, or wherever it lives.</li>
-          <li><b>Click the flame › While App Is Running › Terminal.</b> Or Keep Awake Until › 7:00 AM. Check “Stay awake with lid closed” if you're closing the laptop.</li>
+          <li><b>Click the clock › While App Is Running › Terminal.</b> Or Keep Awake Until › 7:00 AM. Check “Stay awake with lid closed” if you're closing the laptop.</li>
           <li><b>Leave.</b> When the app quits or the time arrives, your Mac goes back to its normal sleep schedule.</li>
         </ol>
         <p>Like wrapping commands? Midnight Oil comes with a <code>midnightoil</code> command that works the same way, plus closed-lid mode, battery safety, and a countdown in the menu bar:</p>
@@ -357,7 +357,7 @@ midnightoil start --until 7am                # instead of caffeinate -t, minus t
         <h2>If sleep was your real problem</h2>
         <ol class="steps">
           <li><b>Install Midnight Oil.</b> <code>brew install --cask coreyhaines31/tap/midnightoil</code>, or the DMG from GitHub.</li>
-          <li><b>Click the flame and pick how long.</b> Indefinitely, 8 hours, until 7 AM, or while Terminal is running.</li>
+          <li><b>Click the clock and pick how long.</b> Indefinitely, 8 hours, until 7 AM, or while Terminal is running.</li>
           <li><b>Closing the laptop?</b> Check “Stay awake with lid closed.”</li>
           <li><b>Unplug the jiggler.</b> Or quit it. Your cursor will stay where you left it.</li>
         </ol>

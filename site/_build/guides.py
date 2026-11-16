@@ -407,7 +407,7 @@ tmux attach -t agent       # check on it later</code></pre>
             <tr><td>A keep-awake app</td><td>Amphetamine, KeepingYouAwake, Midnight Oil, and so on</td><td>End its session from the menu bar</td></tr>
           </tbody>
         </table></div>
-        <p>With Midnight Oil, the flame in the menu bar shows when a session is running and what started it, and <code>midnightoil status</code> says the same in Terminal.</p>
+        <p>With Midnight Oil, the clock in the menu bar shows when a session is running and what started it, and <code>midnightoil status</code> says the same in Terminal.</p>
             """},
             {"id": "settings", "html": """
         <h2>3. Nothing listed? Check the settings</h2>
