@@ -267,7 +267,7 @@ enum Help {
 
     // MARK: - Appearance
 
-    static let menuBarIcon = "The flame is an outline when your Mac can sleep, and filled in while a session keeps it awake."
+    static let menuBarIcon = "The clock is an outline when your Mac can sleep, and its night half fills in while a session keeps it awake."
     static let showRemaining = "Shows the time left next to the icon during timed sessions, like “1h 20m”."
     static let customImages = "Pick one image for when your Mac can sleep and one for while a session runs."
     static let templates = """

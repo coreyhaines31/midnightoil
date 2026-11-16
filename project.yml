@@ -24,6 +24,10 @@ packages:
   Sparkle:
     url: https://github.com/sparkle-project/Sparkle
     exactVersion: "2.10.0"
+  # Shared Brushed components for the menu card.
+  PanelKit:
+    url: https://github.com/coreyhaines31/panelkit
+    from: "0.2.0"
 targets:
   MidnightOil:
     type: application
@@ -43,6 +47,7 @@ targets:
       - package: MidnightOilTeams
       - package: KeyboardShortcuts
       - package: Sparkle
+      - package: PanelKit
       - target: MidnightOilHelper
         copy:
           destination: executables
