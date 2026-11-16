@@ -26,14 +26,7 @@ enum StatusIcon {
                 return custom
             }
         }
-        return clockImage(for: state)
-    }
-
-    /// The clock in outline when the Mac can sleep, with the night half filled while a session keeps it awake.
-    static func clockImage(for state: State) -> NSImage? {
-        let image = NSImage(named: state == .active ? "StatusClock-awake" : "StatusClock-idle")
-        image?.isTemplate = true
-        return image
+        return ClockGlyph.image(awake: state == .active)
     }
 
     static func customImageURL(for state: State) -> URL {
