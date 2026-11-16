@@ -37,60 +37,61 @@ FLAME = ('<svg viewBox="0 0 24 30" fill="currentColor" aria-hidden="true"><path 
          '9.4-7.5 18.4-.9-3.8-3.6-6.6-4.7-10.3-1 1.9-2.5 4-3.9 5.1C2.6 21.5 2 18.2 2 15.4 2 8.8 4.8 0 12 0z"/></svg>')
 
 PAGE_CSS = """
-    .sub-hero { padding: 72px 22px 40px; }
-    .sub-hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--flame); margin-bottom: 14px; }
-    .sub-hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.04; max-width: 900px; }
-    .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; font-weight: 600; letter-spacing: -0.02em; }
-    .sub-hero .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); max-width: 720px; margin: 20px 0 0; line-height: 1.45; }
-    .sub-hero .actions { display: flex; align-items: center; gap: 14px; margin-top: 28px; flex-wrap: wrap; }
-    .tldr { background: var(--glass); border-radius: 28px; padding: 26px 28px; margin: 44px 0 0; max-width: 900px; position: relative; box-shadow: var(--glass-shadow); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
-    .tldr h2 { font-size: 15px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
-    .tldr p { margin: 0; font-size: 18px; line-height: 1.5; }
+    .sub-hero { padding-top: 40px; padding-bottom: 60px; }
+    .sub-hero .eyebrow { display: inline-flex; gap: 10px; align-items: center; font: 600 12px/1.3 var(--bx-display); letter-spacing: .26em; text-transform: uppercase; background: var(--bx-plate); color: var(--bx-plate-ink); padding: 7px 12px 7px 10px; border-radius: 2px; margin-bottom: 18px; }
+    .sub-hero .eyebrow::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--bx-accent); box-shadow: 0 0 6px var(--bx-accent); }
+    .sub-hero h1 { font-size: clamp(38px, 5.6vw, 66px); font-weight: 600; line-height: 1; max-width: 900px; }
+    .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: var(--bx-mono); font-size: .84em; font-weight: 600; }
+    .sub-hero .lede { font-size: 19px; color: var(--bx-ink2); max-width: 720px; margin: 18px 0 0; line-height: 1.5; }
+    .sub-hero .lede a, .sub-hero .actions > a:not(.pill) { color: var(--bx-ink); }
+    .sub-hero .actions { display: flex; align-items: center; gap: 10px 14px; margin-top: 26px; flex-wrap: wrap; }
+    .tldr { background: var(--bx-card); border: 1px solid var(--bx-rule); border-radius: 10px; padding: 22px 24px; margin: 36px 0 0; max-width: 900px; }
+    .tldr h2 { font: 600 12px/1 var(--bx-display); letter-spacing: .2em; text-transform: uppercase; color: var(--bx-muted); margin-bottom: 10px; }
+    .tldr p { margin: 0; font-size: 18px; line-height: 1.55; }
     .prose { max-width: 760px; }
-    .prose h2 { font-size: clamp(28px, 3.6vw, 40px); margin: 0 0 16px; }
-    .prose h3 { font-size: 21px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 8px; }
-    .prose p, .prose li { color: var(--muted); font-size: 17px; line-height: 1.6; }
-    .prose p strong { color: var(--text); font-weight: 600; }
+    .prose h2 { font-size: clamp(28px, 3.4vw, 40px); margin: 0 0 16px; }
+    .prose h3 { font-size: 23px; font-weight: 600; margin: 32px 0 8px; }
+    .prose p, .prose li { color: var(--bx-ink2); font-size: 17px; line-height: 1.65; }
+    .prose a { color: var(--bx-ink); }
+    .prose p strong { color: var(--bx-ink); font-weight: 600; }
     .prose ul { padding-left: 20px; margin: 0 0 8px; }
     .prose li { margin-bottom: 6px; }
-    .prose h2 code { font-size: 0.86em; background: none; padding: 0; }
+    .prose h2 code { font-size: .86em; background: none; border: 0; padding: 0; }
     .compare.cmds:not(.asks) td:first-child { white-space: nowrap; }
     .compare.cmds td:last-child code { white-space: nowrap; }
     .agent-head code { font-size: 12px; padding: 1px 5px; }
-    .prose code, .compare code { font: 15px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--gray); padding: 2px 6px; border-radius: 5px; }
-    .prose pre { background: #14162a; color: #d9dbe9; border-radius: 12px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; }
-    .prose pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
-    .prose blockquote { margin: 18px 0; padding: 14px 20px; border-left: 3px solid var(--gold); background: var(--gray); border-radius: 0 12px 12px 0; }
+    .prose code, .compare code { font: 15px var(--bx-mono); background: var(--bx-field); border: 1px solid var(--bx-rule); padding: 1px 6px; border-radius: 4px; }
+    .prose pre { background: var(--term); color: var(--term-ink); border-radius: 6px; padding: 16px 18px; overflow-x: auto; font: 14px/1.6 var(--bx-mono); box-shadow: 0 0 0 1px rgba(0,0,0,.5); }
+    .prose pre code { background: none; border: 0; padding: 0; color: inherit; font-size: inherit; }
+    .prose blockquote { margin: 18px 0; padding: 14px 20px; border-left: 3px solid var(--bx-plate); background: var(--bx-card); border-radius: 0 6px 6px 0; }
     .prose blockquote p { margin: 0; font-size: 16px; }
-    .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--faint); font-style: normal; }
-    .prose blockquote cite a { color: var(--faint); }
-    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
-    .two > div { background: var(--glass); border-radius: 22px; padding: 22px; box-shadow: var(--glass-shadow); }
-    .two h3 { margin: 0 0 10px; font-size: 18px; }
+    .prose blockquote cite { display: block; margin-top: 6px; font-size: 13px; color: var(--bx-muted); font-style: normal; }
+    .prose blockquote cite a { color: var(--bx-muted); }
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px; }
+    .two > div { background: var(--bx-card); border: 1px solid var(--bx-rule); border-radius: 10px; padding: 22px; }
+    .two h3 { margin: 0 0 10px; font-size: 21px; }
     .two ul { margin: 0; padding-left: 18px; }
     .two li { font-size: 15px; margin-bottom: 6px; }
     .steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
     .steps li { counter-increment: step; position: relative; padding-left: 46px; margin-bottom: 18px; }
-    .steps li::before { content: counter(step); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; background: var(--text); color: #fff; font-weight: 600; font-size: 14px; display: grid; place-items: center; }
-    .steps li b { color: var(--text); display: block; margin-bottom: 2px; }
+    .steps li::before { content: counter(step); position: absolute; left: 0; top: 0; width: 28px; height: 28px; border-radius: 2px; background: var(--bx-plate); color: var(--bx-plate-ink); font: 600 14px/1 var(--bx-display); display: grid; place-items: center; }
+    .steps li b { color: var(--bx-ink); display: block; margin-bottom: 2px; }
     .glance { max-width: 760px; margin: 0 0 44px; }
     .glance .compare td:first-child { font-weight: 500; }
-    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
-    .related a { display: block; background: var(--glass); border-radius: 22px; padding: 18px 20px; text-decoration: none; box-shadow: var(--glass-shadow); transition: transform .2s ease, background .2s ease; }
-    .related a:hover { background: var(--glass-strong); transform: translateY(-2px); }
-    .related b { display: block; margin-bottom: 4px; }
-    .related span { color: var(--muted); font-size: 14px; }
+    .related { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 14px; }
+    .related a { display: block; background: var(--bx-card); border: 1px solid var(--bx-rule); border-radius: 10px; padding: 18px 20px; text-decoration: none; }
+    .related a:hover { border-color: var(--bx-ink2); }
+    .related b { display: block; margin-bottom: 4px; font: 600 19px/1.25 var(--bx-display); }
+    .related span { color: var(--bx-ink2); font-size: 14.5px; }
     section.tight { padding: 64px 0; }
-    .tldr::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; background: var(--rim);
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
     @media (max-width: 720px) {
       .compare.cmds, .compare.cmds tbody, .compare.cmds tr, .compare.cmds td { display: block; width: auto; min-width: 0; }
       .compare.cmds thead { display: none; }
       .compare.cmds td { padding: 0; border: 0; }
-      .compare.cmds tr { padding: 14px 0; border-bottom: 1px solid var(--line); }
+      .compare.cmds tr { padding: 14px 0; border-bottom: 1px solid var(--bx-rule); }
       .compare.cmds td:first-child { white-space: normal; margin-bottom: 6px; }
       .compare.cmds code { font-size: 13.5px; }
-      .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 48px; }
+      .two { grid-template-columns: 1fr; } .sub-hero { padding-top: 28px; }
       .sub-hero .actions:has(.glass) { flex-direction: column; align-items: stretch; max-width: 340px; }
       .sub-hero .actions .pill { justify-content: center; }
     }
@@ -195,12 +196,16 @@ def head(title, description, path):
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@300;600;700&display=swap">
+  <link rel="stylesheet" href="/kit/brushed.css">
   <link rel="stylesheet" href="/site.css">
   <style>{PAGE_CSS}  </style>
   <script async src="https://tracerkit.com/t.js" data-key="tk__vMOLefQSrM_pLCt"></script>
   <script src="https://ingest.getuserproof.com/sdk.js" data-site="f47d3267-ab67-4aae-8dee-7c160e0f05f1" defer></script>
 </head>
-<body>
+<body class="bx">
 '''
 
 
