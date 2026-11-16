@@ -1,9 +1,10 @@
 import AppKit
 
-/// The menu bar image for each state: built-in symbols, or the user's own images.
+/// The menu bar image for each state: the 24-hour clock glyph, or the user's own images.
 enum StatusIcon {
     enum Style: String, CaseIterable {
-        case flame
+        /// Stored as "flame", the app's original icon, so existing settings and managed profiles keep working.
+        case clock = "flame"
         case custom
     }
 
@@ -25,7 +26,14 @@ enum StatusIcon {
                 return custom
             }
         }
-        return FlameIcon.menuBarImage(lit: state == .active)
+        return clockImage(for: state)
+    }
+
+    /// The clock in outline when the Mac can sleep, with the night half filled while a session keeps it awake.
+    static func clockImage(for state: State) -> NSImage? {
+        let image = NSImage(named: state == .active ? "StatusClock-awake" : "StatusClock-idle")
+        image?.isTemplate = true
+        return image
     }
 
     static func customImageURL(for state: State) -> URL {
