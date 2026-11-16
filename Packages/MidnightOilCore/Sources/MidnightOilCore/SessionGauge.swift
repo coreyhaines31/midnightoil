@@ -24,7 +24,7 @@ public enum SessionGauge: Equatable, Sendable {
 
 /// The printed scale of the countdown meter: zero at the left stop, the session's length at the right.
 public struct CountdownScale: Equatable, Sendable {
-    /// The word printed on the face, e.g. "MIN LEFT".
+    /// The word printed on the face: "MIN LEFT", "HRS LEFT" or, past three days, "DAYS LEFT".
     public let word: String
     /// Major divisions on the scale.
     public let divisions: Int
@@ -38,14 +38,24 @@ public struct CountdownScale: Equatable, Sendable {
 
     /// Steps the scale can count in, shortest first.
     private static let steps: [TimeInterval] = [
-        60, 120, 300, 600, 900, 1_200, 1_800, 3_600, 7_200, 10_800, 14_400, 21_600
+        60, 120, 300, 600, 900, 1_200, 1_800, 3_600, 7_200, 10_800, 14_400, 21_600, 28_800, 43_200,
+        86_400, 172_800, 259_200, 432_000, 604_800, 1_209_600, 2_592_000
     ]
 
     public init(total: TimeInterval) {
         let total = max(total, 60)
-        let inMinutes = total <= 90 * 60
-        let unit: TimeInterval = inMinutes ? 60 : 3_600
-        word = inMinutes ? "MIN LEFT" : "HRS LEFT"
+        let unit: TimeInterval
+        switch total {
+        case ...(90 * 60):
+            unit = 60
+            word = "MIN LEFT"
+        case ...(72 * 3_600):
+            unit = 3_600
+            word = "HRS LEFT"
+        default:
+            unit = 86_400
+            word = "DAYS LEFT"
+        }
 
         func text(_ seconds: TimeInterval) -> String {
             let value = seconds / unit
@@ -80,11 +90,19 @@ public struct CountdownScale: Equatable, Sendable {
     }
 }
 
-/// The tape counter's digits for an elapsed time, as hours and minutes ("01", "23").
-/// Stops at 99:59 because the counter has two drums for hours.
-public enum ElapsedCounter {
-    public static func digits(_ interval: TimeInterval) -> (hours: String, minutes: String) {
-        let minutes = min(max(0, Int(interval / 60)), 99 * 60 + 59)
-        return (String(format: "%02d", minutes / 60), String(format: "%02d", minutes % 60))
+/// The tape counter's drums for an elapsed time: hours and minutes ("01", "23"), with a days drum
+/// from the first full day ("3", "09", "42" for 3d 09:42). Stops at 99d 23:59, two drums of days.
+public struct ElapsedCounter: Equatable, Sendable {
+    /// Whole days, or nil under a day.
+    public let days: String?
+    public let hours: String
+    public let minutes: String
+
+    public init(_ interval: TimeInterval) {
+        let total = min(max(0, Int(interval / 60)), 99 * 1_440 + 23 * 60 + 59)
+        let dayCount = total / 1_440
+        days = dayCount > 0 ? String(dayCount) : nil
+        hours = String(format: "%02d", total % 1_440 / 60)
+        minutes = String(format: "%02d", total % 60)
     }
 }
