@@ -61,7 +61,7 @@ COMPARE = [
     ("Ends on low battery or unplug", "Yes, using your settings", "No"),
     ("Clock times", "<code>--until 6am</code>", "Seconds only, with <code>-t</code>"),
     ("Agents running in parallel", "One shared session until the last finishes", "One assertion per process"),
-    ("Shows it's running", "Flame and countdown in the menu bar", "Nothing; check <code>pmset -g assertions</code>"),
+    ("Shows it's running", "Clock and countdown in the menu bar", "Nothing; check <code>pmset -g assertions</code>"),
     ("Also a menu bar app", "Yes, with schedules and triggers", "No"),
     ("Install", "Comes with Midnight Oil", "Built in"),
 ]

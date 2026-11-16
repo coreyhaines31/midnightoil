@@ -207,8 +207,8 @@ footer .footer-alts .label { color: #e9eaea; font: 600 12px/1.6 var(--bx-display
 .menubar .left, .menubar .right { display: flex; align-items: center; gap: 14px; }
 .menubar .apple { width: 12px; height: 14px; background: #e6e7e8; -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 170 170'><path d='M150 130c-3 7-7 14-12 21-7 9-13 15-17 18-7 5-14 8-22 8-6 0-13-2-21-5-8-3-15-5-21-5-7 0-14 2-22 5-8 3-14 5-19 5-8 0-16-3-23-9-4-4-10-10-17-19C7 137 0 116 0 96c0-19 4-35 12-48 7-10 15-19 25-25 10-6 21-9 33-9 6 0 15 2 25 6 10 4 17 6 20 6 2 0 9-2 21-7 11-4 21-6 29-5 21 2 37 10 47 26-19 12-29 28-28 49 0 16 6 30 18 40 5 5 11 9 18 12-1 4-3 8-5 12z'/><path d='M120 4c0 14-5 27-15 39-12 14-27 22-43 21-1-2-1-4-1-6 0-13 6-27 16-39 5-6 11-11 19-15 8-4 15-6 22-7 1 3 1 5 2 7z'/></svg>") center/contain no-repeat; mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 170 170'><path d='M150 130c-3 7-7 14-12 21-7 9-13 15-17 18-7 5-14 8-22 8-6 0-13-2-21-5-8-3-15-5-21-5-7 0-14 2-22 5-8 3-14 5-19 5-8 0-16-3-23-9-4-4-10-10-17-19C7 137 0 116 0 96c0-19 4-35 12-48 7-10 15-19 25-25 10-6 21-9 33-9 6 0 15 2 25 6 10 4 17 6 20 6 2 0 9-2 21-7 11-4 21-6 29-5 21 2 37 10 47 26-19 12-29 28-28 49 0 16 6 30 18 40 5 5 11 9 18 12-1 4-3 8-5 12z'/><path d='M120 4c0 14-5 27-15 39-12 14-27 22-43 21-1-2-1-4-1-6 0-13 6-27 16-39 5-6 11-11 19-15 8-4 15-6 22-7 1 3 1 5 2 7z'/></svg>") center/contain no-repeat; }
 .menubar b { font-weight: 600; }
-.menubar .flame { display: inline-flex; align-items: center; gap: 5px; color: #f4f4f4; font-weight: 500; background: rgba(255,255,255,.16); border-radius: 4px; padding: 1px 6px; font-variant-numeric: tabular-nums; }
-.menubar .flame svg { width: 11px; height: 13px; }
+.menubar .clock { display: inline-flex; align-items: center; gap: 5px; color: #f4f4f4; font-weight: 500; background: rgba(255,255,255,.16); border-radius: 4px; padding: 1px 6px; font-variant-numeric: tabular-nums; }
+.menubar .clock svg { width: 13px; height: 13px; }
 .menubar .glyph { display: inline-block; height: 11px; border-radius: 2px; background: #e6e7e8; opacity: .9; }
 .menubar .wifi { width: 14px; -webkit-mask: radial-gradient(circle at 50% 100%, #000 0 15%, transparent 16% 33%, #000 34% 48%, transparent 49% 66%, #000 67% 82%, transparent 83%); mask: radial-gradient(circle at 50% 100%, #000 0 15%, transparent 16% 33%, #000 34% 48%, transparent 49% 66%, #000 67% 82%, transparent 83%); }
 .menubar .batt { width: 22px; border: 1.5px solid #e6e7e8; background: linear-gradient(90deg, #e6e7e8 0 62%, transparent 62%); box-sizing: border-box; }
@@ -354,7 +354,7 @@ footer .footer-alts .label { color: #e9eaea; font: 600 12px/1.6 var(--bx-display
 .mk-check i.on::after { content: ""; position: absolute; left: .34em; top: .12em; width: .28em; height: .56em; border: solid #fff; border-width: 0 .13em .13em 0; transform: rotate(45deg); }
 .mk-check + .mk-check { margin-top: .22em; }
 .mk-bar { display: flex; justify-content: flex-end; gap: .9em; align-items: center; padding: .3em .8em; margin: -.2em 0 .45em; font-size: .95em; color: #161616; }
-.mk-bar svg { width: .95em; height: 1.2em; fill: none; stroke: #161616; stroke-width: 2.2; }
+.mk-bar svg { width: 1.1em; height: 1.1em; color: #161616; }
 .mk-bar .lit { background: rgba(0,0,0,.14); border-radius: .3em; padding: .15em .45em; display: flex; }
 .frame .shot .mk-menus { font-size: 12px; }
 /* The menu plus its submenu: drop the shortcut column so both fit the frame. */
