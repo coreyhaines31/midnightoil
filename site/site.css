@@ -417,3 +417,12 @@ div.openmenu { font-size: clamp(7px, .86vw, 13px); box-shadow: none; border-radi
 .mk-win.short { height: 330px; }
 @media (max-width: 900px) { .teams-feature { grid-template-columns: 1fr; gap: 22px; } .teams-feature .art > * { zoom: 1; } }
 @media (max-width: 700px) { .teams-feature .art > * { zoom: .54; } }
+
+/* What's new strip under the hero */
+.whats-new { padding: 24px 0; }
+.whats-new-card { display: flex; align-items: center; gap: 18px; padding: 14px 18px; border: 1px solid var(--bx-rule); border-radius: 6px; background: var(--bx-card); font-size: 15px; color: var(--bx-ink2); }
+.whats-new-card p { margin: 0; flex: 1; }
+.whats-new-card strong { color: var(--bx-ink); }
+.whats-new-card .bx-badge { flex: none; }
+.whats-new-card a { flex: none; white-space: nowrap; color: var(--bx-ink); }
+@media (max-width: 760px) { .whats-new-card { flex-direction: column; align-items: flex-start; gap: 8px; } }

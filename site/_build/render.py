@@ -34,9 +34,6 @@ GITHUB_ICON = ('<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
 CTAS = (f'<a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">{DOWNLOAD_ICON}Download free</a>\n'
         f'        <a class="pill big glass" href="https://github.com/coreyhaines31/midnightoil">{GITHUB_ICON}View source code</a>')
 
-FLAME = ('<svg viewBox="0 0 24 30" fill="currentColor" aria-hidden="true"><path d="M12 0c6.8 0 10 4.7 10 10.6 0 6.3-4.6 '
-         '9.4-7.5 18.4-.9-3.8-3.6-6.6-4.7-10.3-1 1.9-2.5 4-3.9 5.1C2.6 21.5 2 18.2 2 15.4 2 8.8 4.8 0 12 0z"/></svg>')
-
 PAGE_CSS = """
     .sub-hero { padding-top: 40px; padding-bottom: 60px; }
     .sub-hero .eyebrow { display: inline-flex; gap: 10px; align-items: center; font: 600 12px/1.3 var(--bx-display); letter-spacing: .26em; text-transform: uppercase; background: var(--bx-plate); color: var(--bx-plate-ink); padding: 7px 12px 7px 10px; border-radius: 2px; margin-bottom: 18px; }
