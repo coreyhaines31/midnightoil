@@ -87,6 +87,13 @@ public struct Session: Equatable, Sendable {
         endDate.map { max(0, $0.timeIntervalSince(now)) }
     }
 
+    /// Whether Keep Awake Indefinitely would change anything. A manual indefinite session can
+    /// only be ended; any other session switches to indefinite, and a schedule or trigger
+    /// session hands over to a manual one that runs on past its window.
+    public var offersKeepAwakeIndefinitely: Bool {
+        !(source == .manual && end == .indefinite)
+    }
+
     /// Pushes a timed session's end later. Indefinite sessions are unchanged.
     public func extended(by interval: TimeInterval) -> Session {
         let newEnd: SessionEnd
