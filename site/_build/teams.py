@@ -56,7 +56,7 @@ LOCK_MOCK = f"""<div class="mk-win short" role="img" aria-label="Midnight Oil's 
 
 WEBHOOK_MOCK = f"""<div role="img" aria-label="Session events from Midnight Oil posted to Slack, and the signed JSON body.">
 <div class="mk-slack">
-<div class="msg"><div class="avatar"><img src="/images/icon-192.png" alt=""></div><div><b>Midnight Oil</b><span class="t">11:00 PM</span><div>🔥 Build Mac 1 is staying awake on the “Overnight agents” schedule.</div></div></div>
+<div class="msg"><div class="avatar"><img src="/images/icon-192.png" alt=""></div><div><b>Midnight Oil</b><span class="t">11:00 PM</span><div>⏰ Build Mac 1 is staying awake on the “Overnight agents” schedule.</div></div></div>
 <div class="msg"><div class="avatar"><img src="/images/icon-192.png" alt=""></div><div><b>Midnight Oil</b><span class="t">7:00 AM</span><div>Build Mac 1 can sleep again after 8h on the “Overnight agents” schedule.</div></div></div>
 </div>
 <div class="mk-json">{{
@@ -220,7 +220,7 @@ def verify(raw_body: bytes, header: str, secret: str) -&gt; bool:
           <li>When Midnight Oil quits mid-session, it waits up to three seconds to send <code>session.ended</code>.</li>
         </ul>
         <h2>Slack</h2>
-        <p>Use a Slack incoming-webhook URL (<code>https://hooks.slack.com/…</code>) and Macs post readable messages instead, like “🔥 Build Mac 1 is staying awake on the “Overnight agents” schedule.” Slack messages aren't signed.</p>
+        <p>Use a Slack incoming-webhook URL (<code>https://hooks.slack.com/…</code>) and Macs post readable messages instead, like “⏰ Build Mac 1 is staying awake on the “Overnight agents” schedule.” Slack messages aren't signed.</p>
 """,
     },
     {

@@ -12,6 +12,21 @@ struct SessionTests {
         #expect(!session.isFinished(at: start.addingTimeInterval(1_000_000)))
     }
 
+    @Test func onlyAManualIndefiniteSessionHidesKeepAwakeIndefinitely() {
+        let schedule = SessionSource.schedule(id: UUID(), name: "Nights")
+        let trigger = SessionSource.trigger(id: UUID(), name: "On power")
+        #expect(!Session(start: start, end: .indefinite, allowsDisplaySleep: false).offersKeepAwakeIndefinitely)
+        #expect(Session(start: start, end: .after(600), allowsDisplaySleep: false).offersKeepAwakeIndefinitely)
+        #expect(Session(start: start, end: .until(start.addingTimeInterval(60)), allowsDisplaySleep: false)
+            .offersKeepAwakeIndefinitely)
+        #expect(Session(start: start, end: .whileProcessesRunning([]), allowsDisplaySleep: false)
+            .offersKeepAwakeIndefinitely)
+        #expect(Session(start: start, end: .indefinite, allowsDisplaySleep: false, source: schedule)
+            .offersKeepAwakeIndefinitely)
+        #expect(Session(start: start, end: .indefinite, allowsDisplaySleep: false, source: trigger)
+            .offersKeepAwakeIndefinitely)
+    }
+
     @Test func timedSessionCountsDownAndFinishes() {
         let session = Session(start: start, end: .after(600), allowsDisplaySleep: false)
         #expect(session.remaining(at: start.addingTimeInterval(200)) == 400)

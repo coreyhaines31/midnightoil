@@ -117,7 +117,7 @@ public enum SessionWebhook {
         default: ""
         }
         if payload.event == "session.started" {
-            return "🔥 \(mac) is staying awake\(what)."
+            return "⏰ \(mac) is staying awake\(what)."
         }
         let awake = payload.session.awakeSeconds.map { " after \(RemainingTime.short(TimeInterval($0)))" } ?? ""
         return "\(mac) can sleep again\(awake)\(what)."

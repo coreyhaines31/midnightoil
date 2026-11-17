@@ -100,10 +100,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             menu.addItem(next)
             menu.addItem(.separator())
         }
-        // A manual indefinite session can only be ended, which End Session above already does.
-        // Schedule and trigger sessions keep it: it lets them run on past their window.
-        let isManualIndefinite = sessions.session.map { $0.source == .manual && $0.end == .indefinite } ?? false
-        if !isManualIndefinite {
+        if sessions.session?.offersKeepAwakeIndefinitely ?? true {
             menu.addItem(startItem("Keep Awake Indefinitely", end: .indefinite, keyEquivalent: "i")
                 .withToolTip(Help.Menu.indefinitely))
         }
