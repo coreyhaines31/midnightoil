@@ -10,12 +10,12 @@ struct MidnightOilControls: WidgetBundle {
     }
 }
 
-/// Starts or ends a session from Control Center, like the menu bar's flame.
+/// Starts or ends a session from Control Center, like the menu bar's clock.
 struct SessionToggleControl: ControlWidget {
     var body: some ControlWidgetConfiguration {
         StaticControlConfiguration(kind: ControlBridge.controlKind, provider: Provider()) { isAwake in
             ControlWidgetToggle("Midnight Oil", isOn: isAwake, action: SetSessionIntent()) { isOn in
-                Label(isOn ? "Keeping Awake" : "Off", systemImage: isOn ? "flame.fill" : "flame")
+                Label(isOn ? "Keeping Awake" : "Off", systemImage: isOn ? "clock.fill" : "clock")
             }
         }
         .displayName("Keep Mac Awake")
