@@ -48,6 +48,6 @@ struct SessionWebhookTests {
         #expect(SessionWebhook.isSlack(url))
         #expect(!SessionWebhook.isSlack(try #require(URL(string: "https://example.com/hooks"))))
         let started = WebhookPayload(.started(scheduled), device: device)
-        #expect(SessionWebhook.slackText(for: started) == "🔥 Build Mac 3 is staying awake on the “Overnight” schedule.")
+        #expect(SessionWebhook.slackText(for: started) == "⏰ Build Mac 3 is staying awake on the “Overnight” schedule.")
     }
 }
