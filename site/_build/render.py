@@ -34,6 +34,19 @@ GITHUB_ICON = ('<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
 CTAS = (f'<a class="pill big" href="https://github.com/coreyhaines31/midnightoil/releases/latest">{DOWNLOAD_ICON}Download free</a>\n'
         f'        <a class="pill big glass" href="https://github.com/coreyhaines31/midnightoil">{GITHUB_ICON}View source code</a>')
 
+# Self-hosted Barlow from mac-app-kit site-kit/sections/fonts.html. font-display: optional keeps the layout still.
+FONTS = """  <link rel="preload" href="/fonts/barlow-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/barlow-semi-condensed-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/barlow-semi-condensed-300.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    @font-face {font-family: "Barlow"; font-style: normal; font-weight: 400; font-display: optional; src: url(/fonts/barlow-400.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+    @font-face {font-family: "Barlow"; font-style: normal; font-weight: 500; font-display: optional; src: url(/fonts/barlow-500.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+    @font-face {font-family: "Barlow"; font-style: normal; font-weight: 600; font-display: optional; src: url(/fonts/barlow-600.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+    @font-face {font-family: "Barlow Semi Condensed"; font-style: normal; font-weight: 300; font-display: optional; src: url(/fonts/barlow-semi-condensed-300.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+    @font-face {font-family: "Barlow Semi Condensed"; font-style: normal; font-weight: 600; font-display: optional; src: url(/fonts/barlow-semi-condensed-600.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+    @font-face {font-family: "Barlow Semi Condensed"; font-style: normal; font-weight: 700; font-display: optional; src: url(/fonts/barlow-semi-condensed-700.woff2) format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;}
+  </style>"""
+
 PAGE_CSS = """
     .sub-hero { padding-top: 40px; padding-bottom: 60px; }
     .sub-hero .eyebrow { display: inline-flex; gap: 10px; align-items: center; font: 600 12px/1.3 var(--bx-display); letter-spacing: .26em; text-transform: uppercase; background: var(--bx-plate); color: var(--bx-plate-ink); padding: 7px 12px 7px 10px; border-radius: 2px; margin-bottom: 18px; }
@@ -105,7 +118,7 @@ def nav():
     return f'''  <a class="skip" href="#main">Skip to content</a>
   <header class="bx-hero">
     <div class="wrap bx-nav">
-      <a class="bx-brand" href="/"><img src="/images/icon-192.png" alt="" width="32" height="32">Midnight Oil</a>
+      <a class="bx-brand" href="/"><img src="/images/icon-96.webp" alt="" width="32" height="32">Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
         <a href="/cli">For agents</a>
@@ -157,7 +170,7 @@ def footer_family():
     """Corey's free Mac apps as a panel of their icons, cross-linked from every footer."""
     items = "".join(
         f'<li><a href="{url}" title="{esc(desc)}"{CURRENT if key == "oil" else ""}>'
-        f'<img src="/images/family/{key}.png" alt="" width="56" height="56">{esc(name)}</a></li>'
+        f'<img src="/images/family/{key}.webp" alt="" width="56" height="56">{esc(name)}</a></li>'
         for key, name, url, desc in FAMILY)
     return f'''    <section class="bx-family" aria-label="More free Mac apps">
       <div class="wrap">
@@ -208,9 +221,7 @@ def head(title, description, path):
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@300;600;700&display=swap">
+{FONTS}
   <link rel="stylesheet" href="/kit/brushed.css">
   <link rel="stylesheet" href="/site.css">
   <style>{PAGE_CSS}  </style>
@@ -249,7 +260,7 @@ def cta(text):
     return f'''    <section class="cta">
       <div class="wrap">
         <div class="cta-card">
-          <img src="/images/icon-192.png" alt="" width="96" height="96">
+          <img src="/images/icon-192.webp" alt="" width="96" height="96">
           <h2>{text}</h2>
           <p>Free. No account, no subscription.</p>
           <div class="actions">

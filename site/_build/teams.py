@@ -56,8 +56,8 @@ LOCK_MOCK = f"""<div class="mk-win short" role="img" aria-label="Midnight Oil's 
 
 WEBHOOK_MOCK = f"""<div role="img" aria-label="Session events from Midnight Oil posted to Slack, and the signed JSON body.">
 <div class="mk-slack">
-<div class="msg"><div class="avatar"><img src="/images/icon-192.png" alt=""></div><div><b>Midnight Oil</b><span class="t">11:00 PM</span><div>⏰ Build Mac 1 is staying awake on the “Overnight agents” schedule.</div></div></div>
-<div class="msg"><div class="avatar"><img src="/images/icon-192.png" alt=""></div><div><b>Midnight Oil</b><span class="t">7:00 AM</span><div>Build Mac 1 can sleep again after 8h on the “Overnight agents” schedule.</div></div></div>
+<div class="msg"><div class="avatar"><img src="/images/icon-96.webp" alt="" width="34" height="34"></div><div><b>Midnight Oil</b><span class="t">11:00 PM</span><div>⏰ Build Mac 1 is staying awake on the “Overnight agents” schedule.</div></div></div>
+<div class="msg"><div class="avatar"><img src="/images/icon-96.webp" alt="" width="34" height="34"></div><div><b>Midnight Oil</b><span class="t">7:00 AM</span><div>Build Mac 1 can sleep again after 8h on the “Overnight agents” schedule.</div></div></div>
 </div>
 <div class="mk-json">{{
   <span class="k">"event"</span>: <span class="s">"session.ended"</span>,
