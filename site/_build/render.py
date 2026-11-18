@@ -105,7 +105,7 @@ def nav():
     return f'''  <a class="skip" href="#main">Skip to content</a>
   <header class="bx-hero">
     <div class="wrap bx-nav">
-      <a class="bx-brand" href="/"><img src="/images/icon-192.png" alt="" width="32" height="32">Midnight Oil</a>
+      <a class="bx-brand" href="/"><img src="/images/icon-96.webp" alt="" width="32" height="32">Midnight Oil</a>
       <nav>
         <a href="/#features">Features</a>
         <a href="/cli">For agents</a>
@@ -157,7 +157,7 @@ def footer_family():
     """Corey's free Mac apps as a panel of their icons, cross-linked from every footer."""
     items = "".join(
         f'<li><a href="{url}" title="{esc(desc)}"{CURRENT if key == "oil" else ""}>'
-        f'<img src="/images/family/{key}.png" alt="" width="56" height="56">{esc(name)}</a></li>'
+        f'<img src="/images/family/{key}.webp" alt="" width="56" height="56">{esc(name)}</a></li>'
         for key, name, url, desc in FAMILY)
     return f'''    <section class="bx-family" aria-label="More free Mac apps">
       <div class="wrap">
@@ -249,7 +249,7 @@ def cta(text):
     return f'''    <section class="cta">
       <div class="wrap">
         <div class="cta-card">
-          <img src="/images/icon-192.png" alt="" width="96" height="96">
+          <img src="/images/icon-192.webp" alt="" width="96" height="96">
           <h2>{text}</h2>
           <p>Free. No account, no subscription.</p>
           <div class="actions">
