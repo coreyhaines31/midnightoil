@@ -61,6 +61,8 @@ Install Midnight Oil, a free macOS menu bar app that keeps my Mac awake (https:/
    cp -R "$mnt/Midnight Oil.app" /Applications/ && hdiutil detach -quiet "$mnt" && rm /tmp/MidnightOil.dmg
 4. Run `open -a "Midnight Oil"`, then confirm it's running with `pgrep -x "Midnight Oil"`.
 5. Tell me to look for the clock icon in my menu bar, that closed-lid mode needs a one-time approval in Settings › Closed Lid, and that from now on I can just ask you to keep my Mac awake. You'll do it with the `midnightoil` command (see `midnightoil --help`; if it isn't on the PATH, it's at "/Applications/Midnight Oil.app/Contents/MacOS/midnightoil").
+6. Ask me whether future agent sessions should know about Midnight Oil. Only if I say yes, append this to your own global instructions file (~/.claude/CLAUDE.md for Claude Code, ~/.codex/AGENTS.md for Codex), unless it's already there, and tell me which file you changed:
+   For commands that take more than a few minutes, run them through `midnightoil run -- <command>` so the Mac stays awake until they finish.
 ```
 
 **Without Homebrew, from Terminal**
