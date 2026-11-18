@@ -1,5 +1,5 @@
 /* Brushed: the shared look for the eight Mac app sites.
-   Load Barlow + Barlow Semi Condensed from Google Fonts, then this file, then popover.css for app mockups.
+   Load Barlow + Barlow Semi Condensed (self-hosted: site-kit/sections/fonts.html + site-kit/fonts/), then this file, then popover.css for app mockups.
    Each site sets one variable: --bx-accent (its pilot light). Colour appears only in lights and readings. */
 
 :root {
