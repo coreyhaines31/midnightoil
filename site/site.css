@@ -426,3 +426,6 @@ div.openmenu { font-size: clamp(7px, .86vw, 13px); box-shadow: none; border-radi
 .whats-new-card .bx-badge { flex: none; }
 .whats-new-card a { flex: none; white-space: nowrap; color: var(--bx-ink); }
 @media (max-width: 760px) { .whats-new-card { flex-direction: column; align-items: flex-start; gap: 8px; } }
+
+/* Nine siblings: three rows of three */
+@media (min-width: 881px) { #apps .bx-apps { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
