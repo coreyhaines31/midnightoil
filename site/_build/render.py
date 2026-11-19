@@ -160,6 +160,7 @@ FAMILY = [
     ("hand", "On Hand", "https://onhandformac.com", "A clipboard manager for your Mac"),
     ("coat", "Coat Check", "https://coatcheckformac.com", "Reach the menu bar icons the notch hides"),
     ("kill", "Kill Cord", "https://killcord.app", "See your API spend before the bill does"),
+    ("exhibit", "Exhibit A", "https://exhibitaformac.com", "Mark up a screenshot in a few keystrokes"),
 ]
 
 
