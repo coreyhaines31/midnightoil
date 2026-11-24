@@ -49,7 +49,7 @@ FONTS = """  <link rel="preload" href="/fonts/barlow-400.woff2" as="font" type="
 
 PAGE_CSS = """
     .sub-hero { padding-top: 40px; padding-bottom: 60px; }
-    .sub-hero .eyebrow { display: inline-flex; gap: 10px; align-items: center; font: 600 12px/1.3 var(--bx-display); letter-spacing: .26em; text-transform: uppercase; background: var(--bx-plate); color: var(--bx-plate-ink); padding: 7px 12px 7px 10px; border-radius: 2px; margin-bottom: 18px; }
+    .sub-hero .eyebrow { display: inline-flex; gap: 10px; align-items: center; font: 600 12px/1.3 var(--bx-display-caps); letter-spacing: .26em; text-transform: uppercase; background: var(--bx-plate); color: var(--bx-plate-ink); padding: 7px 12px 7px 10px; border-radius: 2px; margin-bottom: 18px; }
     .sub-hero .eyebrow::before { content: ""; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--bx-accent); box-shadow: 0 0 6px var(--bx-accent); }
     .sub-hero h1 { font-size: clamp(38px, 5.6vw, 66px); font-weight: 600; line-height: 1; max-width: 900px; }
     .sub-hero h1 code { font: inherit; background: none; padding: 0; font-family: var(--bx-mono); font-size: .84em; font-weight: 600; }
@@ -57,7 +57,7 @@ PAGE_CSS = """
     .sub-hero .lede a, .sub-hero .actions > a:not(.pill) { color: var(--bx-ink); }
     .sub-hero .actions { display: flex; align-items: center; gap: 10px 14px; margin-top: 26px; flex-wrap: wrap; }
     .tldr { background: var(--bx-card); border: 1px solid var(--bx-rule); border-radius: 10px; padding: 22px 24px; margin: 36px 0 0; max-width: 900px; }
-    .tldr h2 { font: 600 12px/1 var(--bx-display); letter-spacing: .2em; text-transform: uppercase; color: var(--bx-muted); margin-bottom: 10px; }
+    .tldr h2 { font: 600 12px/1 var(--bx-display-caps); letter-spacing: .2em; text-transform: uppercase; color: var(--bx-muted); margin-bottom: 10px; }
     .tldr p { margin: 0; font-size: 18px; line-height: 1.55; }
     .prose { max-width: 760px; }
     .prose h2 { font-size: clamp(28px, 3.4vw, 40px); margin: 0 0 16px; }
